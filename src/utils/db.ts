@@ -10,8 +10,5 @@ const dbConfig: PoolConfig = {
   port: env.DB_PORT || 5432,
 };
 
-/**
- * Cria a conexão com o banco de dados e exporta
- */
 const pool = new Pool(dbConfig);
 export default pool;
