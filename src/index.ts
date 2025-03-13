@@ -1,12 +1,11 @@
 // api/src/index.ts
 import env from "./lib/env"
 import express, { Request, Response } from 'express'
-import pool from './utils/db' // Importa a configuração do banco de dados
+import pool from './utils/db'
 
 const app = express()
 const port = env.API_PORT
 
-// Middleware para parsear JSON
 app.use(express.json())
 
 // Rota de teste de conexão com o banco de dados
@@ -23,7 +22,7 @@ app.get('/test-db', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Erro ao conectar ao banco de dados' })
   }
 })
-console.log(env)
+
 // Rota de boas-vindas
 app.get('/', (req: Request, res: Response) => {
   res.send('API está funcionando! ')

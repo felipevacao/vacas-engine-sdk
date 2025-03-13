@@ -6,8 +6,8 @@ const env = cleanEnv(process.env, {
     DB_PASSWORD: str(),
     DB_NAME: str(),
     DB_HOST: str(),
-    DB_PORT: port(),
-    API_PORT: port(),
+    DB_PORT: port({ default: 5432 }),
+    API_PORT: port({ default: 3000 }),
     ENABLE_TEST_ROUTES: bool({ default: false }),
 })
 
