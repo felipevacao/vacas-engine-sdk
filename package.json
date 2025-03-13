@@ -12,6 +12,7 @@
     "pg": "^8.14.0"
   },
   "devDependencies": {
+    "@types/pg": "^8.11.11",
     "eslint": "^9.22.0",
     "eslint-config-recommended": "^4.1.0",
     "eslint-plugin-node": "^11.1.0",
