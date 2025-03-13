@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "target": "ES2021", // Define a versão do ECMAScript
+      "module": "CommonJS", // Usa módulos CommonJS
+      "outDir": "./dist", // Pasta de saída para os arquivos compilados
+      "rootDir": "./src", // Pasta de entrada dos arquivos TypeScript
+      "strict": true, // Habilita todas as verificações de tipo estritas
+      "esModuleInterop": true, // Permite imports de módulos CommonJS
+      "skipLibCheck": true // Ignora a verificação de tipos em arquivos de declaração
+    },
+    "include": ["src/**/*"], // Inclui todos os arquivos TypeScript na pasta src/
+    "exclude": ["node_modules", "dist"] // Exclui pastas desnecessárias
+  }
