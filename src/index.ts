@@ -1,7 +1,7 @@
 // api/src/index.ts
 import env from "./lib/env"
 import express, { Request, Response } from 'express'
-import pool from './utils/db'
+import pool from './utils/db' // Importa a configuração do banco de dados
 
 const app = express()
 const port = env.API_PORT
@@ -23,13 +23,13 @@ app.get('/test-db', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Erro ao conectar ao banco de dados' })
   }
 })
-
+console.log(env)
 // Rota de boas-vindas
 app.get('/', (req: Request, res: Response) => {
-  res.send('API está funcionando! ');
-});
+  res.send('API está funcionando! ')
+})
 
 // Inicia o servidor
 app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+  console.log(`Servidor rodando na porta ${port}`)
+})
