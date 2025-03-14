@@ -4,7 +4,6 @@ export interface BaseEntity {
     updatedAt?: Date;
 }
 
-export * from "./entities/user";
 export * from "./entities/model";
 
 export * from './queryTypes';
