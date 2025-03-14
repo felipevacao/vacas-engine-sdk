@@ -1,6 +1,8 @@
 // api/src/utils/db.ts
-import { Pool, PoolConfig } from 'pg';
-import env from "../lib/env";
+import { Pool, PoolConfig } from 'pg'
+import env from "../lib/env"
+import knex from 'knex'
+import config from './knexfile'
 
 const dbConfig: PoolConfig = {
   user: env.DB_USER,
@@ -8,7 +10,7 @@ const dbConfig: PoolConfig = {
   database: env.DB_NAME,
   password: env.DB_PASSWORD,
   port: env.DB_PORT || 5432,
-};
+}
 
-const pool = new Pool(dbConfig);
-export default pool;
+export const pool = new Pool(dbConfig)
+export const db = knex(config)
