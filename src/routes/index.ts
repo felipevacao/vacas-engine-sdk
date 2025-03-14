@@ -20,7 +20,7 @@ const loadRoutes = async () => {
         const routeFile = path.join(routesDir, item.name);
         if (fs.existsSync(routeFile)) {
             const routeModule = await import(routeFile);
-            const routeName = item.name.replace('.ts', '')
+            const routeName = item.name.replace('.ts', '').replace('.js','')
             const routePath = `/${routeName}`; 
             router.use(routePath, routeModule.default); 
         }

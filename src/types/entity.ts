@@ -5,5 +5,4 @@ export interface BaseEntity {
 }
 
 export * from "./entities/model";
-
 export * from './queryTypes';

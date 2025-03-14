@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.3.3",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "envalid": "^8.0.0",
     "express": "^4.21.2",
