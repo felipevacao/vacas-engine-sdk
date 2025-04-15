@@ -8,4 +8,5 @@ export interface Model<T extends BaseEntity> {
     findBy: (query: Partial<T>) => Promise<T[] | undefined>,
     update: (id: number, data: UpdateData<T>) => Promise<T>,
     delete: (id: number) => Promise<T>,
+    forceDelete: (id: number) => Promise<T>,
 }

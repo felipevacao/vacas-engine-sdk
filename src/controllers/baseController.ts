@@ -117,4 +117,27 @@ export class BaseController<T extends BaseEntity> {
             res.status(500).json({ message: 'Error deleting entity', error });
         }
     }
+
+    public async forceDelete(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            const numericId = Number(id);
+
+            if (isNaN(numericId)) {
+                res.status(400).json({ message: 'Invalid ID format' });
+                return;
+            }
+
+            const success = await this.model.forceDelete(numericId);
+
+            if (!success) {
+                res.status(404).json({ message: 'Entity not found' });
+                return;
+            }
+
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ message: 'Error deleting entity', error });
+        }
+    }
 }
