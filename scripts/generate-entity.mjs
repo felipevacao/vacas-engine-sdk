@@ -25,7 +25,7 @@ const columns = await db.raw(`
   SELECT column_name, data_type, is_nullable, column_default
   FROM information_schema.columns
   WHERE table_name = ?
-  AND column_name NOT IN ('id','created_at','updated_at')
+  AND column_name NOT IN ('id','created_at','updated_at', 'deleted_at')
 `, [tableName]);
 
 return columns.rows;
@@ -56,10 +56,13 @@ import * as baseService from '../services/baseServices';
 import { Model } from '../types/entity';
 
 const ${Tablename}Model: Model<${Tablename}Entity> = {
+  table: '${tableName}',
   create: baseService.create<${Tablename}Entity>('${tableName}'),
   findAll: baseService.read<${Tablename}Entity>('${tableName}').findAll,
   findById: baseService.read<${Tablename}Entity>('${tableName}').findById,
   findBy: baseService.read<${Tablename}Entity>('${tableName}').findBy,
+  update: baseService.update<${Tablename}Entity>('${tableName}'),
+  delete: baseService.deleteById<${Tablename}Entity>('${tableName}'),
 };
 
 export default ${Tablename}Model;
@@ -104,6 +107,8 @@ const ${tableName.toLowerCase()}Controller = new ${Tablename}Controller();
 router.post('/', ${tableName.toLowerCase()}Controller.create.bind(${tableName.toLowerCase()}Controller));
 router.get('/', ${tableName.toLowerCase()}Controller.findAll.bind(${tableName.toLowerCase()}Controller));
 router.get('/:id', ${tableName.toLowerCase()}Controller.findById.bind(${tableName.toLowerCase()}Controller));
+router.put('/:id', ${tableName.toLowerCase()}Controller.update.bind(${tableName.toLowerCase()}Controller));
+router.delete('/:id', ${tableName.toLowerCase()}Controller.delete.bind(${tableName.toLowerCase()}Controller));
 
 export default router;
 `;

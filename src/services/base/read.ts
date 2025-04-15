@@ -16,4 +16,3 @@ export const read = <T extends BaseEntity>(table: string) => {
 
     return { findAll, findById, findBy };
 };
-export default read
