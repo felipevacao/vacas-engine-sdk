@@ -1,5 +1,5 @@
 # Usa a imagem oficial do Node.js versão 16 como base
-FROM node:23.9.0-alpine
+FROM node:23.11.0-alpine
 
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
