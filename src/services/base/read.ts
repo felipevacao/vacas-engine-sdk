@@ -1,35 +1,29 @@
 import { db } from '../../utils/db'
-import { BaseEntity, ReadData } from '../../types/entity'
+import { BaseEntity, OutputData, QueryFields } from '../../types/entity'
 
 export const read = <T extends BaseEntity>(table: string) => {
 
-    const excludeTimestamps = <T extends BaseEntity>(entity: T): ReadData<T> => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { createdAt, updatedAt, deletedAt, ...rest } = entity
-        return rest
-    }
-
-    const findAll = async (): Promise<ReadData<T>[]> => {
-        return db(table)
+    const findAll = async ( options: QueryFields<T> = {} ): Promise<OutputData<T>[]> => {
+        
+        const result = db(table)
+                .select(options.fields || '*')
                 .whereNull('deletedAt')
-                .select('*')
-                .then(rows => rows.map(excludeTimestamps))
+        return result
     }
 
-    const findById = async (id: number): Promise<ReadData<T> | undefined> => {
+    const findById = async (id: number, options: QueryFields<T> = {} ): Promise<OutputData<T> | undefined> => {
         return db(table)
+                .select(options.fields || '*')
                 .where({ id })
                 .whereNull('deletedAt')
                 .first()
-                .then(result => result ? excludeTimestamps(result) : undefined)
     }
 
-    const findBy = async (filters: Partial<T>): Promise<ReadData<T>[] | undefined> => {
+    const findBy = async (options: QueryFields<T>): Promise<OutputData<T>[] | undefined> => {
         return db(table)
-                .where(filters)
+                .select(options.fields || '*')
+                .where(options.where || {})
                 .whereNull('deletedAt')
-                .select('*')
-                .then(rows => rows.map(excludeTimestamps))
     }
 
     return { findAll, findById, findBy }

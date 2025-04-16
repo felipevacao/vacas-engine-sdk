@@ -9,8 +9,11 @@ const UsersModel: Model<UsersEntity> = {
   findById: baseService.read<UsersEntity>('users').findById,
   findBy: baseService.read<UsersEntity>('users').findBy,
   update: baseService.update<UsersEntity>('users'),
-  delete: baseService.deleteById<UsersEntity>('users'),
+  delete: baseService.deleteById('users'),
   forceDelete: baseService.forceDelete('users'),
+  selectableFields: ['name', 'email', 'login'],
+  defaultFields: ['id'],
+  excludedFields: ['password'],
 };
 
 export default UsersModel;

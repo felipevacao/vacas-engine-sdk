@@ -1,14 +1,35 @@
+import env from "../lib/env"
 import { Request, Response } from 'express';
 import { BaseEntity, Model, UpdateData } from '../types/entity';
-
-type UpdateRequest<T extends BaseEntity> = {
-    params: { id: string };
-    body: UpdateData<T>;
-};
+import { HateoasTransformer } from '../transformers/hateoas.transformer';
 
 export class BaseController<T extends BaseEntity> {
     constructor(private model: Model<T>) {}
     
+    public generateQueryFields(req: Request) {
+
+        const extraFields = req.query.fields ? (req.query.fields as string).split(',') as (keyof Model<T>)[] : [];
+        
+        const fields = this.getAvailableFields(this.model, extraFields) as (keyof T)[];
+
+        const where = req.query.where as Partial<T> ?? [];
+
+        const links = req.query.links ? ( req.query.links == 'true' ? true : false ) : env.ENABLE_HATEOAS;
+
+        return {
+            fields,
+            where,
+            links
+            };
+    }
+
+    public getAvailableFields(model: Model<T>, extraFields: (keyof Model<T>)[] = []): (keyof Model<T>)[] {
+        return ([
+          ...model.defaultFields,
+          ...model.selectableFields,
+          ...extraFields
+        ] as (keyof Model<T>)[]).filter((field) => !model.excludedFields.includes(field as keyof T));
+    }
 
     public generateHateoasLinks(model: Model<T>, id: number | undefined): { rel: string; href: string; method: string }[] {
         return [
@@ -16,14 +37,15 @@ export class BaseController<T extends BaseEntity> {
           { rel: "update", href: `/${model.table}/${id}`, method: "PUT" },
           { rel: "delete", href: `/${model.table}/${id}`, method: "DELETE" },
         ];
-      }
+    }
 
     public async create(req: Request, res: Response): Promise<void> {
         try {
             const data = req.body;
-            const result = await this.model.create(data);
-            result.links = this.generateHateoasLinks(this.model, result.id);
-            res.status(201).json(result);
+            const options = this.generateQueryFields(req);
+            const result = await this.model.create(data, options);
+            const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.model, result.id), options.links);
+            res.status(201).json(response);
         } catch (error) {
             res.status(500).json({ message: 'Error creating entity', error });
         }
@@ -31,26 +53,25 @@ export class BaseController<T extends BaseEntity> {
 
     public async findAll(req: Request, res: Response): Promise<void> {
         try {
-            const result = await this.model.findAll();
-            const aResult = result.map(entity => {
-                entity.links = this.generateHateoasLinks(this.model, entity.id);
-                return entity
-            });
-            res.status(200).json(aResult);
+            const options = this.generateQueryFields(req);
+            const result = await this.model.findAll(options);
+            const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.model, item.id), options.links);
+            res.status(200).json(response);
         } catch (error) {
             res.status(500).json({ message: 'Error fetching entities', error });
         }
-    }
-
+    }    
+    
     public async findById(req: Request, res: Response): Promise<void> {
         try {
             const id = parseInt(req.params.id);
-            const result = await this.model.findById(id);
+            const options = this.generateQueryFields(req);
+            const result = await this.model.findById(id, options);
             if (!result) {
                 res.status(404).json({ message: 'Entity not found' });
             } else {
-                result.links = this.generateHateoasLinks(this.model, result.id);
-                res.status(200).json(result);
+                const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.model, result.id), options.links);
+                res.status(200).json(response);
             }
         } catch (error) {
             res.status(500).json({ message: 'Error fetching entity', error });
@@ -59,26 +80,23 @@ export class BaseController<T extends BaseEntity> {
 
     public async findBy(req: Request, res: Response): Promise<void> {
         try {
-            const query = req.query as Partial<T>;
-            const result = await this.model.findBy(query);
+            const options = this.generateQueryFields(req);
+            const result = await this.model.findBy(options);
             if (!result) {
                 res.status(404).json({ message: 'Entity not found' });
             } else {
-                const aResult = result.map(entity => {
-                    entity.links = this.generateHateoasLinks(this.model, entity.id);
-                    return entity
-                });
-                res.status(200).json(aResult);
+                const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.model, item.id), options.links);
+                res.status(200).json(response);
             }
         } catch (error) {
             res.status(500).json({ message: 'Error fetching entity', error });
         }
     }
 
-    public async update(req: UpdateRequest<T>, res: Response): Promise<void> {
+    public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const data = req.body;
+            const data = req.body as UpdateData<T>;
             
             const numericId = Number(id);
             
@@ -86,10 +104,10 @@ export class BaseController<T extends BaseEntity> {
                 res.status(400).json({ message: 'Invalid ID format' });
                 return;
             }
-
-            const result = await this.model.update(numericId, data);
-            result.links = this.generateHateoasLinks(this.model, result.id);
-            res.status(200).json(result);
+            const options = this.generateQueryFields(req);
+            const result = await this.model.update(numericId, data, options);
+            const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.model, result.id), options.links);
+            res.status(200).json(response);
         } catch (error) {
             res.status(500).json({ message: 'Error updating entity', error });
         }

@@ -9,8 +9,11 @@ const {{Tablename}}Model: Model<{{Tablename}}Entity> = {
   findById: baseService.read<{{Tablename}}Entity>('{{tableName}}').findById,
   findBy: baseService.read<{{Tablename}}Entity>('{{tableName}}').findBy,
   update: baseService.update<{{Tablename}}Entity>('{{tableName}}'),
-  delete: baseService.deleteById<{{Tablename}}Entity>('{{tableName}}'),
+  delete: baseService.deleteById('{{tableName}}'),
   forceDelete: baseService.forceDelete('{{tableName}}'),
+  selectableFields: [{{fields}}],
+  defaultFields: ['id'],
+  excludedFields: [],
 };
 
 export default {{Tablename}}Model;

@@ -1,14 +1,9 @@
 import { db } from '../../utils/db'
-import { BaseEntity, UpdateData, ReadData } from '../../types/entity'
+import { BaseEntity, UpdateData, OutputData, QueryFields } from '../../types/entity'
 
 export const update = <T extends BaseEntity>(table: string) => {
-  const excludeTimestamps = <T extends BaseEntity>(entity: T): ReadData<T> => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { createdAt, updatedAt, deletedAt, ...rest } = entity
-      return rest
-  }
-
-  return async (id: number, data: UpdateData<T>): Promise<ReadData<T>> => {
+  
+  return async (id: number, data: UpdateData<T>, options: QueryFields<T> = {}): Promise<OutputData<T>> => {
     const updateData = {
       ...data,
       updatedAt: new Date()
@@ -16,10 +11,9 @@ export const update = <T extends BaseEntity>(table: string) => {
     const [result] = await db(table)
                             .where({ id })
                             .update(updateData)
-                            .returning('*')
+                            .returning(options.fields ? options.fields.map(String) : '*')
     if (!result) {
       throw new Error(`Record with ID ${id} not found in table ${table}`);
     }
-    return excludeTimestamps(result);
-  }
-}
+    return result;
+  }}

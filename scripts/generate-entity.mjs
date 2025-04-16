@@ -46,10 +46,13 @@ function generateEntityFile(tableName, columns) {
 }
 
 // Função para gerar o arquivo de modelo
-function generateModelFile(tableName) {
+async function generateModelFile(tableName) {
+  const columns = await getTableStructure(tableName);
   const Tablename = tableName.charAt(0).toUpperCase() + tableName.slice(1)
   const entityTemplate = readFileSync(join(__dirname, 'model.txt'), 'utf-8');
-  const modelContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
+  const columnNames = columns.map((row) => "'" + row.column_name + "'");
+  const columnsString = columnNames.join(', ');
+  const modelContent = ((entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName)).replaceAll('{{fields}}', columnsString);
   
   const filePath = join(__dirname, '../src/models', `${tableName}.ts`);
   writeFileSync(filePath, modelContent);
@@ -115,7 +118,7 @@ async function main() {
       generateEntityFile(tableName, columns);
     }
     if(await confirm({ message: 'Criar o Model?'}) == true){
-      generateModelFile(tableName);
+      await generateModelFile(tableName);
     }
     if(await confirm({ message: 'Criar o Controller?'}) == true){
       generateControllerFile(tableName);

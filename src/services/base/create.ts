@@ -1,18 +1,12 @@
 import { db } from '../../utils/db'
-import { BaseEntity, CreateData, ReadData } from '../../types/entity'
+import { BaseEntity, CreateData, OutputData, QueryFields } from '../../types/entity'
 
 export const create = <T extends BaseEntity>(table: string) => {
 
-    const excludeTimestamps = <T extends BaseEntity>(entity: T): ReadData<T> => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { createdAt, updatedAt, deletedAt, ...rest } = entity
-        return rest
-    }
-
-    return async (data: CreateData<T>): Promise<ReadData<T>> => {
+    return async (data: CreateData<T>, options: QueryFields<T> = {}): Promise<OutputData<T>> => {
         const [result] = await db(table)
                                 .insert(data)
-                                .returning('*')
-        return excludeTimestamps(result);
+                                .returning(options.fields ? options.fields.map(String) : '*')
+        return result;
     }
 }

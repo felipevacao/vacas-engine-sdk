@@ -1,15 +1,9 @@
 import { db } from '../../utils/db'
-import { BaseEntity, ReadData } from '../../types/entity'
 
 /* SOFT DELETE */
-export const deleteById = <T extends BaseEntity>(table: string) => {
-  const excludeTimestamps = <T extends BaseEntity>(entity: T): ReadData<T> => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { createdAt, updatedAt, deletedAt, ...rest } = entity
-      return rest
-  }
+export const deleteById = (table: string) => {
 
-  return async (id: number): Promise<ReadData<T>> => {
+  return async (id: number): Promise<boolean> => {
     const deleteData = {
       deletedAt: new Date()
     }
@@ -20,7 +14,7 @@ export const deleteById = <T extends BaseEntity>(table: string) => {
     if (!result) {
       throw new Error(`Record with ID ${id} not found in table ${table}`);
     }
-    return excludeTimestamps(result)
+    return true
   }
 }
 
