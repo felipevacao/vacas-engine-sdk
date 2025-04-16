@@ -1,5 +1,5 @@
 import express from 'express';
-import { {{Tablename}}Controller } from '../../controllers/{{tableName}}Controller';
+import { {{Tablename}}Controller } from '../../controllers/{{Tablename}}Controller';
 
 const router = express.Router();
 const {{tableName}}Controller = new {{Tablename}}Controller();

@@ -35,7 +35,7 @@ async function getTableStructure(tableName) {
 function generateEntityFile(tableName, columns) {
   const Tablename = tableName.charAt(0).toUpperCase() + tableName.slice(1)
   const entityTemplate = readFileSync(join(__dirname, 'entity.txt'), 'utf-8');
-  const entityTemplateContent = (entityTemplate.replace('{{Tablename}}', Tablename)).replace('{{tableName}}', tableName);
+  const entityTemplateContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
   const entityContent = `${entityTemplateContent}
     ${columns.map(col => `    ${col.column_name}: ${mapDataType(col.data_type)};`).join('\n')}
   }`;
@@ -49,7 +49,7 @@ function generateEntityFile(tableName, columns) {
 function generateModelFile(tableName) {
   const Tablename = tableName.charAt(0).toUpperCase() + tableName.slice(1)
   const entityTemplate = readFileSync(join(__dirname, 'model.txt'), 'utf-8');
-  const modelContent = (entityTemplate.replace('{{Tablename}}', Tablename)).replace('{{tableName}}', tableName);
+  const modelContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
   
   const filePath = join(__dirname, '../src/models', `${tableName}.ts`);
   writeFileSync(filePath, modelContent);
@@ -59,10 +59,10 @@ function generateModelFile(tableName) {
 // Função para gerar o arquivo de controlador
 function generateControllerFile(tableName) {
   const Tablename = tableName.charAt(0).toUpperCase() + tableName.slice(1)
-  const entityTemplate = readFileSync(join(__dirname, 'model.txt'), 'utf-8');
-  const controllerContent = (entityTemplate.replace('{{Tablename}}', Tablename)).replace('{{tableName}}', tableName);
+  const entityTemplate = readFileSync(join(__dirname, 'controller.txt'), 'utf-8');
+  const controllerContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
 
-  const filePath = join(__dirname, '../src/controllers', `${tableName}Controller.ts`);
+  const filePath = join(__dirname, '../src/controllers', `${Tablename}Controller.ts`);
   writeFileSync(filePath, controllerContent);
   console.log(`Arquivo de controlador criado: ${filePath}`);
 }
@@ -72,7 +72,7 @@ function generateControllerFile(tableName) {
 function generateRoutesFile(tableName) {
   const Tablename = tableName.charAt(0).toUpperCase() + tableName.slice(1)
   const entityTemplate = readFileSync(join(__dirname, 'routes.txt'), 'utf-8');
-  const routesContent = (entityTemplate.replace('{{Tablename}}', Tablename)).replace('{{tableName}}', tableName);
+  const routesContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
 
   const filePath = join(__dirname, '../src/routes/routes', `${tableName}.ts`);
   writeFileSync(filePath, routesContent);
