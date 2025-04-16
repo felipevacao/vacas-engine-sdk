@@ -20,7 +20,7 @@ export type HateoasEntity<T extends BaseEntity> = T & {
 export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' |  'deletedAt'>;
 
 // Layout de Update
-export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
+export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'email'>;
 
 // Layout de Saída
 export type OutputData<T extends BaseEntity> = Omit<

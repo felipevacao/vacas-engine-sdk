@@ -1,7 +1,7 @@
 import { BaseEntity } from '../entity';
 
 export interface UsersEntity extends BaseEntity {
-        name: string;
+    name: string;
     email: string;
     login: string;
     password: string;

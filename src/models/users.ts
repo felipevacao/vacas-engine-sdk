@@ -11,9 +11,9 @@ const UsersModel: Model<UsersEntity> = {
   update: baseService.update<UsersEntity>('users'),
   delete: baseService.deleteById('users'),
   forceDelete: baseService.forceDelete('users'),
-  selectableFields: ['name', 'email', 'login'],
+  selectableFields: ['name', 'login'],
   defaultFields: ['id'],
-  excludedFields: ['password'],
+  excludedFields: [],
 };
 
 export default UsersModel;
