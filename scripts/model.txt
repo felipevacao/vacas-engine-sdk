@@ -10,7 +10,7 @@ const {{Tablename}}Model: Model<{{Tablename}}Entity> = {
   findBy: baseService.read<{{Tablename}}Entity>('{{tableName}}').findBy,
   update: baseService.update<{{Tablename}}Entity>('{{tableName}}'),
   delete: baseService.deleteById<{{Tablename}}Entity>('{{tableName}}'),
-  forceDelete: baseService.forceDelete<{{Tablename}}Entity>('{{tableName}}'),
+  forceDelete: baseService.forceDelete('{{tableName}}'),
 };
 
 export default {{Tablename}}Model;

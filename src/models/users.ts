@@ -10,7 +10,7 @@ const UsersModel: Model<UsersEntity> = {
   findBy: baseService.read<UsersEntity>('users').findBy,
   update: baseService.update<UsersEntity>('users'),
   delete: baseService.deleteById<UsersEntity>('users'),
-  forceDelete: baseService.forceDelete<UsersEntity>('users'),
+  forceDelete: baseService.forceDelete('users'),
 };
 
 export default UsersModel;
