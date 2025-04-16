@@ -1,0 +1,14 @@
+import express from 'express';
+import { {{Tablename}}Controller } from '../../controllers/{{tableName}}Controller';
+
+const router = express.Router();
+const {{tableName}}Controller = new {{Tablename}}Controller();
+
+router.post('/', {{tableName}}Controller.create.bind({{tableName}}Controller));
+router.get('/', {{tableName}}Controller.findAll.bind({{tableName}}Controller));
+router.get('/:id', {{tableName}}Controller.findById.bind({{tableName}}Controller));
+router.put('/:id', {{tableName}}Controller.update.bind({{tableName}}Controller));
+router.delete('/:id', {{tableName}}Controller.delete.bind({{tableName}}Controller));
+router.delete('/force/:id', {{tableName}}Controller.forceDelete.bind({{tableName}}Controller));
+
+export default router;
