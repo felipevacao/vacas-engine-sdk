@@ -29,6 +29,7 @@ export type OutputData<T extends BaseEntity> = Omit<
 >;
 
 export type QueryFields<T extends BaseEntity> = { 
+    links?: boolean,
     fields?: (keyof T)[],
     where?: Partial<T>,
     limit?: number,
@@ -37,3 +38,9 @@ export type QueryFields<T extends BaseEntity> = {
 
 export * from "./entities/model";
 // export * from './queryTypes';
+
+export interface ApiError {
+    message: string;
+    code: string;
+    details?: object;
+}

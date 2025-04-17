@@ -4,7 +4,7 @@ export class HateoasTransformer {
     static addLinks<T extends BaseEntity>(
         entity: T,
         links: HateoasLink[],
-        showLinks: boolean
+        showLinks: boolean = false
     ): HateoasEntity<T> | T {
         if(showLinks){
             return {
@@ -18,7 +18,7 @@ export class HateoasTransformer {
     static addCollectionLinks<T extends BaseEntity>(
         entities: T[],
         itemLinks: (item: T) => HateoasLink[],
-        showLinks: boolean
+        showLinks: boolean = false
     ): HateoasEntity<T>[] | T[] {
         if(showLinks){
             return entities.map(entity => ({

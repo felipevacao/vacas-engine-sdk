@@ -1,12 +1,12 @@
 import env from "../lib/env"
 import { Request, Response } from 'express';
-import { BaseEntity, Model, UpdateData } from '../types/entity';
+import { BaseEntity, CreateData, Model, UpdateData, QueryFields } from '../types/entity';
 import { HateoasTransformer } from '../transformers/hateoas.transformer';
 
 export class BaseController<T extends BaseEntity> {
     constructor(private model: Model<T>) {}
     
-    public generateQueryFields(req: Request) {
+    protected generateQueryFields(req: Request): QueryFields<T> {
 
         const extraFields = req.query.fields ? (req.query.fields as string).split(',') as (keyof Model<T>)[] : [];
         
@@ -14,16 +14,24 @@ export class BaseController<T extends BaseEntity> {
 
         const where = req.query.where as Partial<T> ?? [];
 
-        const links = req.query.links ? ( req.query.links == 'true' ? true : false ) : env.ENABLE_HATEOAS;
-
         return {
+            links: req.query.links ? ( req.query.links == 'true' ? true : false ) : env.ENABLE_HATEOAS,
             fields,
             where,
-            links
-            };
+            }
     }
 
-    public getAvailableFields(model: Model<T>, extraFields: (keyof Model<T>)[] = []): (keyof Model<T>)[] {
+    protected async generateBodyCreate(req: Request): Promise<CreateData<T>> {
+        const body = req.body as CreateData<T>;
+        return body;
+    }
+
+    protected async generateBodyUpdate(req: Request): Promise<UpdateData<T>> {
+        const body = req.body as UpdateData<T>;
+        return body;
+    }
+
+    protected getAvailableFields(model: Model<T>, extraFields: (keyof Model<T>)[] = []): (keyof Model<T>)[] {
         return ([
           ...model.defaultFields,
           ...model.selectableFields,
@@ -31,7 +39,7 @@ export class BaseController<T extends BaseEntity> {
         ] as (keyof Model<T>)[]).filter((field) => !model.excludedFields.includes(field as keyof T));
     }
 
-    public generateHateoasLinks(model: Model<T>, id: number | undefined): { rel: string; href: string; method: string }[] {
+    protected generateHateoasLinks(model: Model<T>, id: number | undefined): { rel: string; href: string; method: string }[] {
         return [
           { rel: "self", href: `/${model.table}/${id}`, method: "GET" },
           { rel: "update", href: `/${model.table}/${id}`, method: "PUT" },
@@ -41,7 +49,7 @@ export class BaseController<T extends BaseEntity> {
 
     public async create(req: Request, res: Response): Promise<void> {
         try {
-            const data = req.body;
+            const data = await this.generateBodyCreate(req);
             const options = this.generateQueryFields(req);
             const result = await this.model.create(data, options);
             const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.model, result.id), options.links);
@@ -85,7 +93,7 @@ export class BaseController<T extends BaseEntity> {
             if (!result) {
                 res.status(404).json({ message: 'Entity not found' });
             } else {
-                const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.model, item.id), options.links);
+                const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.model, item.id), options.links || false);
                 res.status(200).json(response);
             }
         } catch (error) {
@@ -96,7 +104,7 @@ export class BaseController<T extends BaseEntity> {
     public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const data = req.body as UpdateData<T>;
+            const data = await this.generateBodyUpdate(req);
             
             const numericId = Number(id);
             
