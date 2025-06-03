@@ -1,3 +1,5 @@
+import { Model } from "./entities/model";
+
 export interface BaseEntity {
     id?: number;
     createdAt?: Date;
@@ -27,7 +29,7 @@ export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt'
 
 export type QueryFields<T extends BaseEntity> = { 
     links?: boolean,
-    fields?: (keyof T)[],
+    fields?: (keyof Model<T>)[],
     where?: Partial<T>,
     limit?: number,
     offset?: number
@@ -40,4 +42,22 @@ export interface ApiError {
     message: string;
     code: string;
     details?: object;
+}
+
+export interface IAdapter<T, U> {
+  create(input: T, output: U): Promise<void>;
+  findAll(input: T, output: U): Promise<void>;
+  findById(input: T, output: U): Promise<void>;
+  findBy(input: T, output: U): Promise<void>;
+}
+
+// Layout de Entrada - Create
+export interface InputRequest<T> {
+  body?: T,
+  params?: object,
+  query: {
+    fields?: string;
+    where?: Partial<T>;
+    links?: string;
+  };
 }

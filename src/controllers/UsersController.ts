@@ -1,16 +1,15 @@
 import { BaseController } from '../controllers/baseController';
 import UsersModel from '../models/users';
 import { UsersEntity } from '../types/entities/users';
-import { CreateData, QueryFields } from '../types/entity';
-import { Request } from 'express';
+import { CreateData, InputRequest, QueryFields } from '../types/entity';
 
 export class UsersController extends BaseController<UsersEntity> {
   constructor() {
       super(UsersModel);
   }
   
-  protected override async generateBodyCreate(req: Request): Promise<CreateData<UsersEntity>> {
-      const body = await super.generateBodyCreate(req);
+  public override async generateBodyCreate(input: InputRequest<unknown>): Promise<CreateData<UsersEntity> | null> {
+      const body = input.body as CreateData<UsersEntity>;
       const options = {
           links: false,
           where: {"email": body.email}
