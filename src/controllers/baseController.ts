@@ -1,7 +1,7 @@
 import env from "../lib/env"
 import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest } from '../types/entity'
 
-export abstract class BaseController<T extends BaseEntity> {
+export class BaseController<T extends BaseEntity> {
     hateoas: boolean
     _bodyCreateExtended: boolean
     _bodyUpdateExtended: boolean
