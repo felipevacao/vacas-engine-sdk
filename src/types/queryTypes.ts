@@ -1,4 +1,4 @@
-// src/types/queryTypes.ts
+// deprecated
 
 // Interface para paginação de resultados
 // export interface PaginatedResult<T> {

@@ -9,7 +9,7 @@ export interface Model<T extends BaseEntity> {
     update: (id: number, data: UpdateData<T>, options: QueryFields<T>) => Promise<OutputData<T>>,
     delete: (id: number) => Promise<boolean>,
     forceDelete: (id: number) => Promise<boolean>
-    selectableFields: (keyof T)[],
+    selectAbleFields: (keyof T)[],
     defaultFields: (keyof T)[],
     excludedFields: (keyof T)[],
 }

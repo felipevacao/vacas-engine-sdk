@@ -34,7 +34,7 @@ export class BaseController<T extends BaseEntity> {
     protected getAvailableFields(model: Model<T>, extraFields: (keyof Model<T>)[] = []): (keyof Model<T>)[] {
         return ([
           ...model.defaultFields,
-          ...model.selectableFields,
+          ...model.selectAbleFields,
           ...extraFields
         ] as (keyof Model<T>)[]).filter((field) => !model.excludedFields.includes(field as keyof T));
     }

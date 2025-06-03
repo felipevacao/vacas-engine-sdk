@@ -6,7 +6,7 @@ import { errorHandler } from "../middlewares/errorHandlers"
 
 const router = express.Router();
 
-router.get('/db', enableTestRoute, async (req: Request, res: Response) => {
+router.get('/health', enableTestRoute, async (req: Request, res: Response) => {
   try {
     const result = await db.raw('SELECT NOW()');
     res.json({

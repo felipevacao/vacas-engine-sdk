@@ -11,8 +11,10 @@ const router = express.Router()
 
 router.use(logging)
 
+// Carrega rotas automaticamente, de acordo com cada entidade
 const loadRoutes = async () => {
-    const routesDir = path.join(__dirname, '/routes'); // Pasta atual (routes)
+
+    const routesDir = path.join(__dirname, '/routes'); 
 
     const items = fs.readdirSync(routesDir, { withFileTypes: true });
 

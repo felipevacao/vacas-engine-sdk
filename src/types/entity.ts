@@ -23,10 +23,7 @@ export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'upd
 export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'email'>;
 
 // Layout de Saída
-export type OutputData<T extends BaseEntity> = Omit<
-  T, 
-  "createdAt" | 'updatedAt' | 'deletedAt'
->;
+export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt' | 'deletedAt'>;
 
 export type QueryFields<T extends BaseEntity> = { 
     links?: boolean,

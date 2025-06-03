@@ -4,10 +4,17 @@ import { {{Tablename}}Controller } from '../../controllers/{{Tablename}}Controll
 const router = express.Router();
 const {{tableName}}Controller = new {{Tablename}}Controller();
 
+// C
 router.post('/', {{tableName}}Controller.create.bind({{tableName}}Controller));
+
+// R
 router.get('/', {{tableName}}Controller.findAll.bind({{tableName}}Controller));
 router.get('/:id', {{tableName}}Controller.findById.bind({{tableName}}Controller));
+
+// U
 router.put('/:id', {{tableName}}Controller.update.bind({{tableName}}Controller));
+
+// D
 router.delete('/:id', {{tableName}}Controller.delete.bind({{tableName}}Controller));
 router.delete('/force/:id', {{tableName}}Controller.forceDelete.bind({{tableName}}Controller));
 

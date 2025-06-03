@@ -2,6 +2,7 @@ import type { Knex } from 'knex'
 import { knexSnakeCaseMappers } from 'objection'
 import env from "../lib/env"
 
+// Configurações do banco de dados
 const config: Knex.Config = {
   client: 'pg',
   connection: {

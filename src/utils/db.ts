@@ -4,6 +4,7 @@ import env from "../lib/env"
 import knex from 'knex'
 import config from './knexfile'
 
+// Configurações do banco de dados
 const dbConfig: PoolConfig = {
   user: env.DB_USER,
   host: env.DB_HOST,
