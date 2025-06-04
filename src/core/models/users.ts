@@ -1,4 +1,5 @@
-import { UsersEntity } from '@entities/users';
+// Gerado automáticamente
+import { UsersEntity } from '@core/entities/users';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
 
@@ -11,7 +12,7 @@ const UsersModel: Model<UsersEntity> = {
   update: baseService.update<UsersEntity>('users'),
   delete: baseService.deleteById('users'),
   forceDelete: baseService.forceDelete('users'),
-  selectAbleFields: ['name', 'login'],
+  selectAbleFields: ['name', 'email', 'login', 'password'],
   defaultFields: ['id'],
   excludedFields: [],
 };

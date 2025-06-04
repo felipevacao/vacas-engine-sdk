@@ -1,4 +1,5 @@
-import { {{Tablename}}Entity } from '@entities/{{tableName}}';
+// Gerado automáticamente
+import { {{Tablename}}Entity } from '@core/entities/{{tableName}}';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
 
