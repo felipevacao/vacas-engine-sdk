@@ -26,6 +26,7 @@ async function getTableStructure(tableName) {
     FROM information_schema.columns
     WHERE table_name = ?
     AND column_name NOT IN ('id','created_at','updated_at', 'deleted_at')
+    AND table_name NOT IN ('users')
   `, [tableName]);
 
   return columns.rows;
@@ -113,20 +114,20 @@ async function main() {
     const columns = await getTableStructure(tableName);
     console.log('Estrutura da tabela:');
     console.table(columns);
-    
-    if(await confirm({ message: 'Criar a Entidade?'}) == true){
-      generateEntityFile(tableName, columns);
+    if(columns.length > 0){
+      if(await confirm({ message: 'Criar a Entidade?'}) == true){
+        generateEntityFile(tableName, columns);
+      }
+      if(await confirm({ message: 'Criar o Model?'}) == true){
+        await generateModelFile(tableName);
+      }
+      if(await confirm({ message: 'Criar o Controller?'}) == true){
+        generateControllerFile(tableName);
+      }
+      if(await confirm({  message: 'Criar as Rotas?'}) == true){
+        generateRoutesFile(tableName);
+      }
     }
-    if(await confirm({ message: 'Criar o Model?'}) == true){
-      await generateModelFile(tableName);
-    }
-    if(await confirm({ message: 'Criar o Controller?'}) == true){
-      generateControllerFile(tableName);
-    }
-    if(await confirm({  message: 'Criar as Rotas?'}) == true){
-      generateRoutesFile(tableName);
-    }
-
   } catch (error) {
     console.error('Erro durante a execução do script:', error);
   } finally {
