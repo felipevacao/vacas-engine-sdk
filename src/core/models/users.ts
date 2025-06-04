@@ -1,4 +1,3 @@
-// Gerado automáticamente
 import { UsersEntity } from '@core/entities/users';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
@@ -14,7 +13,7 @@ const UsersModel: Model<UsersEntity> = {
   forceDelete: baseService.forceDelete('users'),
   selectAbleFields: ['name', 'email', 'login'],
   defaultFields: ['id'],
-  excludedFields: [],
+  excludedFields: ['password'],
 };
 
 export default UsersModel;

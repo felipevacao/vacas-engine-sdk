@@ -1,24 +1,25 @@
-// Gerado automáticamente
 import express from 'express';
 import { UsersController } from '@core/controllers/UsersController';
-import { ExpressAdapter } from '@adapters/express.adapter';
+import { UserExpressAdapter } from '@core/adapters/userExpress.adapter';
 
 const router = express.Router();
 const usersController = new UsersController();
-const expressAdapter = new ExpressAdapter(usersController);
+const userExpressAdapter = new UserExpressAdapter(usersController);
 
 // C
-router.post('/', expressAdapter.create.bind(expressAdapter));
+router.post('/', userExpressAdapter.create.bind(userExpressAdapter));
 
 // R
-router.get('/', expressAdapter.findAll.bind(expressAdapter));
-router.get('/:id', expressAdapter.findById.bind(expressAdapter));
+router.get('/', userExpressAdapter.findAll.bind(userExpressAdapter));
+router.get('/:id', userExpressAdapter.findById.bind(userExpressAdapter));
+
+router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
 // U
-router.put('/:id', expressAdapter.update.bind(expressAdapter));
+router.put('/:id', userExpressAdapter.update.bind(userExpressAdapter));
 
 // D
-router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
-router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
+router.delete('/:id', userExpressAdapter.delete.bind(userExpressAdapter));
+router.delete('/force/:id', userExpressAdapter.forceDelete.bind(userExpressAdapter));
 
 export default router;

@@ -11,5 +11,5 @@ export interface Model<T extends BaseEntity> {
     forceDelete: (id: number) => Promise<boolean>
     selectAbleFields: (keyof T)[],
     defaultFields: (keyof T)[],
-    excludedFields: (keyof T)[],
+    excludedFields: (keyof T)[]
 }

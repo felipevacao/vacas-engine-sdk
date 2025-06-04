@@ -26,6 +26,7 @@
     "pg": "^8.14.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/pg": "^8.11.11",
     "eslint": "^9.22.0",
@@ -40,16 +41,16 @@
     "typescript-eslint": "^8.26.1"
   },
   "_moduleAliases": {
-        "@controllers": "dist/controllers",
-        "@adapters": "dist/adapters",
-        "@models": "dist/models",
-        "@utils": "dist/utils",
-        "@entities": "dist/types/entities",
-        "@transformers": "dist/transformers",
-        "@lib": "dist/lib",
-        "@services": "dist/services",
-        "@middlewares": "dist/middlewares",
-        "@core": "dist/core"
+    "@controllers": "dist/controllers",
+    "@adapters": "dist/adapters",
+    "@models": "dist/models",
+    "@utils": "dist/utils",
+    "@entities": "dist/types/entities",
+    "@transformers": "dist/transformers",
+    "@lib": "dist/lib",
+    "@services": "dist/services",
+    "@middlewares": "dist/middlewares",
+    "@core": "dist/core"
   },
   "author": "Felipe Trevenzoli",
   "license": "ISC"

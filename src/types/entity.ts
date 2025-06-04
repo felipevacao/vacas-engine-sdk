@@ -22,7 +22,7 @@ export type HateoasEntity<T extends BaseEntity> = T & {
 export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' |  'deletedAt'>;
 
 // Layout de Update
-export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'email'>;
+export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' >;
 
 // Layout de Saída
 export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt' | 'deletedAt'>;
@@ -51,9 +51,13 @@ export interface IAdapter<T, U> {
   findBy(input: T, output: U): Promise<void>;
 }
 
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
 // Layout de Entrada - Create
 export interface InputRequest<T> {
-  body?: object,
+  body?: object | LoginRequest,
   params?: object,
   query: {
     fields?: string;
