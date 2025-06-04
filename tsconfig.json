@@ -18,6 +18,7 @@
         "@lib/*": ["lib/*"],
         "@services/*": ["services/*"],
         "@middlewares/*": ["middlewares/*"],
+        "@core/*": ["core/*"],
 
       }
     },

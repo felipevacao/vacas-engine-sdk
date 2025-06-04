@@ -1,4 +1,4 @@
-import { Model } from "./entities/model";
+import { Model } from "./model";
 
 export interface BaseEntity {
     id?: number;
@@ -35,7 +35,7 @@ export type QueryFields<T extends BaseEntity> = {
     offset?: number
 }
 
-export * from "./entities/model";
+export * from "./model";
 // export * from './queryTypes';
 
 export interface ApiError {

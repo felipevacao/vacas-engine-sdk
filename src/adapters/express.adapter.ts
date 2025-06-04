@@ -21,6 +21,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         const body = req.body as CreateData<T>;
         return body;
     }
+
     async create(req: Request, res: Response): Promise<void> {
         try {
             const data = await this.validateCreate(req);
@@ -34,14 +35,14 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     }
 
     async findAll(req: Request, res: Response): Promise<void> {
-        // try {
+        try {
             const options = this.generateQueryFields(req);
             const result = await this.service.findAllEntity(options);
             const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id), options.links);
             res.status(200).json(response);
-        // } catch (error) {
-        //     res.status(500).json({ message: 'Error fetching entities', error });
-        // }
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching entities', error });
+        }
     }  
 
     async findById(req: Request, res: Response): Promise<void> {

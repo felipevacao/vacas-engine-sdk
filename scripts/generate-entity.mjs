@@ -40,7 +40,7 @@ function generateEntityFile(tableName, columns) {
     ${columns.map(col => `    ${col.column_name}: ${mapDataType(col.data_type)};`).join('\n')}
   }`;
 
-  const filePath = join(__dirname, '../src/types/entities', `${tableName}.ts`);
+  const filePath = join(__dirname, '../src/core/entities', `${tableName}.ts`);
   writeFileSync(filePath, entityContent);
   console.log(`Arquivo de entidade criado: ${filePath}`);
 }
@@ -54,7 +54,7 @@ async function generateModelFile(tableName) {
   const columnsString = columnNames.join(', ');
   const modelContent = ((entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName)).replaceAll('{{fields}}', columnsString);
   
-  const filePath = join(__dirname, '../src/models', `${tableName}.ts`);
+  const filePath = join(__dirname, '../src/core/models', `${tableName}.ts`);
   writeFileSync(filePath, modelContent);
   console.log(`Arquivo de modelo criado: ${filePath}`);
 }
@@ -65,7 +65,7 @@ function generateControllerFile(tableName) {
   const entityTemplate = readFileSync(join(__dirname, 'controller.txt'), 'utf-8');
   const controllerContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
 
-  const filePath = join(__dirname, '../src/controllers', `${Tablename}Controller.ts`);
+  const filePath = join(__dirname, '../src/core/controllers', `${Tablename}Controller.ts`);
   writeFileSync(filePath, controllerContent);
   console.log(`Arquivo de controlador criado: ${filePath}`);
 }
@@ -77,7 +77,7 @@ function generateRoutesFile(tableName) {
   const entityTemplate = readFileSync(join(__dirname, 'routes.txt'), 'utf-8');
   const routesContent = (entityTemplate.replaceAll('{{Tablename}}', Tablename)).replaceAll('{{tableName}}', tableName);
 
-  const filePath = join(__dirname, '../src/routes/routes', `${tableName}.ts`);
+  const filePath = join(__dirname, '../src/core/routes', `${tableName}.ts`);
   writeFileSync(filePath, routesContent);
   console.log(`Arquivo de rotas criado: ${filePath}`);
 }
