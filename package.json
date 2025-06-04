@@ -21,6 +21,7 @@
     "express-validator": "^7.2.1",
     "inquirer": "^12.4.3",
     "knex": "^3.1.0",
+    "module-alias": "^2.2.3",
     "objection": "^3.1.5",
     "pg": "^8.14.0"
   },
@@ -37,6 +38,18 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1"
+  },
+  "_moduleAliases": {
+        "@controllers": "dist/controllers",
+        "@adapters": "dist/adapters",
+        "@models": "dist/models",
+        "@utils": "dist/utils",
+        "@entities": "dist/types/entities",
+        "@transformers": "dist/transformers",
+        "@lib": "dist/lib",
+        "@services": "dist/services",
+        "@middlewares": "dist/middlewares",
+        "@core": "dist/core"
   },
   "author": "Felipe Trevenzoli",
   "license": "ISC"

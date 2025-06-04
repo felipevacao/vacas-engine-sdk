@@ -12,7 +12,7 @@ const UsersModel: Model<UsersEntity> = {
   update: baseService.update<UsersEntity>('users'),
   delete: baseService.deleteById('users'),
   forceDelete: baseService.forceDelete('users'),
-  selectAbleFields: ['name', 'email', 'login', 'password'],
+  selectAbleFields: ['name', 'email', 'login'],
   defaultFields: ['id'],
   excludedFields: [],
 };

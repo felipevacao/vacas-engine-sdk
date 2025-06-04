@@ -1,5 +1,7 @@
 // Importação de módulos
 import 'tsconfig-paths/register'; 
+// import 'module-alias/register';
+
 import env from "./lib/env"
 import express from 'express'
 import router from "./routes/index"

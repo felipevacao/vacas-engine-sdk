@@ -5,11 +5,13 @@ export class BaseController<T extends BaseEntity> {
     hateoas: boolean
     _bodyCreateExtended: boolean
     _bodyUpdateExtended: boolean
+    _showErrors: boolean
     
     constructor(private model: Model<T>) {
         this.hateoas = env.ENABLE_HATEOAS ?? false
         this._bodyCreateExtended = false
         this._bodyUpdateExtended = false
+        this._showErrors = env.ENABLE_RETURN_ERRORS
     }
 
     public getModelTable(): string {

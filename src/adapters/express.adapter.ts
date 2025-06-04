@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseAdapter } from './base.adapter';
-import { BaseEntity, CreateData } from 'types/entity';
+import { BaseEntity } from 'types/entity';
 import { BaseController } from '@controllers/baseController';
 import { HateoasTransformer } from '@transformers/hateoas.transformer';
 
@@ -17,11 +17,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         ];
     }
 
-    async validateCreate(req: Request): Promise<CreateData<T>> {
-        const body = req.body as CreateData<T>;
-        return body;
-    }
-
     async create(req: Request, res: Response): Promise<void> {
         try {
             const data = await this.validateCreate(req);
@@ -30,10 +25,9 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id), options.links);
             res.status(201).json(response);
         } catch (error) {
-            res.status(500).json({ message: 'Error creating entity', error });
+            res.status(500).json(this.handleError('Error creating entity', error as Error));
         }
     }
-
     async findAll(req: Request, res: Response): Promise<void> {
         try {
             const options = this.generateQueryFields(req);
@@ -41,7 +35,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id), options.links);
             res.status(200).json(response);
         } catch (error) {
-            res.status(500).json({ message: 'Error fetching entities', error });
+            res.status(500).json(this.handleError('Error fetching entities', error as Error));
         }
     }  
 
@@ -51,13 +45,13 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const options = this.generateQueryFields(req);
             const result = await this.service.findByIdEntity(id, options);
             if (!result) {
-                res.status(404).json({ message: 'Entity not found' });
+                res.status(404).json(this.handleError('Entity not found'));
             } else {
                 const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id), options.links);
                 res.status(200).json(response);
             }
         } catch (error) {
-            res.status(500).json({ message: 'Error fetching entity', error });
+            res.status(500).json(this.handleError('Error fetching entity', error as Error));
         }
     }
 
@@ -66,13 +60,13 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const options = this.generateQueryFields(req);
             const result = await this.service.findByEntity(options);
             if (result.length === 0) {
-                res.status(404).json({ message: 'Entity not found' });
+                res.status(404).json(this.handleError('Entity not found'));
             } else {
                 const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id), options.links || false)
                 res.status(200).json(response);
             }
         } catch (error) {
-            res.status(500).json({ message: 'Error fetching entity', error });
+            res.status(500).json(this.handleError('Error fetching entity', error as Error));
         }
     }
 
@@ -82,7 +76,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const data = await this.validateUpdate(req);
             
             if (isNaN(id)) {
-                res.status(400).json({ message: 'Invalid ID format' });
+                res.status(400).json(this.handleError('Invalid ID format'));
                 return;
             }
             const options = this.generateQueryFields(req);
@@ -90,7 +84,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id), options.links)
             res.status(200).json(response);
         } catch (error) {
-            res.status(500).json({ message: 'Error updating entity', error });
+            res.status(500).json(this.handleError('Error updating entity', error as Error));
         }
     }
 
@@ -99,20 +93,20 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const id = parseInt(req.params.id);
 
             if (isNaN(id)) {
-                res.status(400).json({ message: 'Invalid ID format' });
+                res.status(400).json(this.handleError('Invalid ID format'));
                 return;
             }
 
             const success = await this.service.deleteEntity(id);
 
             if (!success) {
-                res.status(404).json({ message: 'Entity not found' });
+                res.status(404).json(this.handleError('Entity not found'));
                 return;
             }
 
             res.status(204).send();
         } catch (error) {
-            res.status(500).json({ message: 'Error deleting entity', error });
+            res.status(500).json(this.handleError('Error deleting entity', error as Error));
         }
     }
 
@@ -122,20 +116,20 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const numericId = Number(id);
 
             if (isNaN(numericId)) {
-                res.status(400).json({ message: 'Invalid ID format' });
+                res.status(400).json(this.handleError('Invalid ID format'));
                 return;
             }
 
             const success = await this.service.forceDeleteEntity(numericId);
 
             if (!success) {
-                res.status(404).json({ message: 'Entity not found' });
+                res.status(404).json(this.handleError('Entity not found'));
                 return;
             }
 
             res.status(204).send();
         } catch (error) {
-            res.status(500).json({ message: 'Error deleting entity', error });
+            res.status(500).json(this.handleError('Error deleting entity', error as Error));
         }
     }
 }

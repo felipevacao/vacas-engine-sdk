@@ -10,6 +10,7 @@ const env = cleanEnv(process.env, {
     API_PORT: port({ default: 3000 }),
     ENABLE_TEST_ROUTES: bool({ default: false }),
     ENABLE_HATEOAS: bool({ default: true }),
+    ENABLE_RETURN_ERRORS: bool({ default: false }),
 })
 
 export default env

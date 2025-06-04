@@ -47,7 +47,7 @@ const loadRoutes = async () => {
 };
 
 loadRoutes().catch((err) => {
-console.error('Erro ao carregar rotas:', err);
+    console.error('Erro ao carregar rotas:', err);
 });
 
 export default router

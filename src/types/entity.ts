@@ -40,8 +40,8 @@ export * from "./model";
 
 export interface ApiError {
     message: string;
-    code: string;
-    details?: object;
+    code?: string;
+    details: object | string;
 }
 
 export interface IAdapter<T, U> {

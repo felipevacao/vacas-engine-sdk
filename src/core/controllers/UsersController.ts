@@ -9,15 +9,17 @@ export class UsersController extends BaseController<UsersEntity> {
   }
   
   public override async generateBodyCreate(input: InputRequest<unknown>): Promise<CreateData<UsersEntity> | null> {
+
       const body = input.body as CreateData<UsersEntity>;
-      const options = {
-          links: false,
-          where: {"email": body.email}
-        } as QueryFields<UsersEntity>;
-      const result = await UsersModel.findBy(options)
+      const verifyMail = await this.findByEntity({ where: { "email": body.email } } as QueryFields<UsersEntity>)
       
-      if(result && result.length > 0) {
-        throw new Error('User already exists')
+      if(verifyMail && verifyMail.length > 0) {
+        throw new Error('E-mail already exists')
+      }
+ 
+      const verifyLogin = await this.findByEntity({ where: { "login": body.login } } as QueryFields<UsersEntity>)
+      if(verifyLogin && verifyLogin.length > 0) {
+        throw new Error('Login already exists')
       }
       return body;
   }

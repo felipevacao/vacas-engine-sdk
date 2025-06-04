@@ -1,5 +1,5 @@
 import { BaseController } from "@controllers/baseController";
-import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData} from "types/entity";
+import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData, ApiError } from "types/entity";
 
 export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapter<V, U> {
     constructor(protected service: BaseController<T>) {
@@ -38,5 +38,12 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
             fields,
             where,
             }
+    }
+
+    protected handleError(message: string, error: Error | null = null): ApiError {
+        return {
+            message: message,
+            details: this.service._showErrors ? error?.stack : error?.message,
+        } as ApiError;
     }
 }
