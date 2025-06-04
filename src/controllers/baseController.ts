@@ -1,5 +1,5 @@
-import env from "../lib/env"
-import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest } from '../types/entity'
+import env from "@lib/env"
+import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest } from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
     hateoas: boolean

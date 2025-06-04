@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { BaseAdapter } from './base.adapter';
-import { BaseEntity, CreateData } from '../types/entity';
-import { BaseController } from '../controllers/baseController';
-import { HateoasTransformer } from '../transformers/hateoas.transformer';
+import { BaseEntity, CreateData } from 'types/entity';
+import { BaseController } from '@controllers/baseController';
+import { HateoasTransformer } from '@transformers/hateoas.transformer';
 
 export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
     constructor(protected service: BaseController<T>){

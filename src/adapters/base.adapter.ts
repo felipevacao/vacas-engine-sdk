@@ -1,5 +1,5 @@
-import { BaseController } from "../controllers/baseController";
-import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData} from "../types/entity";
+import { BaseController } from "@controllers/baseController";
+import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData} from "types/entity";
 
 export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapter<V, U> {
     constructor(protected service: BaseController<T>) {

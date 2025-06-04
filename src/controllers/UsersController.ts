@@ -1,7 +1,7 @@
-import { BaseController } from '../controllers/baseController';
-import UsersModel from '../models/users';
-import { UsersEntity } from '../types/entities/users';
-import { CreateData, InputRequest, QueryFields } from '../types/entity';
+import { BaseController } from '@controllers/baseController';
+import UsersModel from '@models/users';
+import { UsersEntity } from '@entities/users';
+import { CreateData, InputRequest, QueryFields } from 'types/entity';
 
 export class UsersController extends BaseController<UsersEntity> {
   constructor() {

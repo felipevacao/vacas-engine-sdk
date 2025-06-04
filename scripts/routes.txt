@@ -1,6 +1,6 @@
 import express from 'express';
-import { {{Tablename}}Controller } from '../../controllers/{{Tablename}}Controller';
-import { ExpressAdapter } from '../../adapters/express.adapter';
+import { {{Tablename}}Controller } from '@controllers/{{Tablename}}Controller';
+import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();
 const {{tableName}}Controller = new {{Tablename}}Controller();
