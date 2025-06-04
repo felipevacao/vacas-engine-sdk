@@ -1,5 +1,5 @@
-import { db } from '../../utils/db'
-import { BaseEntity, UpdateData, OutputData, QueryFields } from '../../types/entity'
+import { db } from '@utils/db'
+import { BaseEntity, UpdateData, OutputData, QueryFields } from 'types/entity'
 
 export const update = <T extends BaseEntity>(table: string) => {
   

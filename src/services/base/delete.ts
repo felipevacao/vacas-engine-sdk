@@ -1,4 +1,4 @@
-import { db } from '../../utils/db'
+import { db } from '@utils/db'
 
 /* SOFT DELETE */
 export const deleteById = (table: string) => {

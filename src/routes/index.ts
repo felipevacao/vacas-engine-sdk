@@ -1,8 +1,8 @@
 // api/src/routes/index.ts
 import express, { Request, Response } from 'express'
 import testRoutes from "./test"
-import { logging } from '../middlewares/logging'
-import { routeNotFound, errorHandler } from '../middlewares/errorHandlers'
+import { logging } from '@middlewares/logging'
+import { routeNotFound, errorHandler } from '@middlewares/errorHandlers'
 import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';

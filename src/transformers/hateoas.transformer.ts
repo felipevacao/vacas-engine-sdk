@@ -1,4 +1,4 @@
-import { HateoasEntity, HateoasLink, BaseEntity } from '../types/entity';
+import { HateoasEntity, HateoasLink, BaseEntity } from 'types/entity';
 
 export class HateoasTransformer {
     static addLinks<T extends BaseEntity>(

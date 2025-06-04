@@ -6,7 +6,20 @@
       "rootDir": "./src", // Pasta de entrada dos arquivos TypeScript
       "strict": true, // Habilita todas as verificações de tipo estritas
       "esModuleInterop": true, // Permite imports de módulos CommonJS
-      "skipLibCheck": true // Ignora a verificação de tipos em arquivos de declaração
+      "skipLibCheck": true, // Ignora a verificação de tipos em arquivos de declaração
+      "baseUrl": "./src",
+      "paths": {
+        "@controllers/*": ["controllers/*"],
+        "@adapters/*": ["adapters/*"],
+        "@models/*": ["models/*"],
+        "@utils/*": ["utils/*"],
+        "@entities/*": ["types/entities/*"],
+        "@transformers/*": ["transformers/*"],
+        "@lib/*": ["lib/*"],
+        "@services/*": ["services/*"],
+        "@middlewares/*": ["middlewares/*"],
+
+      }
     },
     "include": ["src/**/*"], // Inclui todos os arquivos TypeScript na pasta src/
     "exclude": ["node_modules", "dist"] // Exclui pastas desnecessárias

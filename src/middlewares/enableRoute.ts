@@ -1,5 +1,5 @@
 // api/src/middlewares/enableRoute.ts
-import env from "../lib/env"
+import env from "@lib/env"
 import { Request, Response, NextFunction } from 'express'
 import { notFound } from "./errorHandlers"
 

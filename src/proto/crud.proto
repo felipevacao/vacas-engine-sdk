@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+service CrudService {
+  // Métodos genéricos para qualquer tabela
+  rpc List (TableRequest) returns (TableResponse);
+  rpc GetById (TableIdRequest) returns (TableResponse);
+  rpc Create (TableCreateRequest) returns (TableResponse);
+  rpc Update (TableUpdateRequest) returns (TableResponse);
+  rpc Delete (TableIdRequest) returns (EmptyResponse);
+}
+
+message TableRequest {
+  string table = 1;
+  optional string filters = 2; // JSON string para WHERE
+}
+
+message TableIdRequest {
+  string table = 1;
+  int32 id = 2;
+}
+
+message TableCreateRequest {
+  string table = 1;
+  string data = 2; // JSON string com os dados
+}
+
+message TableUpdateRequest {
+  string table = 1;
+  int32 id = 2;
+  string data = 3; // JSON string com os dados
+}
+
+message TableResponse {
+  string data = 1; // JSON string com os resultados
+}
+
+message EmptyResponse {}

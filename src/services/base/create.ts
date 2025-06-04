@@ -1,5 +1,5 @@
-import { db } from '../../utils/db'
-import { BaseEntity, CreateData, OutputData, QueryFields } from '../../types/entity'
+import { db } from '@utils/db'
+import { BaseEntity, CreateData, OutputData, QueryFields } from 'types/entity'
 
 export const create = <T extends BaseEntity>(table: string) => {
 

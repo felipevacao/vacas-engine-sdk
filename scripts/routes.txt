@@ -1,21 +1,23 @@
 import express from 'express';
-import { {{Tablename}}Controller } from '../../controllers/{{Tablename}}Controller';
+import { {{Tablename}}Controller } from '@controllers/{{Tablename}}Controller';
+import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();
 const {{tableName}}Controller = new {{Tablename}}Controller();
+const expressAdapter = new ExpressAdapter({{tableName}}Controller);
 
 // C
-router.post('/', {{tableName}}Controller.create.bind({{tableName}}Controller));
+router.post('/', expressAdaptercreate.bind(expressAdapter));
 
 // R
-router.get('/', {{tableName}}Controller.findAll.bind({{tableName}}Controller));
-router.get('/:id', {{tableName}}Controller.findById.bind({{tableName}}Controller));
+router.get('/', expressAdapterfindAll.bind(expressAdapter));
+router.get('/:id', expressAdapterfindById.bind(expressAdapter));
 
 // U
-router.put('/:id', {{tableName}}Controller.update.bind({{tableName}}Controller));
+router.put('/:id', expressAdapterupdate.bind(expressAdapter));
 
 // D
-router.delete('/:id', {{tableName}}Controller.delete.bind({{tableName}}Controller));
-router.delete('/force/:id', {{tableName}}Controller.forceDelete.bind({{tableName}}Controller));
+router.delete('/:id', expressAdapterdelete.bind(expressAdapter));
+router.delete('/force/:id', expressAdapterforceDelete.bind(expressAdapter));
 
 export default router;
