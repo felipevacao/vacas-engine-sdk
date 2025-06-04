@@ -1,5 +1,6 @@
+// Gerado automáticamente
 import express from 'express';
-import { {{Tablename}}Controller } from '@controllers/{{Tablename}}Controller';
+import { {{Tablename}}Controller } from '@core/controllers/{{Tablename}}Controller';
 import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();
@@ -7,17 +8,17 @@ const {{tableName}}Controller = new {{Tablename}}Controller();
 const expressAdapter = new ExpressAdapter({{tableName}}Controller);
 
 // C
-router.post('/', expressAdaptercreate.bind(expressAdapter));
+router.post('/', expressAdapter.create.bind(expressAdapter));
 
 // R
-router.get('/', expressAdapterfindAll.bind(expressAdapter));
-router.get('/:id', expressAdapterfindById.bind(expressAdapter));
+router.get('/', expressAdapter.findAll.bind(expressAdapter));
+router.get('/:id', expressAdapter.findById.bind(expressAdapter));
 
 // U
-router.put('/:id', expressAdapterupdate.bind(expressAdapter));
+router.put('/:id', expressAdapter.update.bind(expressAdapter));
 
 // D
-router.delete('/:id', expressAdapterdelete.bind(expressAdapter));
-router.delete('/force/:id', expressAdapterforceDelete.bind(expressAdapter));
+router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
+router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
 
 export default router;

@@ -1,6 +1,7 @@
+// Gerado automáticamente
 import { BaseController } from '@controllers/baseController';
-import {{Tablename}}Model from '@models/{{tableName}}';
-import { {{Tablename}}Entity } from 'types/entities/{{tableName}}';
+import {{Tablename}}Model from '@core/models/{{tableName}}';
+import { {{Tablename}}Entity } from '@core/entities/{{tableName}}';
 
 export class {{Tablename}}Controller extends BaseController<{{Tablename}}Entity> {
   constructor() {
