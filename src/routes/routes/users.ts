@@ -1,21 +1,23 @@
 import express from 'express';
 import { UsersController } from '../../controllers/UsersController';
+import { ExpressAdapter } from '../../adapters/express.adapter';
 
 const router = express.Router();
 const usersController = new UsersController();
+const expressAdapter = new ExpressAdapter(usersController);
 
 // C
-router.post('/', usersController.create.bind(usersController));
+router.post('/', expressAdapter.create.bind(expressAdapter));
 
 // R
-router.get('/', usersController.findAll.bind(usersController));
-router.get('/:id', usersController.findById.bind(usersController));
+router.get('/', expressAdapter.findAll.bind(expressAdapter));
+router.get('/:id', expressAdapter.findById.bind(expressAdapter));
 
 // U
-router.put('/:id', usersController.update.bind(usersController));
+router.put('/:id', expressAdapter.update.bind(expressAdapter));
 
 // D
-router.delete('/:id', usersController.delete.bind(usersController));
-router.delete('/force/:id', usersController.forceDelete.bind(usersController));
+router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
+router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
 
 export default router;

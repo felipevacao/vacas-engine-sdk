@@ -4,10 +4,11 @@ import { BaseEntity, CreateData } from '../types/entity';
 import { BaseController } from '../controllers/baseController';
 import { HateoasTransformer } from '../transformers/hateoas.transformer';
 
-export class ExpressAdapter extends BaseAdapter<Request, Response> {
-    constructor(protected service: BaseController<BaseEntity>){
+export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
+    constructor(protected service: BaseController<T>){
         super(service)
-    }
+    }    
+    
     protected generateHateoasLinks(table: string, id: number | undefined): { rel: string; href: string; method: string }[] {
         return [
             { rel: "self", href: `/${table}/${id}`, method: "GET" },
@@ -16,8 +17,8 @@ export class ExpressAdapter extends BaseAdapter<Request, Response> {
         ];
     }
 
-    async validateCreate(req: Request): Promise<CreateData<BaseEntity>> {
-        const body = req.body as CreateData<BaseEntity>;
+    async validateCreate(req: Request): Promise<CreateData<T>> {
+        const body = req.body as CreateData<T>;
         return body;
     }
     async create(req: Request, res: Response): Promise<void> {
@@ -33,17 +34,17 @@ export class ExpressAdapter extends BaseAdapter<Request, Response> {
     }
 
     async findAll(req: Request, res: Response): Promise<void> {
-        try {
+        // try {
             const options = this.generateQueryFields(req);
             const result = await this.service.findAllEntity(options);
             const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id), options.links);
             res.status(200).json(response);
-        } catch (error) {
-            res.status(500).json({ message: 'Error fetching entities', error });
-        }
+        // } catch (error) {
+        //     res.status(500).json({ message: 'Error fetching entities', error });
+        // }
     }  
 
-    public async findById(req: Request, res: Response): Promise<void> {
+    async findById(req: Request, res: Response): Promise<void> {
         try {
             const id = parseInt(req.params.id);
             const options = this.generateQueryFields(req);
@@ -59,7 +60,7 @@ export class ExpressAdapter extends BaseAdapter<Request, Response> {
         }
     }
 
-    public async findBy(req: Request, res: Response): Promise<void> {
+    async findBy(req: Request, res: Response): Promise<void> {
         try {
             const options = this.generateQueryFields(req);
             const result = await this.service.findByEntity(options);
@@ -74,7 +75,7 @@ export class ExpressAdapter extends BaseAdapter<Request, Response> {
         }
     }
 
-    public async update(req: Request, res: Response): Promise<void> {
+    async update(req: Request, res: Response): Promise<void> {
         try {
             const id = parseInt(req.params.id);
             const data = await this.validateUpdate(req);
@@ -92,7 +93,7 @@ export class ExpressAdapter extends BaseAdapter<Request, Response> {
         }
     }
 
-    public async delete(req: Request, res: Response): Promise<void> {
+    async delete(req: Request, res: Response): Promise<void> {
         try {
             const id = parseInt(req.params.id);
 
@@ -114,7 +115,7 @@ export class ExpressAdapter extends BaseAdapter<Request, Response> {
         }
     }
 
-    public async forceDelete(req: Request, res: Response): Promise<void> {
+    async forceDelete(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
             const numericId = Number(id);

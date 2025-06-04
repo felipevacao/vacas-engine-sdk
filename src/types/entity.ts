@@ -53,7 +53,7 @@ export interface IAdapter<T, U> {
 
 // Layout de Entrada - Create
 export interface InputRequest<T> {
-  body?: T,
+  body?: object,
   params?: object,
   query: {
     fields?: string;
