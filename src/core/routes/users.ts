@@ -1,3 +1,4 @@
+// Gerado automáticamente
 import express from 'express';
 import { UsersController } from '@core/controllers/UsersController';
 import { ExpressAdapter } from '@adapters/express.adapter';
