@@ -1,25 +1,29 @@
 import express from 'express';
 import { UsersController } from '@core/controllers/UsersController';
+import { AuthController } from '@controllers/AuthController';
 import { UserExpressAdapter } from '@core/adapters/userExpress.adapter';
+import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();
 const usersController = new UsersController();
-const userExpressAdapter = new UserExpressAdapter(usersController);
+const authController = new AuthController();
+const userExpressAdapter = new UserExpressAdapter(authController);
+const expressAdapter = new ExpressAdapter(usersController);
 
 // C
-router.post('/', userExpressAdapter.create.bind(userExpressAdapter));
+router.post('/', expressAdapter.create.bind(expressAdapter));
 
 // R
-router.get('/', userExpressAdapter.findAll.bind(userExpressAdapter));
-router.get('/:id', userExpressAdapter.findById.bind(userExpressAdapter));
+router.get('/', expressAdapter.findAll.bind(expressAdapter));
+router.get('/:id', expressAdapter.findById.bind(expressAdapter));
 
 router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
 // U
-router.put('/:id', userExpressAdapter.update.bind(userExpressAdapter));
+router.put('/:id', expressAdapter.update.bind(expressAdapter));
 
 // D
-router.delete('/:id', userExpressAdapter.delete.bind(userExpressAdapter));
-router.delete('/force/:id', userExpressAdapter.forceDelete.bind(userExpressAdapter));
+router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
+router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
 
 export default router;

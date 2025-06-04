@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
-import { UsersController } from "@core/controllers/UsersController"
+import { AuthController } from "@controllers/AuthController"
 import { UsersEntity } from "@core/entities/users"
 import { LoginRequest } from "types/entity"
 
 
 export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
-    constructor(protected service: UsersController) {
+    constructor(protected service: AuthController) {
         super(service)
     }
 
