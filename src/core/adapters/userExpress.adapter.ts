@@ -25,9 +25,9 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     async login(req: Request, res: Response): Promise<void> {
         try {
             const [login, password] = this.validateLoginFields(req.body)
-
-            if(await this.service.verifyUserPassword(login, password)){
-                res.status(201).json('Login efetuado com sucesso')
+            const session = await this.service.login(login, password)
+            if(session){
+                res.status(201).json(session)
             } else {
                 res.status(401).json(this.handleError('Invalid login or password'))
             }

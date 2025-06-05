@@ -95,6 +95,7 @@ function mapDataType(dataType) {
     case 'varchar':
     case 'character varying':
     case 'char':
+    case 'uuid':
       return 'string';
     case 'boolean':
       return 'boolean';

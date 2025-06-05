@@ -20,6 +20,13 @@ export const read = <T extends BaseEntity>(table: string) => {
     }
 
     const findBy = async (options: QueryFields<T>): Promise<OutputData<T>[] | undefined> => {
+        if(options.whereSign){
+            return db(table)
+                    .select(options.fields || '*')
+                    .where(options.where || {})
+                    .where(options.whereSign.field, options.whereSign.sign, options.whereSign.value)
+                    .whereNull('deletedAt')
+        }
         return db(table)
                 .select(options.fields || '*')
                 .where(options.where || {})

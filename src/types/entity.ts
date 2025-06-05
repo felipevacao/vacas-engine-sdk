@@ -32,7 +32,12 @@ export type QueryFields<T extends BaseEntity> = {
     fields?: (keyof Model<T>)[],
     where?: Partial<T>,
     limit?: number,
-    offset?: number
+    offset?: number,
+    whereSign?: {
+      field: string,
+      sign: string,
+      value: string
+    }
 }
 
 export * from "./model";

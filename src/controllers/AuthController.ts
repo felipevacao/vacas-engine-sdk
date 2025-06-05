@@ -2,12 +2,15 @@ import { UsersController } from "@core/controllers/UsersController";
 import { UsersEntity } from "@core/entities/users";
 import { hash, compare, genSalt } from 'bcrypt';
 import { Model, OutputData, QueryFields, UpdateData } from "types/entity";
+import { SessionController } from "./SessionController";
 
 const SALT_ROUNDS = 12;
 
 export class AuthController extends UsersController {
+    private session: SessionController
     constructor() {
         super();
+        this.session = new SessionController()
     }
 
     private async generateHash(password: string): Promise<string> {
@@ -28,9 +31,12 @@ export class AuthController extends UsersController {
     return userData;
   }
 
-  public async verifyUserPassword(email: string, password: string): Promise<boolean> {
+  private async verifyUserPassword(email: string, password: string): Promise<OutputData<UsersEntity> | null> {
     const user = await this.getEntityByEmail(email);
-    return await this.comparePassword(password, user?.password);
+    if(user && await this.comparePassword(password, user?.password)){
+      return user
+    }
+    return null;
   }
 
   private async comparePassword(password: string, passwordHash: string = '123'): Promise<boolean> {
@@ -55,6 +61,15 @@ export class AuthController extends UsersController {
         throw new Error(errorMessage);
       }
     }
+  }
+
+  public async login(login: string, password: string): Promise<{ token: string } | boolean> {
+      const user = await this.verifyUserPassword(login, password);
+      if (!user) {
+          return false;
+      }
+      const session = await this.session.createSession(user);
+      return { token: session.token };
   }
   
 }
