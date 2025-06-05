@@ -37,6 +37,7 @@ export class SessionController {
         } as QueryFields<User_sessionsEntity>;
 
         const user_sessions = await this.user_sessions.findByEntity(options);
+
         return user_sessions && user_sessions.length > 0;
     }
 

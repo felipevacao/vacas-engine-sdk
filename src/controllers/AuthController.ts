@@ -1,10 +1,12 @@
 import { UsersController } from "@dynamic-modules/controllers/UsersController";
 import { UsersEntity } from "@dynamic-modules/entities/users";
-import { hash, compare, genSalt } from 'bcrypt';
+import { hash, genSalt, compare } from 'bcrypt';
+import { promisify } from 'util';
 import { Model, OutputData, QueryFields, UpdateData } from "types/entity";
 import { SessionController } from "./SessionController";
 
 const SALT_ROUNDS = 12;
+const compareAsync = promisify(compare);
 
 export class AuthController extends UsersController {
     private session: SessionController
@@ -33,6 +35,7 @@ export class AuthController extends UsersController {
 
   private async verifyUserPassword(email: string, password: string): Promise<OutputData<UsersEntity> | null> {
     const user = await this.getEntityByEmail(email);
+
     if(user && await this.comparePassword(password, user?.password)){
       return user
     }
@@ -40,8 +43,9 @@ export class AuthController extends UsersController {
   }
 
   private async comparePassword(password: string, passwordHash: string = '123'): Promise<boolean> {
-    const match = compare(password, passwordHash);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const match = await compareAsync(password, passwordHash);
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
     return match
   }
 
