@@ -1,7 +1,7 @@
 // Gerado automáticamente
 import { BaseController } from '@controllers/baseController';
-import {{Tablename}}Model from '@core/models/{{tableName}}';
-import { {{Tablename}}Entity } from '@core/entities/{{tableName}}';
+import {{Tablename}}Model from '@dynamic-modules/models/{{tableName}}';
+import { {{Tablename}}Entity } from '@dynamic-modules/entities/{{tableName}}';
 
 export class {{Tablename}}Controller extends BaseController<{{Tablename}}Entity> {
   constructor() {

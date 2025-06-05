@@ -1,5 +1,5 @@
 // Gerado automáticamente
-import { {{Tablename}}Entity } from '@core/entities/{{tableName}}';
+import { {{Tablename}}Entity } from '@dynamic-modules/entities/{{tableName}}';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
 

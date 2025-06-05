@@ -53,7 +53,7 @@
     "@lib": "dist/lib",
     "@services": "dist/services",
     "@middlewares": "dist/middlewares",
-    "@core": "dist/core"
+    "@dynamic-modules": "dist/dynamic-modules"
   },
   "author": "Felipe Trevenzoli",
   "license": "ISC"

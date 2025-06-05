@@ -1,6 +1,6 @@
 // Gerado automáticamente
 import express from 'express';
-import { {{Tablename}}Controller } from '@core/controllers/{{Tablename}}Controller';
+import { {{Tablename}}Controller } from '@dynamic-modules/controllers/{{Tablename}}Controller';
 import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();
