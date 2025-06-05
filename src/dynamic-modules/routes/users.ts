@@ -1,7 +1,7 @@
 import express from 'express';
-import { UsersController } from '@core/controllers/UsersController';
+import { UsersController } from '@dynamic-modules/controllers/UsersController';
 import { AuthController } from '@controllers/AuthController';
-import { UserExpressAdapter } from '@core/adapters/userExpress.adapter';
+import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
 import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();

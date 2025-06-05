@@ -1,8 +1,8 @@
-import { User_sessionsController } from "@core/controllers/User_sessionsController";
+import { User_sessionsController } from "@dynamic-modules/controllers/User_sessionsController";
 import { cryptoUtils } from "@utils/crypto";
-import { UsersEntity } from "@core/entities/users";
+import { UsersEntity } from "@dynamic-modules/entities/users";
 import { CreateData, QueryFields } from "types/entity";
-import { User_sessionsEntity } from "@core/entities/user_sessions";
+import { User_sessionsEntity } from "@dynamic-modules/entities/user_sessions";
 
 export class SessionController {
     private user_sessions: User_sessionsController;

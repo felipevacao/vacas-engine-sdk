@@ -1,5 +1,5 @@
-import { UsersController } from "@core/controllers/UsersController";
-import { UsersEntity } from "@core/entities/users";
+import { UsersController } from "@dynamic-modules/controllers/UsersController";
+import { UsersEntity } from "@dynamic-modules/entities/users";
 import { hash, compare, genSalt } from 'bcrypt';
 import { Model, OutputData, QueryFields, UpdateData } from "types/entity";
 import { SessionController } from "./SessionController";

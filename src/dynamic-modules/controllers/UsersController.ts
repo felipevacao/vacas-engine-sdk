@@ -1,6 +1,6 @@
 import { BaseController } from '@controllers/baseController';
-import UsersModel from '@core/models/users';
-import { UsersEntity } from '@core/entities/users';
+import UsersModel from '@dynamic-modules/models/users';
+import { UsersEntity } from '@dynamic-modules/entities/users';
 import { CreateData, InputRequest, QueryFields } from 'types/entity';
 
 export class UsersController extends BaseController<UsersEntity> {

@@ -1,4 +1,4 @@
-import { UsersEntity } from '@core/entities/users';
+import { UsersEntity } from '@dynamic-modules/entities/users';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
 

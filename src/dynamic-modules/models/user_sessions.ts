@@ -1,5 +1,5 @@
 // Gerado automáticamente
-import { User_sessionsEntity } from '@core/entities/user_sessions';
+import { User_sessionsEntity } from '@dynamic-modules/entities/user_sessions';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
 

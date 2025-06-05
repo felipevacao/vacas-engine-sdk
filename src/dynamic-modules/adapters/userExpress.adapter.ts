@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
 import { AuthController } from "@controllers/AuthController"
-import { UsersEntity } from "@core/entities/users"
+import { UsersEntity } from "@dynamic-modules/entities/users"
 import { LoginRequest } from "types/entity"
 
 
