@@ -18,6 +18,7 @@ RUN npm run build
 RUN npm ci --only=production
 
 ARG DB_PASS
+ARG PORT=3002
 
 ENV NODE_ENV=production
 ENV DB_USER=felipe
@@ -25,13 +26,13 @@ ENV DB_PASSWORD=$DB_PASS
 ENV DB_NAME=apitreis
 ENV DB_HOST=localhost
 ENV DB_PORT=5432
-ENV API_PORT=3002
+ENV API_PORT=$PORT
 ENV ENABLE_TEST_ROUTES=false
 ENV ENABLE_HATEOAS=false
 ENV ENABLE_RETURN_ERRORS=false
 
-# Expõe a porta 3000 (a mesma que a API usa)
-EXPOSE 3000
+# Expõe a porta (a mesma que a API usa)
+EXPOSE $PORT
 
 # Comando para rodar a API
 CMD ["node", "dist/index.js"]
