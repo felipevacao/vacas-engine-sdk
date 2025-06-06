@@ -12,7 +12,7 @@ const User_sessionsModel: Model<User_sessionsEntity> = {
   update: baseService.update<User_sessionsEntity>('user_sessions'),
   delete: baseService.deleteById('user_sessions'),
   forceDelete: baseService.forceDelete('user_sessions'),
-  selectAbleFields: ['user_id', 'expires_at', 'last_used_at', 'is_revoked', 'token_hash', 'ip_address'],
+  selectAbleFields: ['userId', 'expiresAt', 'lastUsedAt', 'isRevoked', 'tokenHash', 'ipAddress'],
   defaultFields: ['id'],
   excludedFields: [],
 };

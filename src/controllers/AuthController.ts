@@ -73,7 +73,7 @@ export class AuthController extends UsersController {
           return false;
       }
       const session = await this.session.createSession(user);
-      return { token: session.token };
+      return session;
   }
   
 }
