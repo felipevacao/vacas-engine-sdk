@@ -16,13 +16,15 @@ const userExpressAdapter = new UserExpressAdapter(authController);
 
 router.use(logging)
 
+
 // Carrega rotas automaticamente, de acordo com cada entidade
 const loadRoutes = async () => {
 
+    router.post('/users/login', userExpressAdapter.login.bind(userExpressAdapter));
+
+    // load routes from dynamic modules
     const routesDir = path.join(__dirname, '../dynamic-modules/routes'); 
-
     const items = fs.readdirSync(routesDir, { withFileTypes: true });
-
     for (const item of items) {
         const routeFile = path.join(routesDir, item.name);
         if (fs.existsSync(routeFile)) {
@@ -33,8 +35,6 @@ const loadRoutes = async () => {
             router.use(routePath, middleware, routeModule.default); 
         }
     }
-
-    router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
     router.get('/', (req: Request, res: Response) => {
         res.send('API Treis está funcionando! ')

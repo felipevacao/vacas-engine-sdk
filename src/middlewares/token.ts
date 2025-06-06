@@ -1,12 +1,14 @@
 import { SessionController } from '@controllers/SessionController';
 import { Request, Response, NextFunction } from 'express';
+import { Session, SessionData } from 'express-session';
 
 export const tokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   
   // 1. Verificar se o token foi enviado
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({
+
+    return res.status(401).json({
       success: false,
       error: 'Token de autenticação não fornecido',
       code: 'MISSING_TOKEN'
@@ -27,6 +29,12 @@ export const tokenMiddleware = async (req: Request, res: Response, next: NextFun
             });
             return
         }
+        
+        if(session){
+          req.session = {
+            id: session.id,
+          } as Session & Partial<SessionData>;
+        }
 
         next()
 
@@ -35,10 +43,8 @@ export const tokenMiddleware = async (req: Request, res: Response, next: NextFun
     }
   }
 
-}
 
-function handleTokenError(error: Error, res: Response) {
-  console.error('Erro na validação do token:', error);
+function handleTokenError(error: Error, res: Response) {  console.error('Erro na validação do token:', error);
   
   if (error.name === 'TokenExpiredError') {
     return res.status(401).json({
@@ -53,4 +59,6 @@ function handleTokenError(error: Error, res: Response) {
     error: 'Erro durante a validação do token',
     code: 'SERVER_ERROR'
   });
+}
+
 }

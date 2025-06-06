@@ -3,7 +3,7 @@ import { BaseEntity, UpdateData, OutputData, QueryFields } from 'types/entity'
 
 export const update = <T extends BaseEntity>(table: string) => {
   
-  return async (id: number, data: UpdateData<T>, options: QueryFields<T> = {}): Promise<OutputData<T>> => {
+  return async (id: number | string, data: UpdateData<T>, options: QueryFields<T> = {}): Promise<OutputData<T>> => {
     const updateData = {
       ...data,
       updatedAt: new Date()

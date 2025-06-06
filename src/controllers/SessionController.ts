@@ -1,16 +1,16 @@
 import { UserSessionsController } from "@dynamic-modules/controllers/userSessions";
 import { cryptoUtils } from "@utils/crypto";
-import { CreateData, OutputData, QueryFields } from "types/entity";
+import { CreateData, QueryFields, UpdateData } from "types/entity";
 import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
 import { UsersController } from "@dynamic-modules/controllers/users";
 import { UsersEntity } from "@dynamic-modules/entities/users";
 
 export class SessionController {
-    private user_sessions: UserSessionsController;
+    private userSessions: UserSessionsController;
     private user: UsersController;
 
     constructor() {
-        this.user_sessions = new UserSessionsController();
+        this.userSessions = new UserSessionsController();
         this.user = new UsersController();
     }
 
@@ -25,11 +25,11 @@ export class SessionController {
         return cryptoUtils.verifyToken(token, hash);
     }
 
-    private async verifySession(user: UsersEntity): Promise<boolean> {
+    private async verifySession(user: UsersEntity, ipAddress: string): Promise<boolean> {
         const options = {
             where: { 
                 user_id: user.id,
-                ip_address: '127.0.0.1',
+                ip_address: ipAddress,
                 is_revoked: false
              },
              whereSign: {
@@ -39,20 +39,20 @@ export class SessionController {
              }
         } as QueryFields<UserSessionsEntity>;
 
-        const user_sessions = await this.user_sessions.findByEntity(options);
+        const userSessions = await this.userSessions.findByEntity(options);
 
-        return user_sessions && user_sessions.length > 0;
+        return userSessions && userSessions.length > 0;
     }
 
     public async createSession(user: UsersEntity, ipAddress: string): Promise<{ token: string }> {
 
-        if(await this.verifySession(user)) {
+        if(await this.verifySession(user, ipAddress)) {
             throw new Error('Usuário já autenticado!');
         }
 
         const { token, hash } = this.createToken();
-        await this.user_sessions.createEntity({
-            userId: user.id,
+        await this.userSessions.createEntity({
+            userId: user.id as number,
             tokenHash: hash,
             expiresAt: cryptoUtils.getExpiresAt(),
             ipAddress: ipAddress,
@@ -61,7 +61,11 @@ export class SessionController {
         return { token: token };
     }
 
-    public async validateUser(token: string, ipAddress: string): Promise<[OutputData<UsersEntity>, UserSessionsEntity] | [ boolean, boolean]> {
+    public async deleteSession(sessionId: string | number): Promise<void> {
+        await this.userSessions.updateEntity(sessionId, { isRevoked: true } as UpdateData<UserSessionsEntity>, {});
+    }
+    
+    public async validateUser(token: string, ipAddress: string): Promise<[UsersEntity, UserSessionsEntity]> {
         
         const options = {
             where: { 
@@ -75,9 +79,9 @@ export class SessionController {
              }
         } as QueryFields<UserSessionsEntity>;
 
-        const activeSessions = await this.user_sessions.findByEntity(options);   
+        const activeSessions = await this.userSessions.findByEntity(options);   
         if(activeSessions.length === 0) {
-            return [ false, false ];
+            throw new Error('Sessão inválida!');
         }
 
         for (const session of activeSessions) {
@@ -87,10 +91,9 @@ export class SessionController {
                 const user = await this.user.findByIdEntity(session.userId, {
                     fields: this.user.getAvailableFields(),
                 });
-                return [user as OutputData<UsersEntity>, session];
+                return [user as UsersEntity, session];
             }
         }
-
-        return [ false, false ]
+        throw new Error('Sessão inválida!');
     }
 }

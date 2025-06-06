@@ -1,7 +1,7 @@
 import { Model } from "./model";
 
 export interface BaseEntity {
-    id?: number;
+    id?: number | string;
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date | null;

@@ -22,6 +22,20 @@
 
       }
     },
-    "include": ["src/**/*"], // Inclui todos os arquivos TypeScript na pasta src/
+      /* Especifica onde o TypeScript deve procurar por definições de tipo */
+      "typeRoots": [
+        "./node_modules/@types",
+        "./src/types"  // Pasta onde está seu express.d.ts
+      ],
+      /* Garante que as extensões de tipo sejam reconhecidas */
+      "types": [
+        "node",
+        "express"
+      ],
+    /* Inclua explicitamente a pasta de tipos */
+    "include": [
+      "src/**/*",
+      "src/types/**/*"  // Inclui seus arquivos de tipo personalizados
+    ],
     "exclude": ["node_modules", "dist"] // Exclui pastas desnecessárias
   }

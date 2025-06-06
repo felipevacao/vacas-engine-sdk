@@ -11,7 +11,7 @@ export const read = <T extends BaseEntity>(table: string) => {
         return result
     }
 
-    const findById = async (id: number, options: QueryFields<T> = {} ): Promise<OutputData<T> | undefined> => {
+    const findById = async (id: number | string, options: QueryFields<T> = {} ): Promise<OutputData<T> | undefined> => {
         return db(table)
                 .select(options.fields || '*')
                 .where({ id })

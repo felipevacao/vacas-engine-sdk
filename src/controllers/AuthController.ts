@@ -75,5 +75,9 @@ export class AuthController extends UsersController {
       const session = await this.session.createSession(user, ipAdress);
       return session;
   }
-  
+
+  public async logout(sessionId: string | number): Promise<void> {
+      await this.session.deleteSession(sessionId);
+  }
+
 }
