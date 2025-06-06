@@ -1,8 +1,9 @@
 // Gerado automáticamente
 import { BaseEntity } from 'types/entity';
 
-export interface User_sessionsEntity extends BaseEntity {
-    userId: number;
+export interface UserSessionsEntity extends BaseEntity {
+
+        userId: number;
     expiresAt: Date;
     lastUsedAt: Date;
     isRevoked: boolean;

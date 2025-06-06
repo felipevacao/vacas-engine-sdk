@@ -1,4 +1,4 @@
 // Gerado automáticamente
 import { BaseEntity } from 'types/entity';
 
-export interface {{Tablename}}Entity extends BaseEntity {
+export interface {{tablenameCapital}}Entity extends BaseEntity {

@@ -1,16 +1,16 @@
-import { User_sessionsController } from "@dynamic-modules/controllers/User_sessionsController";
+import { UserSessionsController } from "@dynamic-modules/controllers/userSessions";
 import { cryptoUtils } from "@utils/crypto";
 import { CreateData, OutputData, QueryFields } from "types/entity";
-import { User_sessionsEntity } from "@dynamic-modules/entities/user_sessions";
+import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
 import { UsersController } from "@dynamic-modules/controllers/UsersController";
 import { UsersEntity } from "@dynamic-modules/entities/users";
 
 export class SessionController {
-    private user_sessions: User_sessionsController;
+    private user_sessions: UserSessionsController;
     private user: UsersController;
 
     constructor() {
-        this.user_sessions = new User_sessionsController();
+        this.user_sessions = new UserSessionsController();
         this.user = new UsersController();
     }
 
@@ -37,7 +37,7 @@ export class SessionController {
                 sign: '>',
                 value: new Date().toLocaleString()
              }
-        } as QueryFields<User_sessionsEntity>;
+        } as QueryFields<UserSessionsEntity>;
 
         const user_sessions = await this.user_sessions.findByEntity(options);
 
@@ -56,12 +56,12 @@ export class SessionController {
             tokenHash: hash,
             expiresAt: cryptoUtils.getExpiresAt(),
             ipAddress: '127.0.0.1',
-        } as CreateData<User_sessionsEntity>, {});
+        } as CreateData<UserSessionsEntity>, {});
 
         return { token, hash };
     }
 
-    public async validateUser(token: string, ipAddress: string): Promise<[OutputData<UsersEntity>, User_sessionsEntity] | [ boolean, boolean]> {
+    public async validateUser(token: string, ipAddress: string): Promise<[OutputData<UsersEntity>, UserSessionsEntity] | [ boolean, boolean]> {
         
         const options = {
             where: { 
@@ -73,7 +73,7 @@ export class SessionController {
                 sign: '>',
                 value: new Date().toLocaleString()
              }
-        } as QueryFields<User_sessionsEntity>;
+        } as QueryFields<UserSessionsEntity>;
 
         const activeSessions = await this.user_sessions.findByEntity(options);   
         if(activeSessions.length === 0) {
