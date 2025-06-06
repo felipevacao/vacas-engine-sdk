@@ -96,7 +96,7 @@ function generateRoutesFile(tableName) {
   const entityTemplate = readFileSync(join(__dirname, 'routes.txt'), 'utf-8');
   const routesContent = (entityTemplate.replaceAll('{{tablenameCapital}}', tablenameCapital)).replaceAll('{{tableNameCamel}}', tableNameCamel);
 
-  const filePath = join(__dirname, '../src/dynamic-modules/routes', `${tableNameCamel}.ts`);
+  const filePath = join(__dirname, '../src/dynamic-modules/routes', `${tableName}.ts`);
   writeFileSync(filePath, routesContent);
   console.log(`Arquivo de rotas criado: ${filePath}`);
 }
