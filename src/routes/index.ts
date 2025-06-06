@@ -6,8 +6,13 @@ import { routeNotFound, errorHandler } from '@middlewares/errorHandlers'
 import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
+import { AuthController } from '@controllers/AuthController';
+import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
 
 const router = express.Router()
+const authController = new AuthController();
+const userExpressAdapter = new UserExpressAdapter(authController);
+
 
 router.use(logging)
 
@@ -24,9 +29,12 @@ const loadRoutes = async () => {
             const routeModule = await import(routeFile);
             const routeName = item.name.replace('.ts', '').replace('.js','')
             const routePath = `/${routeName}`; 
-            router.use(routePath, routeModule.default); 
+            const middleware = routeModule.middleware || [];
+            router.use(routePath, middleware, routeModule.default); 
         }
     }
+
+    router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
     router.get('/', (req: Request, res: Response) => {
         res.send('API Treis está funcionando! ')

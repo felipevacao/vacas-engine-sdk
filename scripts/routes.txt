@@ -1,11 +1,11 @@
 // Gerado automáticamente
 import express from 'express';
-import { {{Tablename}}Controller } from '@dynamic-modules/controllers/{{Tablename}}Controller';
+import { {{tablenameCapital}}Controller } from '@dynamic-modules/controllers/{{tableNameCamel}}';
 import { ExpressAdapter } from '@adapters/express.adapter';
 
 const router = express.Router();
-const {{tableName}}Controller = new {{Tablename}}Controller();
-const expressAdapter = new ExpressAdapter({{tableName}}Controller);
+const {{tableNameCamel}}Controller = new {{tablenameCapital}}Controller();
+const expressAdapter = new ExpressAdapter({{tableNameCamel}}Controller);
 
 // C
 router.post('/', expressAdapter.create.bind(expressAdapter));

@@ -1,14 +1,17 @@
-import { User_sessionsController } from "@dynamic-modules/controllers/User_sessionsController";
+import { UserSessionsController } from "@dynamic-modules/controllers/userSessions";
 import { cryptoUtils } from "@utils/crypto";
+import { CreateData, OutputData, QueryFields } from "types/entity";
+import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
+import { UsersController } from "@dynamic-modules/controllers/users";
 import { UsersEntity } from "@dynamic-modules/entities/users";
-import { CreateData, QueryFields } from "types/entity";
-import { User_sessionsEntity } from "@dynamic-modules/entities/user_sessions";
 
 export class SessionController {
-    private user_sessions: User_sessionsController;
+    private user_sessions: UserSessionsController;
+    private user: UsersController;
 
     constructor() {
-        this.user_sessions = new User_sessionsController();
+        this.user_sessions = new UserSessionsController();
+        this.user = new UsersController();
     }
 
     private createToken(): { token: string, hash: string } {
@@ -34,7 +37,7 @@ export class SessionController {
                 sign: '>',
                 value: new Date().toLocaleString()
              }
-        } as QueryFields<User_sessionsEntity>;
+        } as QueryFields<UserSessionsEntity>;
 
         const user_sessions = await this.user_sessions.findByEntity(options);
 
@@ -49,13 +52,45 @@ export class SessionController {
 
         const { token, hash } = this.createToken();
         await this.user_sessions.createEntity({
-            user_id: user.id,
-            token_hash: hash,
-            expires_at: cryptoUtils.getExpiresAt(),
-            ip_address: '127.0.0.1',
-        } as CreateData<User_sessionsEntity>, {});
+            userId: user.id,
+            tokenHash: hash,
+            expiresAt: cryptoUtils.getExpiresAt(),
+            ipAddress: '127.0.0.1',
+        } as CreateData<UserSessionsEntity>, {});
 
         return { token, hash };
     }
 
+    public async validateUser(token: string, ipAddress: string): Promise<[OutputData<UsersEntity>, UserSessionsEntity] | [ boolean, boolean]> {
+        
+        const options = {
+            where: { 
+                ip_address: ipAddress,
+                is_revoked: false
+             },
+             whereSign: {
+                field: 'expires_at',
+                sign: '>',
+                value: new Date().toLocaleString()
+             }
+        } as QueryFields<UserSessionsEntity>;
+
+        const activeSessions = await this.user_sessions.findByEntity(options);   
+        if(activeSessions.length === 0) {
+            return [ false, false ];
+        }
+
+        for (const session of activeSessions) {
+            const isValid = this.validateToken(token, session.tokenHash);
+            
+            if (isValid) {
+                const user = await this.user.findByIdEntity(session.userId, {
+                    fields: this.user.getAvailableFields(),
+                });
+                return [user as OutputData<UsersEntity>, session];
+            }
+        }
+
+        return [ false, false ]
+    }
 }

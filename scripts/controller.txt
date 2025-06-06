@@ -1,10 +1,10 @@
 // Gerado automáticamente
 import { BaseController } from '@controllers/baseController';
-import {{Tablename}}Model from '@dynamic-modules/models/{{tableName}}';
-import { {{Tablename}}Entity } from '@dynamic-modules/entities/{{tableName}}';
+import {{tablenameCapital}}Model from '@dynamic-modules/models/{{tableNameCamel}}';
+import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
 
-export class {{Tablename}}Controller extends BaseController<{{Tablename}}Entity> {
+export class {{tablenameCapital}}Controller extends BaseController<{{tablenameCapital}}Entity> {
   constructor() {
-      super({{Tablename}}Model);
+      super({{tablenameCapital}}Model);
   }
 }

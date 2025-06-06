@@ -1,20 +1,20 @@
 // Gerado automáticamente
-import { {{Tablename}}Entity } from '@dynamic-modules/entities/{{tableName}}';
+import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
 import * as baseService from '@services/baseServices';
 import { Model } from 'types/entity';
 
-const {{Tablename}}Model: Model<{{Tablename}}Entity> = {
-  table: '{{tableName}}',
-  create: baseService.create<{{Tablename}}Entity>('{{tableName}}'),
-  findAll: baseService.read<{{Tablename}}Entity>('{{tableName}}').findAll,
-  findById: baseService.read<{{Tablename}}Entity>('{{tableName}}').findById,
-  findBy: baseService.read<{{Tablename}}Entity>('{{tableName}}').findBy,
-  update: baseService.update<{{Tablename}}Entity>('{{tableName}}'),
-  delete: baseService.deleteById('{{tableName}}'),
-  forceDelete: baseService.forceDelete('{{tableName}}'),
+const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
+  table: '{{realTableName}}',
+  create: baseService.create<{{tablenameCapital}}Entity>('{{realTableName}}'),
+  findAll: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findAll,
+  findById: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findById,
+  findBy: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findBy,
+  update: baseService.update<{{tablenameCapital}}Entity>('{{realTableName}}'),
+  delete: baseService.deleteById('{{realTableName}}'),
+  forceDelete: baseService.forceDelete('{{realTableName}}'),
   selectAbleFields: [{{fields}}],
   defaultFields: ['id'],
   excludedFields: [],
 };
 
-export default {{Tablename}}Model;
+export default {{tablenameCapital}}Model;
