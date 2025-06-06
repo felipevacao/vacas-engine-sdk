@@ -19,7 +19,7 @@
         "@services/*": ["services/*"],
         "@middlewares/*": ["middlewares/*"],
         "@dynamic-modules/*": ["dynamic-modules/*"],
-
+        "@constants/*": ["constants/*"],
       }
     },
       /* Especifica onde o TypeScript deve procurar por definições de tipo */

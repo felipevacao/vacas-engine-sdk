@@ -55,7 +55,8 @@
     "@lib": "dist/lib",
     "@services": "dist/services",
     "@middlewares": "dist/middlewares",
-    "@dynamic-modules": "dist/dynamic-modules"
+    "@dynamic-modules": "dist/dynamic-modules",
+    "@constants": "dist/constants"
   },
   "compilerOptions": {
     "typeRoots": [
