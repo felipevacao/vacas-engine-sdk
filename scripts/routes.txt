@@ -2,6 +2,7 @@
 import express from 'express';
 import { {{tablenameCapital}}Controller } from '@dynamic-modules/controllers/{{tableNameCamel}}';
 import { ExpressAdapter } from '@adapters/express.adapter';
+import { tokenMiddleware } from '@middlewares/token';
 
 const router = express.Router();
 const {{tableNameCamel}}Controller = new {{tablenameCapital}}Controller();
@@ -21,4 +22,5 @@ router.put('/:id', expressAdapter.update.bind(expressAdapter));
 router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
 router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
 
+export const middleware = [tokenMiddleware];
 export default router;

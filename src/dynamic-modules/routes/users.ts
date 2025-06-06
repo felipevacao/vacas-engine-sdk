@@ -2,7 +2,6 @@ import express from 'express';
 import { UsersController } from '@dynamic-modules/controllers/users';
 import { ExpressAdapter } from '@adapters/express.adapter';
 import { tokenMiddleware } from '@middlewares/token';
-import { testMiddleware } from '@middlewares/test';
 
 const router = express.Router();
 const usersController = new UsersController();
@@ -22,5 +21,5 @@ router.put('/:id', expressAdapter.update.bind(expressAdapter));
 router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
 router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
 
-export const middleware = [tokenMiddleware, testMiddleware];
+export const middleware = [tokenMiddleware];
 export default router;

@@ -44,7 +44,7 @@ export class SessionController {
         return user_sessions && user_sessions.length > 0;
     }
 
-    public async createSession(user: UsersEntity): Promise<{ token: string, hash: string }> {
+    public async createSession(user: UsersEntity, ipAddress: string): Promise<{ token: string }> {
 
         if(await this.verifySession(user)) {
             throw new Error('Usuário já autenticado!');
@@ -55,10 +55,10 @@ export class SessionController {
             userId: user.id,
             tokenHash: hash,
             expiresAt: cryptoUtils.getExpiresAt(),
-            ipAddress: '127.0.0.1',
+            ipAddress: ipAddress,
         } as CreateData<UserSessionsEntity>, {});
 
-        return { token, hash };
+        return { token: token };
     }
 
     public async validateUser(token: string, ipAddress: string): Promise<[OutputData<UsersEntity>, UserSessionsEntity] | [ boolean, boolean]> {

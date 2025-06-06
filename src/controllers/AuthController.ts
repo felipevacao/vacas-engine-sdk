@@ -67,12 +67,12 @@ export class AuthController extends UsersController {
     }
   }
 
-  public async login(login: string, password: string): Promise<{ token: string } | boolean> {
+  public async login(login: string, password: string, ipAdress: string): Promise<{ token: string } | boolean> {
       const user = await this.verifyUserPassword(login, password);
       if (!user) {
           return false;
       }
-      const session = await this.session.createSession(user);
+      const session = await this.session.createSession(user, ipAdress);
       return session;
   }
   

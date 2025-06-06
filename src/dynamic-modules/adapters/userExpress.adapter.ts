@@ -25,7 +25,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     async login(req: Request, res: Response): Promise<void> {
         try {
             const [login, password] = this.validateLoginFields(req.body)
-            const session = await this.service.login(login, password)
+            const session = await this.service.login(login, password, '127.0.0.1')
             
             if(session){
                 res.status(201).json(session)
