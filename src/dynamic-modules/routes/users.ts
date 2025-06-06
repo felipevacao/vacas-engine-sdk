@@ -1,5 +1,5 @@
 import express from 'express';
-import { UsersController } from '@dynamic-modules/controllers/UsersController';
+import { UsersController } from '@dynamic-modules/controllers/users';
 import { ExpressAdapter } from '@adapters/express.adapter';
 import { tokenMiddleware } from '@middlewares/token';
 import { testMiddleware } from '@middlewares/test';

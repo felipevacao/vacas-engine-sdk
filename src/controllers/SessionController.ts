@@ -2,7 +2,7 @@ import { UserSessionsController } from "@dynamic-modules/controllers/userSession
 import { cryptoUtils } from "@utils/crypto";
 import { CreateData, OutputData, QueryFields } from "types/entity";
 import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
-import { UsersController } from "@dynamic-modules/controllers/UsersController";
+import { UsersController } from "@dynamic-modules/controllers/users";
 import { UsersEntity } from "@dynamic-modules/entities/users";
 
 export class SessionController {

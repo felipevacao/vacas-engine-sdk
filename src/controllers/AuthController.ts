@@ -1,4 +1,4 @@
-import { UsersController } from "@dynamic-modules/controllers/UsersController";
+import { UsersController } from "@dynamic-modules/controllers/users";
 import { UsersEntity } from "@dynamic-modules/entities/users";
 import { hash, genSalt, compare } from 'bcrypt';
 import { promisify } from 'util';
