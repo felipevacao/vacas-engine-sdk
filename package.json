@@ -30,6 +30,8 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.2",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^22.15.30",
     "@types/pg": "^8.11.11",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.22.0",
@@ -54,6 +56,12 @@
     "@services": "dist/services",
     "@middlewares": "dist/middlewares",
     "@dynamic-modules": "dist/dynamic-modules"
+  },
+  "compilerOptions": {
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
   },
   "author": "Felipe Trevenzoli",
   "license": "ISC"

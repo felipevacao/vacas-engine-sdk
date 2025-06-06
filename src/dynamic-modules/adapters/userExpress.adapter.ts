@@ -25,16 +25,29 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     async login(req: Request, res: Response): Promise<void> {
         try {
             const [login, password] = this.validateLoginFields(req.body)
-            const session = await this.service.login(login, password)
+            const session = await this.service.login(login, password, '127.0.0.1')
             
-            if(session){
-                res.status(201).json(session)
-            } else {
+            if(!session){
                 res.status(401).json(this.handleError('Invalid login or password'))
             }
+            
+            res.status(201).json(session)
         } catch (error) {
             res.status(400).json(this.handleError('Erro ao verificar Login', error as Error))
         }
 
     }
-}
+
+    async logout(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.session) {
+                throw new Error('No active session')
+            }
+            await this.service.logout(req.session.id)
+
+            res.status(200).json({ message: 'Logout realizado com sucesso' })
+        } catch (error) {
+            res.status(400).json(this.handleError('Erro ao realizar o Logout', error as Error))
+        }
+
+    }}

@@ -3,7 +3,7 @@ import { db } from '@utils/db'
 /* SOFT DELETE */
 export const deleteById = (table: string) => {
 
-  return async (id: number): Promise<boolean> => {
+  return async (id: number | string): Promise<boolean> => {
     const deleteData = {
       deletedAt: new Date()
     }
@@ -19,7 +19,7 @@ export const deleteById = (table: string) => {
 }
 
 export const forceDelete = (table: string) => {
-  return async (id: number): Promise<boolean> => {
+  return async (id: number | string): Promise<boolean> => {
     const [result] = await db(table)
                             .where({ id })
                             .del()

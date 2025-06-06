@@ -60,7 +60,7 @@ export class BaseController<T extends BaseEntity> {
         return result
     }
 
-    public async updateEntity(id: number, data: UpdateData<T>, options: QueryFields<T>): Promise<OutputData<T>> {
+    public async updateEntity(id: number | string, data: UpdateData<T>, options: QueryFields<T>): Promise<OutputData<T>> {
         return await this.model.update(id, data, options)
     }
 

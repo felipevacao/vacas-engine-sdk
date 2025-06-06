@@ -22,7 +22,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const data = await this.validateCreate(req);
             const options = this.generateQueryFields(req);
             const result = await this.service.createEntity(data, options);
-            const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id), options.links);
+            const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id as number), options.links);
             res.status(201).json(response);
         } catch (error) {
             res.status(500).json(this.handleError('Error creating entity', error as Error));
@@ -32,7 +32,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         try {
             const options = this.generateQueryFields(req);
             const result = await this.service.findAllEntity(options);
-            const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id), options.links);
+            const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id as number), options.links);
             res.status(200).json(response);
         } catch (error) {
             res.status(500).json(this.handleError('Error fetching entities', error as Error));
@@ -47,7 +47,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (!result) {
                 res.status(404).json(this.handleError('Entity not found'));
             } else {
-                const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id), options.links);
+                const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id as number), options.links);
                 res.status(200).json(response);
             }
         } catch (error) {
@@ -62,7 +62,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (result.length === 0) {
                 res.status(404).json(this.handleError('Entity not found'));
             } else {
-                const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id), options.links || false)
+                const response = HateoasTransformer.addCollectionLinks(result, (item) => this.generateHateoasLinks(this.service.getModelTable(), item.id as number), options.links || false)
                 res.status(200).json(response);
             }
         } catch (error) {
@@ -81,7 +81,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             }
             const options = this.generateQueryFields(req);
             const result = await this.service.updateEntity(id, data, options);
-            const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id), options.links)
+            const response = HateoasTransformer.addLinks(result, this.generateHateoasLinks(this.service.getModelTable(), result.id as number), options.links)
             res.status(200).json(response);
         } catch (error) {
             res.status(500).json(this.handleError('Error updating entity', error as Error));
