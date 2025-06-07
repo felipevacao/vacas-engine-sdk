@@ -11,6 +11,12 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         super(service)
     }    
     
+    /**
+     * Generates HATEOAS links for a specific entity.
+     * @param table The name of the table (model) the entity belongs to.
+     * @param id The ID of the entity.
+     * @returns An array of HATEOAS links for the entity.
+     */
     protected generateHateoasLinks(
         table: string, 
         id: number | undefined
@@ -24,6 +30,11 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }
 
+    /**
+     * Creates a new entity.
+     * @param req The request object containing the entity data.
+     * @param res The response object to send the result.
+     */
     async create(
         req: Request, 
         res: Response
@@ -63,6 +74,11 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }
 
+    /**
+     * Retrieves all entities.
+     * @param req The request object containing query parameters.
+     * @param res The response object to send the result.
+     */
     async findAll(
         req: Request, 
         res: Response
@@ -96,6 +112,11 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }  
 
+    /**
+     * Finds an entity by its ID.
+     * @param req The request object containing the entity ID.
+     * @param res The response object to send the result.
+     */
     async findById(
         req: Request, 
         res: Response
@@ -141,6 +162,12 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             }
 
     }
+
+    /**
+     * Finds entities by specific fields.
+     * @param req The request object containing query parameters.
+     * @param res The response object to send the result.
+     */
     async findBy(
         req: Request, 
         res: Response
@@ -185,6 +212,11 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }
 
+    /**
+     * Updates an existing entity.
+     * @param req The request object containing the entity ID and update data.
+     * @param res The response object to send the result.
+     */
     async update(
         req: Request, 
         res: Response
@@ -229,6 +261,11 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }
 
+    /**
+     * Deletes an entity by its ID.
+     * @param req The request object containing the entity ID.
+     * @param res The response object to send the result.
+     */
     async delete(
         req: Request, 
         res: Response
@@ -277,6 +314,11 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             }
     }
 
+    /**
+     * Force deletes an entity by its ID.
+     * @param req The request object containing the entity ID.
+     * @param res The response object to send the result.
+     */
     async forceDelete(
         req: Request, 
         res: Response

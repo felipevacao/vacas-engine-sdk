@@ -9,22 +9,31 @@ const SALT_ROUNDS = 12;
 const compareAsync = promisify(compare);
 
 export class AuthController extends UsersController {
+
     private session: SessionController
+
     constructor() {
         super();
         this.session = new SessionController()
     }
 
-    private async generateHash(password: string): Promise<string> {
+    private async generateHash(
+      password: string
+    ): Promise<string> {
+
         const salt = await genSalt(SALT_ROUNDS);
         const passwordHash = await hash(password, salt);
         return passwordHash;
+
     }
 
-  private async getEntityByEmail(email: string): Promise<OutputData<UsersEntity> | null> {
+  private async getEntityByEmail(
+    email: string
+  ): Promise<OutputData<UsersEntity> | null> {
+
     const options = {
-        where: { "email": email },
-      } as QueryFields<UsersEntity>
+      where: { "email": email },
+    } as QueryFields<UsersEntity>
 
     const [userData] = await this.findByEntity(options);
     if (!userData) {
@@ -33,23 +42,34 @@ export class AuthController extends UsersController {
     return userData;
   }
 
-  private async verifyUserPassword(email: string, password: string): Promise<OutputData<UsersEntity> | null> {
-    const user = await this.getEntityByEmail(email);
+  private async verifyUserPassword(
+    email: string, 
+    password: string
+  ): Promise<OutputData<UsersEntity> | null> {
 
+    const user = await this.getEntityByEmail(email);
     if(user && await this.comparePassword(password, user?.password)){
       return user
     }
     return null;
   }
 
-  private async comparePassword(password: string, passwordHash: string = '123'): Promise<boolean> {
+  private async comparePassword(
+    password: string, 
+    passwordHash: string = '123'
+  ): Promise<boolean> {
+
     const match = await compareAsync(password, passwordHash);
-    
     await new Promise(resolve => setTimeout(resolve, 100));
     return match
+
   }
 
-  private async updatePassword(user: OutputData<UsersEntity>, newPassword: string): Promise<void> {
+  private async updatePassword(
+    user: OutputData<UsersEntity>, 
+    newPassword: string
+  ): Promise<void> {
+
     const passwordHash = await this.generateHash(newPassword);
     if(user.id){
       const options = {
@@ -65,9 +85,15 @@ export class AuthController extends UsersController {
         throw new Error(errorMessage);
       }
     }
+
   }
 
-  public async login(login: string, password: string, ipAdress: string): Promise<{ token: string } | boolean> {
+  public async login(
+    login: string, 
+    password: string, 
+    ipAdress: string
+  ): Promise<{ token: string } | boolean> {
+
       const user = await this.verifyUserPassword(login, password);
       if (!user) {
           return false;
@@ -76,8 +102,12 @@ export class AuthController extends UsersController {
       return session;
   }
 
-  public async logout(sessionId: string | number): Promise<void> {
+  public async logout(
+    sessionId: string | number
+  ): Promise<void> {
+
       await this.session.deleteSession(sessionId);
+      
   }
 
 }

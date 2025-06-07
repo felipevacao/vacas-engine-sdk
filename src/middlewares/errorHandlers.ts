@@ -1,16 +1,61 @@
 // api/src/utils/errorHandlers.ts
+import { ERROR_CODES } from '@constants/errorCodes';
+import { ResponseHandler } from '@utils/responseHandler';
 import { Request, Response } from 'express';
 
-// Função para retornar erro 404
-export const notFound = (res: Response, message: string = 'Rota não encontrada.') => {
-  return res.status(404).json({ error: message });
+/**
+ * Middleware to handle not found routes.
+ * @param res - The Express response object.
+ * @param message - Optional custom message for the not found error.
+ */
+export const notFound = (
+    res: Response, 
+    message: string = 'Rota não encontrada.'
+  ) => {
+
+    ResponseHandler.error(
+          res,
+          message,
+          ERROR_CODES.NOT_FOUND,
+          404
+      )
+
 };
 
-export const routeNotFound = (req: Request, res: Response) => {
+/**
+ * Middleware to handle route not found errors.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
+export const routeNotFound = (
+  req: Request, 
+  res: Response
+) => {
+
   notFound(res, 'Rota não encontrada.');
+
 };
 
-export const errorHandler = (err: Error, req: Request, res: Response) => {
+/**
+ * Middleware to handle internal server errors.
+ * Logs the error and sends a generic error response.
+ * @param err - The error object.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
+export const errorHandler = (
+  err: Error, 
+  req: Request, 
+  res: Response
+) => {
+
   console.error('Erro:', err.message);
-  res.status(500).json({ error: 'Algo deu errado.' });
+  res.status(500).json({ error: 'Algo deu errado.' })
+  ResponseHandler.error(
+    res,
+    err.message || 'Erro interno do servidor.',
+    ERROR_CODES.INTERNAL_ERROR,
+    500
+  );
+
 };

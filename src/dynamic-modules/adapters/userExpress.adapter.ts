@@ -13,6 +13,12 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         super(service)
     }
 
+    /**
+     * Validates the input for login fields.
+     * @param input - Object containing email and password
+     * @returns Array containing email and password
+     * @throws Error if the input is invalid or if the fields are missing
+     */
     private validateLoginFields(
         input: unknown
         ): [string, string] {
@@ -28,22 +34,26 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             return [ email, password ]
     }
     
+    /**
+     * Handles user login.
+     * @param req - Express request object containing the login credentials
+     * @param res - Express response object to send the result
+     */
     async login(
         req: Request, 
         res: Response
         ): Promise<void> {
 
             try {
-                // valida input
+                // validates input
                 const [login, password] = this.validateLoginFields(req.body)
 
-                // valida login
+                // validates login
                 const session = await this.service.login(login, password, '127.0.0.1')
                 if(!session){
-                    res.status(401).json(this.handleError('Invalid login or password'))
                     ResponseHandler.error(
                         res,
-                        'Invalid ID format',
+                        'Invalid login or password',
                         ERROR_CODES.UNAUTHORIZED,
                         401
                     )
@@ -53,17 +63,22 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 // resposta
                 ResponseHandler.success(res, session, 'Login realizado com sucesso');
             } catch (error) {
-                res.status(400).json(this.handleError('', error as Error))
                 ResponseHandler.error(
                     res,
                     'Erro ao verificar Login',
                     ERROR_CODES.INTERNAL_ERROR,
-                    400
+                    500,
+                    error as Error
                 )
             }
 
     }
 
+    /**
+     * Handles user logout.
+     * @param req - Express request object containing the session information
+     * @param res - Express response object to send the result
+     */
     async logout(
         req: Request, 
         res: Response

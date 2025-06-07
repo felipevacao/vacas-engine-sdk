@@ -8,7 +8,16 @@ export class UsersController extends BaseController<UsersEntity> {
       super(UsersModel);
   }
   
-  public override async generateBodyCreate(input: InputRequest<unknown>): Promise<CreateData<UsersEntity> | null> {
+  /**
+   * Generates the body for creating a new user entity.
+   * Validates that the email and login are unique.
+   * @param input The input request containing the user data.
+   * @returns The create data for the user or throws an error if validation fails.
+   */
+  public override async generateBodyCreate(
+    input: InputRequest<unknown>
+  ): Promise<CreateData<UsersEntity> | null> {
+
       const body = input.body as CreateData<UsersEntity>;
       
       const options = {

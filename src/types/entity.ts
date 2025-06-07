@@ -43,12 +43,6 @@ export type QueryFields<T extends BaseEntity> = {
 export * from "./model";
 // export * from './queryTypes';
 
-export interface ApiError {
-    message: string;
-    code?: string;
-    details: object | string;
-}
-
 export interface IAdapter<T, U> {
   create(input: T, output: U): Promise<void>;
   findAll(input: T, output: U): Promise<void>;
