@@ -3,7 +3,9 @@ import './alias'
 
 import env from "./lib/env"
 import express from 'express'
+import "types/express"
 import router from "./routes/index"
+
 
 // Configurações do servidor
 const app = express()

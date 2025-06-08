@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
 import { AuthController } from "@controllers/AuthController"
 import { UsersEntity } from "@dynamic-modules/entities/users"
-import { LoginRequest } from "types/entity"
+import { LoginRequest, PasswordChangeRequest } from "types/entity"
 import { ERROR_CODES } from '@constants/errorCodes';
 import { ResponseHandler } from '@utils/responseHandler';
 
@@ -87,7 +87,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             if (!req.session) {
                 throw new Error('No active session')
             }
-            await this.service.logout(req.session.id)
+            await this.service.logout(req.session.sessionId as string)
 
             ResponseHandler.success(res, { message: 'Logout realizado com sucesso' });
         } catch (error) {
@@ -101,4 +101,63 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         }
 
     }
-}
+
+    private validateUpdatePasswordFields(
+        input: unknown
+        ): [ string, string ] {
+
+            if(!input || typeof input !== 'object') {
+                throw new Error('Invalid input')
+            }
+            const { currentPassword, newPassword } = input as PasswordChangeRequest
+            if( !currentPassword || !newPassword) {
+                throw new Error('Invalid input')
+            }
+            
+            return [ currentPassword, newPassword ]
+    }
+
+    async updatePassword(
+        req: Request, 
+        res: Response
+        ): Promise<void> {
+
+            try {
+                // validates input
+                const [ currentPassword, newPassword ] = this.validateUpdatePasswordFields(req.body)
+                const user = await this.service.findByIdEntity(req.session.userId as number)
+                if(!user){
+                    ResponseHandler.error(
+                        res,
+                        'Usuário não encontrado',
+                        ERROR_CODES.NOT_FOUND,
+                        404
+                    )
+                    return
+                }
+                
+                const isPasswordValid = await this.service.validatePassword(user, currentPassword)
+                if (!isPasswordValid) {
+                    ResponseHandler.error(
+                        res,
+                        'Senha atual inválida',
+                        ERROR_CODES.UNAUTHORIZED,
+                        401
+                    )
+                    return
+                }
+
+                await this.service.updatePassword(user, newPassword)
+                ResponseHandler.success(res, { message: 'Senha alterada com sucesso' });
+
+            } catch (error) {
+                ResponseHandler.error(
+                    res,
+                    'Erro ao verificar Login',
+                    ERROR_CODES.INTERNAL_ERROR,
+                    500,
+                    error as Error
+                )
+            }
+
+    }}

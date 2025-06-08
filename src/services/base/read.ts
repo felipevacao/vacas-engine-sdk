@@ -7,6 +7,7 @@ export const read = <T extends BaseEntity>(table: string) => {
         
         const result = db(table)
                 .select(options.fields || '*')
+                .orderBy(options.orderBy || 'id', options.order || 'asc')
                 .whereNull('deletedAt')
         return result
     }
@@ -25,6 +26,7 @@ export const read = <T extends BaseEntity>(table: string) => {
                     .select(options.fields || '*')
                     .where(options.where || {})
                     .where(options.whereSign.field, options.whereSign.sign, options.whereSign.value)
+                    .orderBy(options.orderBy || 'id', options.order || 'asc')
                     .whereNull('deletedAt')
         }
         return db(table)

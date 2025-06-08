@@ -103,7 +103,7 @@ export class BaseController<T extends BaseEntity> {
      */
     public async findByIdEntity(
         id: number, 
-        options: QueryFields<T>
+        options: QueryFields<T> = {}
     ): Promise<OutputData<T> | null> {
 
         const result = await this.model.findById(id, options)

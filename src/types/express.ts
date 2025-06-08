@@ -2,7 +2,8 @@ import session from 'express-session';
 
 declare module 'express-session' {
   interface SessionData {
-    userId?: string;
+    sessionId?: string;
+    userId?: number;
     // Adicione outros campos conforme necessário
   }
 }

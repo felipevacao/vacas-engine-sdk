@@ -13,14 +13,14 @@ export const tokenMiddleware = async (
   req: Request, 
   res: Response, 
   next: NextFunction
-) => {
+): Promise<void> => {
 
   const authHeader = req.headers.authorization
   
   // 1. Verificar se o token foi enviado
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
 
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       error: 'Token de autenticação não fornecido',
       code: 'MISSING_TOKEN'
@@ -28,32 +28,37 @@ export const tokenMiddleware = async (
   }
 
   const token = authHeader?.split(' ')[1]
-  if(token){
+  if (!token) {
+    res.status(401).json({
+      success: false,
+      error: 'Token não fornecido',
+      code: 'MISSING_TOKEN'
+    })
+  }
+
     try {
         // 2. Validar o token
         const sessionController = new SessionController()
-        const [ user, session ] = await sessionController.validateUser(token, '127.0.0.1')
+        const [ user, session ] = await sessionController.validateUser(token as string, '127.0.0.1')
         if(!session || !user) {
             res.status(401).json({
                 success: false,
                 error: 'Sessão inválida ou usuário não encontrado',
                 code: 'INVALID_SESSION'
             })
-            return
         }
         
-        if(session){
           req.session = {
-            id: session.id,
+            sessionId: session.id,
+            userId: user.id as number,
           } as Session & Partial<SessionData>
-        }
 
         next()
 
     }catch (error) {
         handleTokenError(error as Error, res)
     }
-  }
+  
 
 /**
  * Handle token validation errors.
@@ -67,7 +72,7 @@ function handleTokenError(
   console.error('Erro na validação do token:', error)
   
   if (error.name === 'TokenExpiredError') {
-    ResponseHandler.error(
+    return ResponseHandler.error(
         res,
         'Token expirado',
         ERROR_CODES.EXPIRED_TOKEN,
@@ -75,7 +80,7 @@ function handleTokenError(
     )
   }
 
-  ResponseHandler.error(
+  return ResponseHandler.error(
       res,
       'Erro durante a validação do token',
       ERROR_CODES.INTERNAL_ERROR,

@@ -33,6 +33,8 @@ export type QueryFields<T extends BaseEntity> = {
     where?: Partial<T>,
     limit?: number,
     offset?: number,
+    orderBy?: string,
+    order?: string,
     whereSign?: {
       field: string,
       sign: string,
@@ -54,6 +56,12 @@ export type LoginRequest = {
   email: string;
   password: string;
 };
+
+export type PasswordChangeRequest = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 // Layout de Entrada - Create
 export interface InputRequest<T> {
   body?: object | LoginRequest,

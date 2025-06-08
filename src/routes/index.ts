@@ -6,21 +6,16 @@ import { routeNotFound, errorHandler } from '@middlewares/errorHandlers'
 import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
-import { AuthController } from '@controllers/AuthController';
-import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
+import authRoutes from './auth';
+
 
 const router = express.Router()
-const authController = new AuthController();
-const userExpressAdapter = new UserExpressAdapter(authController);
-
 
 router.use(logging)
 
 
 // Carrega rotas automaticamente, de acordo com cada entidade
 const loadRoutes = async () => {
-
-    router.post('/users/login', userExpressAdapter.login.bind(userExpressAdapter));
 
     // load routes from dynamic modules
     const routesDir = path.join(__dirname, '../dynamic-modules/routes'); 
@@ -40,6 +35,8 @@ const loadRoutes = async () => {
         res.send('API Treis está funcionando! ')
     })
 
+    router.use('/auth', authRoutes)
+
     router.use('/test', testRoutes)
 
     router.get('/test/routes', (req: Request, res: Response) => {
@@ -53,7 +50,6 @@ const loadRoutes = async () => {
     router.use(errorHandler)
 
 };
-
 loadRoutes().catch((err) => {
     console.error('Erro ao carregar rotas:', err);
 });

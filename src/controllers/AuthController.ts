@@ -65,7 +65,16 @@ export class AuthController extends UsersController {
 
   }
 
-  private async updatePassword(
+  public async validatePassword(
+    user: OutputData<UsersEntity>,
+    password: string
+  ): Promise<boolean> {
+    const match = await this.comparePassword(password, user.password);
+    return match;
+
+  }
+
+  public async updatePassword(
     user: OutputData<UsersEntity>, 
     newPassword: string
   ): Promise<void> {
