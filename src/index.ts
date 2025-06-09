@@ -3,7 +3,7 @@ import './alias'
 
 import env from "./lib/env"
 import express from 'express'
-import "types/express"
+import "./types/express"
 import router from "./routes/index"
 
 
