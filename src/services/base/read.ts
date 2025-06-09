@@ -3,16 +3,23 @@ import { BaseEntity, OutputData, QueryFields } from 'types/entity'
 
 export const read = <T extends BaseEntity>(table: string) => {
 
-    const findAll = async ( options: QueryFields<T> = {} ): Promise<OutputData<T>[]> => {
+    const findAll = async ( 
+        options: QueryFields<T> = {} 
+    ): Promise<OutputData<T>[]> => {
         
         const result = db(table)
                 .select(options.fields || '*')
                 .orderBy(options.orderBy || 'id', options.order || 'asc')
                 .whereNull('deletedAt')
         return result
+
     }
 
-    const findById = async (id: number | string, options: QueryFields<T> = {} ): Promise<OutputData<T> | undefined> => {
+    const findById = async (
+        id: number | string, 
+        options: QueryFields<T> = {} 
+    ): Promise<OutputData<T> | undefined> => {
+
         return db(table)
                 .select(options.fields || '*')
                 .where({ id })
@@ -20,7 +27,10 @@ export const read = <T extends BaseEntity>(table: string) => {
                 .first()
     }
 
-    const findBy = async (options: QueryFields<T>): Promise<OutputData<T>[] | undefined> => {
+    const findBy = async (
+        options: QueryFields<T>
+    ): Promise<OutputData<T>[] | undefined> => {
+
         if(options.whereSign){
             return db(table)
                     .select(options.fields || '*')
@@ -36,4 +46,5 @@ export const read = <T extends BaseEntity>(table: string) => {
     }
 
     return { findAll, findById, findBy }
+    
 }

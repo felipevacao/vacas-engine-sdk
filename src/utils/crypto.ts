@@ -22,12 +22,17 @@ export const cryptoUtils = {
      * @param hash The stored hash to compare against.
      * @returns True if the token matches the hash, false otherwise.
      */
-    verifyToken(token: string, hash: string): boolean {
+    verifyToken(
+        token: string, 
+        hash: string
+    ): boolean {
+
         const newHash = this.hashToken(token);
         return crypto.timingSafeEqual(
         Buffer.from(newHash, 'hex'),
         Buffer.from(hash, 'hex')
         );
+        
     },
     /**
      * Generates an expiration date for a token.
