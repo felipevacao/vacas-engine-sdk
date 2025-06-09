@@ -1,12 +1,12 @@
 import { Model } from "./model";
-
+// Layout Base de Entidade
 export interface BaseEntity {
     id?: number | string;
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date | null;
 }
-
+// layout de retorno HATEOAS
 export type HateoasLink = {
     rel: string;
     href: string;
@@ -27,6 +27,7 @@ export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'upd
 // Layout de Saída
 export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt' | 'deletedAt'>;
 
+// Layout de Query
 export type QueryFields<T extends BaseEntity> = { 
     links?: boolean,
     fields?: (keyof Model<T>)[],

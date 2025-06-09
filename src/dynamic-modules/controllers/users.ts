@@ -40,6 +40,11 @@ export class UsersController extends BaseController<UsersEntity> {
       return body;
   }
 
+  /**
+   * Generates the body for updating an existing user entity.
+   * @param input The input request containing the user data.
+   * @returns The update data for the user or null if not extended.
+   */
   public override async generateBodyUpdate(
       input: InputRequest<unknown>
   ): Promise<UpdateData<UsersEntity> | null> {

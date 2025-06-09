@@ -102,6 +102,11 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
 
     }
 
+    /** * Validates the input for updating the password fields.
+     * @param input - Object containing currentPassword and newPassword
+     * @returns Array containing currentPassword and newPassword
+     * @throws Error if the input is invalid or if the fields are missing
+     */
     private validateUpdatePasswordFields(
         input: unknown
         ): [ string, string ] {
@@ -116,7 +121,10 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             
             return [ currentPassword, newPassword ]
     }
-
+        /** * Handles updating the user's password.
+     * @param req - Express request object containing the current and new passwords
+     * @param res - Express response object to send the result
+     */
     async updatePassword(
         req: Request, 
         res: Response
