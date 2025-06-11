@@ -1,4 +1,4 @@
-import { BaseEntity, CreateData, UpdateData, OutputData, QueryFields } from "types/entity";
+import { BaseEntity, CreateData, UpdateData, OutputData, QueryFields, Metadata } from "types/entity";
 
 export interface Model<T extends BaseEntity> {
     table: string,
@@ -11,5 +11,6 @@ export interface Model<T extends BaseEntity> {
     forceDelete: (id: number | string) => Promise<boolean>
     selectAbleFields: (keyof T)[],
     defaultFields: (keyof T)[],
-    excludedFields: (keyof T)[]
+    excludedFields: (keyof T)[],
+    metadata: () => Promise<Metadata> | null
 }

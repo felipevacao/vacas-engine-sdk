@@ -73,3 +73,15 @@ export interface InputRequest<T> {
     links?: string;
   };
 }
+
+export interface Metadata {
+  table: string;
+  fields: {
+    column_name: string;
+    data_type: string;
+    character_maximum_length?: number;
+    is_nullable?: string
+  }[];
+  // relationships?: any[]; // Placeholder for future relationships
+  // constraints?: any[]; // Placeholder for future constraints
+}

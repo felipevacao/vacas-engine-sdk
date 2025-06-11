@@ -15,6 +15,11 @@ const UserSessionsModel: Model<UserSessionsEntity> = {
   selectAbleFields: ['userId', 'expiresAt', 'lastUsedAt', 'isRevoked', 'tokenHash', 'ipAddress'],
   defaultFields: ['id'],
   excludedFields: [],
+  metadata: async () => {
+      const result = await baseService.metadata('user_sessions')();
+      if (!result) throw new Error('Metadata not found');
+      return result;
+    },
 };
 
 export default UserSessionsModel;

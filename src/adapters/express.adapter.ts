@@ -366,4 +366,21 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     )
             }
     }
+
+    async metadata(
+        req: Request, 
+        res: Response
+        ): Promise<void> {
+        const metadata = await this.service.getMetadata();
+        if (!metadata) {
+            ResponseHandler.error(
+                res,
+                'Metadata not found',
+                ERROR_CODES.NOT_FOUND,
+                404
+            );
+            return;
+        }
+        ResponseHandler.success(res, metadata);
+    }
 }

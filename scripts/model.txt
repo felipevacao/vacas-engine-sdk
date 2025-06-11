@@ -15,6 +15,11 @@ const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   selectAbleFields: [{{fields}}],
   defaultFields: ['id'],
   excludedFields: [],
+  metadata: async () => {
+      const result = await baseService.metadata('{{realTableName}}')();
+      if (!result) throw new Error('Metadata not found');
+      return result;
+    },
 };
 
 export default {{tablenameCapital}}Model;
