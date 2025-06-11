@@ -80,7 +80,9 @@ export interface Metadata {
     column_name: string;
     data_type: string;
     character_maximum_length?: number;
-    is_nullable?: string
+    formType?: string;
+    label?: string;
+    required?: boolean;
   }[];
   // relationships?: any[]; // Placeholder for future relationships
   // constraints?: any[]; // Placeholder for future constraints

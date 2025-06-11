@@ -45,7 +45,9 @@ export const metadata = (table: string) => {
                     name: field.columnName,
                     type: mapDataType(field.dataType),
                     maxLength: field.characterMaximumLength,
-                    isNullable: field.isNullable
+                    formType: getFormType(field.dataType, field.columnName),
+                    label: generateLabel(field.columnName),
+                    required: field.isNullable === 'NO'
                 }
             }) as [];
     }
@@ -75,5 +77,36 @@ export const metadata = (table: string) => {
         return typeMap[knexType.toLowerCase()] || 'string';
 
     }
+
+    function getFormType(dbType: string, fieldName: string): string {
+    const name = fieldName.toLowerCase();
+    
+    // Por nome do campo
+    if (name.includes('email')) return 'email';
+    if (name.includes('password')) return 'password';
+    if (name.includes('phone')) return 'tel';
+    if (name.includes('url') || name.includes('link')) return 'url';
+    if (name === 'id' || name.endsWith('_id')) return 'hidden';
+    
+    // Por tipo do banco
+    switch (mapDataType(dbType)) {
+      case 'boolean': return 'checkbox';
+      case 'number': return 'number';
+      case 'date': return 'date';
+      case 'datetime': return 'datetime-local';
+      case 'time': return 'time';
+      case 'object': return 'textarea';
+      default: return 'text';
+    }
+  }
+
+  function generateLabel(fieldName: string): string {
+    return fieldName
+      .replace(/_/g, ' ')
+      .replace(/([A-Z])/g, ' $1')
+      .toLowerCase()
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  }
 }
 
