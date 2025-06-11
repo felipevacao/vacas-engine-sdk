@@ -1,5 +1,5 @@
 import env from "@lib/env"
-import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest } from 'types/entity'
+import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata } from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
     hateoas: boolean
@@ -174,4 +174,7 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
+    public async getMetadata(): Promise<Metadata | null>{
+        return await this.model.metadata()
+    }
 }

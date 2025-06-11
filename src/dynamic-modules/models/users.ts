@@ -14,6 +14,11 @@ const UsersModel: Model<UsersEntity> = {
   selectAbleFields: ['name', 'email', 'login'],
   defaultFields: ['id'],
   excludedFields: ['password'],
+  metadata: async () => {
+    const result = await baseService.metadata('users')();
+    if (!result) throw new Error('Metadata not found');
+    return result;
+  },
 };
 
 export default UsersModel;

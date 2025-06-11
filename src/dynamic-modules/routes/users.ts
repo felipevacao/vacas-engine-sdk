@@ -11,8 +11,10 @@ const expressAdapter = new ExpressAdapter(usersController);
 router.post('/', expressAdapter.create.bind(expressAdapter));
 
 // R
+router.get('/metadata', expressAdapter.metadata.bind(expressAdapter))
 router.get('/', expressAdapter.findAll.bind(expressAdapter));
 router.get('/:id', expressAdapter.findById.bind(expressAdapter));
+
 
 // U
 router.patch('/:id', expressAdapter.update.bind(expressAdapter));

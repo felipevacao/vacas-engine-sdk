@@ -13,6 +13,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
     abstract update(input: V, output: U): Promise<void>;
     abstract delete(input: V, output: U): Promise<void>;
     abstract forceDelete(input: V, output: U): Promise<void>;
+    abstract metadata(input: V, output: U): Promise<void>;
 
     /**
      * Validates the input for creating a new entity.
