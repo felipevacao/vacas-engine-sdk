@@ -2,6 +2,7 @@ import { BaseController } from '@controllers/baseController';
 import UsersModel from '@dynamic-modules/models/users';
 import { UsersEntity } from '@dynamic-modules/entities/users';
 import { CreateData, InputRequest, QueryFields, UpdateData } from 'types/entity';
+import { hashUtils } from '@utils/hash';
 
 export class UsersController extends BaseController<UsersEntity> {
   constructor() {
@@ -37,9 +38,12 @@ export class UsersController extends BaseController<UsersEntity> {
         throw new Error('Login already exists')
       }
 
+      if(body.password) {
+        body.password = hashUtils.generateHash(body.password)
+      }
+
       return body as CreateData<UsersEntity>;
   }
-
   /**
    * Generates the body for updating an existing user entity.
    * @param input The input request containing the user data.

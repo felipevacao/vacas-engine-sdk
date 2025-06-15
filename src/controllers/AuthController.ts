@@ -1,12 +1,8 @@
 import { UsersController } from "@dynamic-modules/controllers/users";
 import { UsersEntity } from "@dynamic-modules/entities/users";
-import { hash, genSalt, compare } from 'bcrypt';
-import { promisify } from 'util';
 import { Model, OutputData, QueryFields, UpdateData } from "types/entity";
 import { SessionController } from "./SessionController";
-
-const SALT_ROUNDS = 12;
-const compareAsync = promisify(compare);
+import { hashUtils } from "@utils/hash";
 
 export class AuthController extends UsersController {
 
@@ -21,13 +17,11 @@ export class AuthController extends UsersController {
      * @param password The password to hash.
      * @returns The hashed password.
      */
-    private async generateHash(
+    public async generateHash(
       password: string
     ): Promise<string> {
 
-        const salt = await genSalt(SALT_ROUNDS);
-        const passwordHash = await hash(password, salt);
-        return passwordHash;
+        return hashUtils.generateHash(password);
 
     }
     /**
@@ -81,7 +75,7 @@ export class AuthController extends UsersController {
     passwordHash: string = '123'
   ): Promise<boolean> {
 
-    const match = await compareAsync(password, passwordHash);
+    const match = await hashUtils.compareAsync(password, passwordHash);
     await new Promise(resolve => setTimeout(resolve, 100));
     return match
 

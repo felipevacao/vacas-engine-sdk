@@ -18,10 +18,12 @@ export class MetadataService {
     
     // 2. Carregar configurações do manifest
     const manifest = this.loadTableManifest(tableName);
-    
+    console.log('manifest', manifest);
     // 3. Combinar as informações
     const fields = this.combineFieldsMetadata(dbFields, manifest.fields || {}, enums || {});
     
+    const requestRaw = this.getTableObject(fields);
+
     return {
       table: tableName,
       displayName: manifest.displayName || this.formatTableName(tableName),
@@ -29,10 +31,28 @@ export class MetadataService {
       fields,
       relationships,
       config: manifest.config,
-      tableValidations: this.extractTableValidations(constraints)
+      tableValidations: this.extractTableValidations(constraints),
+      requestRaw
     };
   }
 
+  private transformarComRegex(input: string): string {
+  return input
+    .replace(/^\{|\}$/g, '') // Remove chaves do início/fim
+    .replace(/\s*,\s*/g, ' | '); // Substitui vírgulas por |
+  }
+
+  private getTableObject(fields: EnhancedFieldMetadata[]): Record<string, string> {
+    return fields.reduce((acc, field) => {
+      if(field.name === 'id') {
+        return acc; // Skip 'id' field to avoid redundancy
+      }
+      acc[field.name] = field.type == 'enum' 
+                        ? this.transformarComRegex(field.enum_values?.toString() as string) ?? field.defaultValue as string 
+                        : field.defaultValue as string ?? '';
+      return acc;
+    }, {} as Record<string, string>);
+  }
   // Novo método para extrair valores ENUM
   private async extractEnumValues(dbFields: DatabaseFieldInfo[]): Promise<EnumInfo[] | []> {
     // Encontra todos os tipos ENUM usados nos campos
@@ -150,9 +170,10 @@ export class MetadataService {
 
   private loadTableManifest(tableName: string): TableManifest {
     try {
-      const manifestPath = join(process.cwd(), 'manifests', `${tableName}.json`);
+      const manifestPath = join(process.cwd(), 'src/dynamic-modules/manifests', `${tableName}.json`);
       const manifestContent = readFileSync(manifestPath, 'utf-8');
-      return JSON.parse(manifestContent);
+
+      return JSON.parse(manifestContent)[tableName];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Se não existir manifest, retorna configuração padrão

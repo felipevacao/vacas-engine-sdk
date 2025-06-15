@@ -18,6 +18,7 @@ const env = cleanEnv(
         ENABLE_TEST_ROUTES: bool({ default: false }),
         ENABLE_HATEOAS: bool({ default: true }),
         ENABLE_RETURN_ERRORS: bool({ default: false }),
+        SALT_ROUNDS: port({ default: 10 }),
     }
 )
 
