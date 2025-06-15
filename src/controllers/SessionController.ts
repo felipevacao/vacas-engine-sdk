@@ -138,7 +138,7 @@ export class SessionController {
              }
         } as QueryFields<UserSessionsEntity>
         // Find active sessions for the given IP address
-        const activeSessions = await this.userSessions.findByEntity(options)   
+        const activeSessions = await this.userSessions.findByEntity(options)
         if(activeSessions.length === 0) {
             throw new Error('Sessão inválida!')
         }

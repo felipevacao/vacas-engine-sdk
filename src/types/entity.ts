@@ -36,11 +36,16 @@ export type QueryFields<T extends BaseEntity> = {
     offset?: number,
     orderBy?: string,
     order?: string,
+    page?: number,
+    pageSize?: number,
+    // whereSign is used for specific conditions like 'greater than', 'less than', etc.
+    // Example: whereSign: { field: 'age', sign: '>', value: '18' }
     whereSign?: {
       field: string,
       sign: string,
       value: string
-    }
+    },
+    paginated?: boolean;
 }
 
 export * from "./model";
@@ -70,7 +75,19 @@ export interface InputRequest<T> {
   query: {
     fields?: string;
     where?: Partial<T>;
+    whereSign?: {
+      field: string;
+      sign: string;
+      value: string;
+    };
+    orderBy?: string;
+    order?: string;
+    limit?: number;
+    offset?: number;
+    page?: number;
+    pageSize?: number;
     links?: string;
+    paginated?: string
   };
 }
 
@@ -86,4 +103,16 @@ export interface Metadata {
   }[];
   // relationships?: any[]; // Placeholder for future relationships
   // constraints?: any[]; // Placeholder for future constraints
+}
+
+export interface PaginatedResult<T extends BaseEntity> {
+    data: T[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+    };
 }

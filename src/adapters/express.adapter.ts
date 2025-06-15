@@ -75,7 +75,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     }
 
     /**
-     * Retrieves all entities.
+     * Retrieves all entities, paginated.
      * @param req The request object containing query parameters.
      * @param res The response object to send the result.
      */
@@ -88,19 +88,22 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 // Valida Input
                 const options = this.generateQueryFields(req)
                 // Busca entidades
-                const result = await this.service.findAllEntity(options)
+                const result = await this.service.findAllEntityPaginated(options)
                 // Retorno Hateoas
-                const response = HateoasTransformer.addCollectionLinks(
-                    result, 
+                result.data = HateoasTransformer.addCollectionLinks(
+                    result.data, 
                     (item) => this.generateHateoasLinks(
                             this.service.getModelTable(), 
                             item.id as number
                         ), 
                     options.links
                 )
+                
                 // resposta
-                ResponseHandler.success(res, response)
+                ResponseHandler.paginated(res, result.data, result.pagination)
+                
             } catch (error) {
+                console.log(error)
                 ResponseHandler.error(
                     res, 
                     'Error fetching entities', 
@@ -177,8 +180,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 // Valida Input
                 const options = this.generateQueryFields(req)
                 // Busca entidade
-                const result = await this.service.findByEntity(options)
-                if (result.length === 0) {
+                const result = await this.service.findByEntityPaginated(options)
+                if (result.data.length === 0) {
                     ResponseHandler.error(
                         res,
                         '',
@@ -188,8 +191,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     return
                 }
                 // Retorno Hateoas
-                const response = HateoasTransformer.addCollectionLinks(
-                    result, 
+                result.data = HateoasTransformer.addCollectionLinks(
+                    result.data, 
                     (item) => this.generateHateoasLinks(
                         this.service.getModelTable(), 
                         item.id as number
@@ -198,7 +201,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 )
                 
                 // resposta
-                ResponseHandler.success(res, response)
+                ResponseHandler.paginated(res, result.data, result.pagination)
                 
             } catch (error) {
                 ResponseHandler.error(

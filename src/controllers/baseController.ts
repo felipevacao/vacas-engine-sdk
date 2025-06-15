@@ -1,5 +1,5 @@
 import env from "@lib/env"
-import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata } from 'types/entity'
+import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata, PaginatedResult } from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
     hateoas: boolean
@@ -96,6 +96,19 @@ export class BaseController<T extends BaseEntity> {
     }
 
     /**
+     * Finds all entities in the model.
+     * @param options The query fields for finding entities.
+     * @returns An array of found entities.
+     */
+    public async findAllEntityPaginated(
+        options: QueryFields<T>
+    ): Promise<PaginatedResult<T>> {
+
+        return await this.model.findAllPaginated(options) 
+
+    }
+
+    /**
      * Finds an entity by its ID.
      * @param id The ID of the entity to find.
      * @param options The query fields for finding the entity.
@@ -128,6 +141,19 @@ export class BaseController<T extends BaseEntity> {
             return []
         }
         return result
+
+    }
+
+    /**
+     * Finds entities by specific fields.
+     * @param options The query fields for finding entities.
+     * @returns An array of found entities or an empty array if none found.
+     */
+    public async findByEntityPaginated(
+        options: QueryFields<T>
+    ): Promise<PaginatedResult<T>> {
+
+        return await this.model.findByPaginated(options)
 
     }
 
