@@ -68,11 +68,9 @@ export const tokenMiddleware = async (
 function handleTokenError(
   error: Error, 
   res: Response
-) {  
-  console.error('Erro na validação do token:', error)
-  
+) {    
   if (error.name === 'TokenExpiredError') {
-    return ResponseHandler.error(
+    ResponseHandler.error(
         res,
         'Token expirado',
         ERROR_CODES.EXPIRED_TOKEN,
@@ -80,7 +78,7 @@ function handleTokenError(
     )
   }
 
-  return ResponseHandler.error(
+  ResponseHandler.error(
       res,
       'Erro durante a validação do token',
       ERROR_CODES.INTERNAL_ERROR,

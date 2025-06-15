@@ -1,0 +1,327 @@
+import { db } from '@utils/db'
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { DatabaseFieldInfo, EnhancedFieldMetadata, EnhancedTableMetadata, EnumInfo, ManifestFieldConfig, TableManifest } from 'types/metadata';
+
+export class MetadataService {
+  private db: typeof db;
+  constructor() {
+    this.db = db;
+  }
+
+  async getTableMetadata(tableName: string): Promise<EnhancedTableMetadata> {
+    // 1. Extrair informações do banco
+    const dbFields = await this.extractDatabaseFields(tableName);
+    const relationships = await this.extractRelationships(tableName);
+    const constraints = await this.extractConstraints(tableName);
+    const enums = await this.extractEnumValues(dbFields);
+    
+    // 2. Carregar configurações do manifest
+    const manifest = this.loadTableManifest(tableName);
+    
+    // 3. Combinar as informações
+    const fields = this.combineFieldsMetadata(dbFields, manifest.fields || {}, enums || {});
+    
+    return {
+      table: tableName,
+      displayName: manifest.displayName || this.formatTableName(tableName),
+      description: manifest.description,
+      fields,
+      relationships,
+      config: manifest.config,
+      tableValidations: this.extractTableValidations(constraints)
+    };
+  }
+
+  // Novo método para extrair valores ENUM
+  private async extractEnumValues(dbFields: DatabaseFieldInfo[]): Promise<EnumInfo[] | []> {
+    // Encontra todos os tipos ENUM usados nos campos
+  const enumTypes = dbFields
+    .filter(field => field.data_type === 'USER-DEFINED' && field.udt_name)
+    .map(field => field.udt_name!)
+    .filter((value, index, self) => self.indexOf(value) === index);
+
+  if (enumTypes.length === 0) {
+    return [];
+  }
+
+  const results: EnumInfo[] = [];
+  
+  for (const enumType of enumTypes) {
+    const query = `
+      SELECT 
+        t.typname as enum_name,
+        array_agg(e.enumlabel ORDER BY e.enumsortorder) as enum_values
+      FROM pg_type t 
+      JOIN pg_enum e ON t.oid = e.enumtypid 
+      WHERE t.typname = ?
+      GROUP BY t.typname
+    `;
+    
+    const result = await this.db.raw(query, [enumType]);
+    if (result.rows && result.rows.length > 0) {
+      results.push(...result.rows);
+    }
+  }
+  
+  return results;
+  }
+
+  private async extractDatabaseFields(tableName: string): Promise<DatabaseFieldInfo[]> {
+    const query = `
+      SELECT 
+        c.column_name,
+        c.data_type,
+        c.udt_name,
+        c.is_nullable,
+        c.column_default,
+        c.character_maximum_length,
+        c.numeric_precision,
+        c.numeric_scale,
+        tc.constraint_type,
+        kcu2.table_name as foreign_table,
+        kcu2.column_name as foreign_column,
+        cc.check_clause
+      FROM information_schema.columns c
+      LEFT JOIN information_schema.key_column_usage kcu 
+        ON c.table_name = kcu.table_name 
+        AND c.column_name = kcu.column_name
+      LEFT JOIN information_schema.table_constraints tc 
+        ON kcu.constraint_name = tc.constraint_name
+      LEFT JOIN information_schema.referential_constraints rc 
+        ON kcu.constraint_name = rc.constraint_name
+      LEFT JOIN information_schema.key_column_usage kcu2 
+        ON rc.unique_constraint_name = kcu2.constraint_name
+      LEFT JOIN information_schema.check_constraints cc 
+        ON tc.constraint_name = cc.constraint_name
+      WHERE c.table_name = ?
+      AND c.table_schema = 'public'
+      AND c.column_name NOT IN ('created_at', 'updated_at', 'deleted_at')
+      ORDER BY c.ordinal_position
+    `;
+
+    return await this.db.raw(query, [tableName]).then(result => result.rows);
+  }
+
+  private async extractRelationships(tableName: string): Promise<[]> {
+    const query = `
+      SELECT 
+        kcu.column_name,
+        kcu.constraint_name,
+        rel_kcu.table_name as foreign_table,
+        rel_kcu.column_name as foreign_column
+      FROM information_schema.key_column_usage kcu
+      JOIN information_schema.referential_constraints rco 
+        ON kcu.constraint_name = rco.constraint_name
+      JOIN information_schema.key_column_usage rel_kcu 
+        ON rco.unique_constraint_name = rel_kcu.constraint_name
+      WHERE kcu.table_name = ?
+    `;
+
+    const fks = await this.db.raw(query, [tableName]).then(result => result.rows);
+    
+    return fks.map((fk: { foreign_table: string; column_name: unknown; foreign_column: unknown; }) => ({
+      name: this.camelCase(fk.foreign_table),
+      type: 'belongsTo' as const,
+      table: fk.foreign_table,
+      foreignKey: fk.column_name,
+      localKey: fk.foreign_column
+    }));
+  }
+
+  private async extractConstraints(tableName: string): Promise<[{ constraint_name: string; constraint_type: string; column_name: string; check_clause: string | null }]> {
+    const query = `
+      SELECT 
+        tc.constraint_name,
+        tc.constraint_type,
+        kcu.column_name,
+        cc.check_clause
+      FROM information_schema.table_constraints tc
+      LEFT JOIN information_schema.key_column_usage kcu 
+        ON tc.constraint_name = kcu.constraint_name
+      LEFT JOIN information_schema.check_constraints cc 
+        ON tc.constraint_name = cc.constraint_name
+      WHERE tc.table_name = ?
+      AND tc.constraint_type IN ('UNIQUE', 'CHECK')
+    `;
+
+    return await this.db.raw(query, [tableName]).then(result => result.rows);
+  }
+
+  private loadTableManifest(tableName: string): TableManifest {
+    try {
+      const manifestPath = join(process.cwd(), 'manifests', `${tableName}.json`);
+      const manifestContent = readFileSync(manifestPath, 'utf-8');
+      return JSON.parse(manifestContent);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      // Se não existir manifest, retorna configuração padrão
+      return {};
+    }
+  }
+
+  private combineFieldsMetadata(
+    dbFields: DatabaseFieldInfo[], 
+    manifestFields: Record<string, ManifestFieldConfig>, 
+    enums: EnumInfo[]
+  ): EnhancedFieldMetadata[] {
+    // Organiza enums por nome
+      const enumsByName = enums.reduce((acc, enumInfo) => {
+        acc[enumInfo.enum_name] = enumInfo.enum_values;
+        return acc;
+      }, {} as Record<string, string[]>);
+
+    return dbFields.map(dbField => {
+      const manifestField = manifestFields[dbField.column_name] || {};
+      
+      const enumValues = dbField.udt_name ? enumsByName[dbField.udt_name] : [];
+
+      return {
+        // Informações do banco
+        name: dbField.column_name,
+        type: this.mapDatabaseType(dbField.data_type),
+        maxLength: dbField.character_maximum_length || undefined,
+        required: dbField.is_nullable === 'NO',
+        defaultValue: this.parseDefaultValue(dbField.column_default),
+        enum_values: enumValues,
+        udt_name: dbField.udt_name,
+        
+        // Informações do manifest (com fallbacks inteligentes)
+        formType: (manifestField.formType as EnhancedFieldMetadata['formType']) || this.inferFormType(dbField),
+        label: manifestField.label || this.formatFieldName(dbField.column_name),
+        
+        // Validações combinadas
+        validation: {
+          ...this.extractDatabaseValidations(dbField),
+          ...manifestField.validation
+        },
+        
+        // Relacionamentos
+        ...(dbField.foreign_table && {
+          relationship: {
+            table: dbField.foreign_table,
+            valueField: dbField.foreign_column || 'id',
+            labelField: 'name', // padrão, pode ser sobrescrito no manifest
+            searchable: true
+          }
+        }),
+        
+        // Configurações do manifest
+        display: manifestField.display,
+        format: manifestField.format,
+        crud: {
+          creatable: true,
+          editable: true,
+          listable: true,
+          searchable: !dbField.column_name.includes('password'),
+          sortable: true,
+          filterable: false,
+          ...manifestField.crud
+        },
+        config: manifestField.config,
+        options: manifestField.options
+      };
+    });
+  }
+
+  private mapDatabaseType(pgType: string): string {
+    const typeMap: Record<string, string> = {
+      'character varying': 'string',
+      'varchar': 'string',
+      'text': 'string',
+      'integer': 'integer',
+      'bigint': 'integer',
+      'smallint': 'integer',
+      'decimal': 'decimal',
+      'numeric': 'decimal',
+      'real': 'decimal',
+      'double precision': 'decimal',
+      'boolean': 'boolean',
+      'date': 'date',
+      'timestamp': 'datetime',
+      'timestamptz': 'datetime',
+      'time': 'time',
+      'json': 'json',
+      'jsonb': 'json',
+      'uuid': 'string',
+      'USER-DEFINED': 'enum', // Para tipos ENUM
+    };
+    
+    return typeMap[pgType] || 'string';
+  }
+
+  private inferFormType(dbField: DatabaseFieldInfo): EnhancedFieldMetadata['formType'] {
+    // Inferir o tipo de formulário baseado no tipo do banco e nome do campo
+    if (dbField.foreign_table) return 'select';
+    if (dbField.column_name.includes('password')) return 'password';
+    if (dbField.column_name.includes('email')) return 'email';
+    if (dbField.column_name.includes('phone') || dbField.column_name.includes('tel')) return 'tel';
+    if (dbField.column_name.includes('url')) return 'url';
+    if (dbField.data_type === 'boolean') return 'checkbox';
+    if (dbField.data_type === 'date') return 'date';
+    if (dbField.data_type === 'timestamp' || dbField.data_type === 'timestamptz') return 'datetime';
+    if (dbField.data_type === 'text' && dbField.column_name.includes('description')) return 'textarea';
+    if (['integer', 'bigint', 'smallint', 'decimal', 'numeric'].includes(dbField.data_type)) return 'number';
+    
+    return 'text';
+  }
+
+  private extractDatabaseValidations(dbField: DatabaseFieldInfo) {
+    const validation = {} as Record<string, unknown>;
+
+    if (dbField.character_maximum_length) {
+      validation.maxLength = dbField.character_maximum_length;
+    }
+    
+    if (dbField.check_clause) {
+      // Extrair validações de check constraints
+      // Ex: CHECK (age >= 18) -> min: 18
+      const ageMatch = dbField.check_clause.match(/(\w+)\s*>=\s*(\d+)/);
+      if (ageMatch) {
+        validation.min = parseInt(ageMatch[2]);
+      }
+    }
+    
+    return validation;
+  }
+
+  private extractTableValidations(constraints: [{ constraint_name: string; constraint_type: string; column_name: string; check_clause: string | null }] | [])
+  : { rule: string; message: string; fields: string[] }[] {
+    return constraints
+      .filter((c) => c.constraint_type === 'UNIQUE')
+      .map((c) => ({
+        rule: `unique_${c.column_name}`,
+        message: `Este ${c.column_name} já está sendo usado`,
+        fields: [c.column_name]
+      }));
+  }
+
+  private formatTableName(tableName: string): string {
+    return tableName
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  private formatFieldName(fieldName: string): string {
+    return fieldName
+      .replace(/_/g, ' ')
+      .replace(/Id$/, '')
+      .replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  private camelCase(str: string): string {
+    return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+  }
+
+  private parseDefaultValue(defaultValue: string | null): string | number | null | undefined {
+    if (!defaultValue) return undefined;
+    if (defaultValue === 'NULL') return null;
+    if (defaultValue.startsWith("'") && defaultValue.endsWith("'")) {
+      return defaultValue.slice(1, -1);
+    }
+    if (!isNaN(Number(defaultValue))) {
+      return Number(defaultValue);
+    }
+    return defaultValue;
+  }
+}

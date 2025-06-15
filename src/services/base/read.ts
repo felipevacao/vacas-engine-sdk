@@ -12,14 +12,16 @@ export const read = <T extends BaseEntity>(table: string) => {
                 .where(options.where || {})
 
         if (options.whereSign) {
-            query = query.where(options.whereSign.field, options.whereSign.sign, options.whereSign.value);
+            options.whereSign.forEach(sign => {
+                query = query.where(sign.field, sign.sign, sign.value);
+            });
         }
         
         query = query
             .limit(options.limit || 10)
             .offset(options.offset || 0)
             .orderBy(options.orderBy || 'id', options.order || 'asc')
-            .whereNull('deletedAt')
+            .whereNull('deletedAt')            
 
         return query
     }
@@ -33,7 +35,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                 .where(options.where || {})
 
         if (options.whereSign) {
-            query = query.where(options.whereSign.field, options.whereSign.sign, options.whereSign.value);
+            options.whereSign.forEach(sign => {
+                query = query.where(sign.field, sign.sign, sign.value);
+            });
         }
         
         query = query
@@ -55,7 +59,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                         .whereNull('deletedAt')
                         .first();
         if (options.whereSign) {
-            countQuery = countQuery.where(options.whereSign.field, options.whereSign.sign, options.whereSign.value);
+            options.whereSign.forEach(sign => {
+                countQuery = countQuery.where(sign.field, sign.sign, sign.value);
+            });
         }
 
         const [ result, totalCount ] = await Promise.all([

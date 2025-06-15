@@ -61,11 +61,11 @@ export class SessionController {
                 ip_address: ipAddress,
                 is_revoked: false
              },
-             whereSign: {
+             whereSign: [{
                 field: 'expires_at',
                 sign: '>',
                 value: new Date().toLocaleString()
-             }
+             }]
         } as QueryFields<UserSessionsEntity>
 
         const userSessions = await this.userSessions.findByEntity(options)
@@ -131,11 +131,11 @@ export class SessionController {
                 ip_address: ipAddress,
                 is_revoked: false
              },
-             whereSign: {
+             whereSign: [{
                 field: 'expires_at',
                 sign: '>',
                 value: new Date().toLocaleString()
-             }
+             }]
         } as QueryFields<UserSessionsEntity>
         // Find active sessions for the given IP address
         const activeSessions = await this.userSessions.findByEntity(options)
@@ -153,7 +153,15 @@ export class SessionController {
             if (isValid) {
                 const user = await this.user.findByIdEntity(session.userId, {
                     fields: this.user.getAvailableFields(),
+                    whereSign: [{
+                        field: 'status',
+                        sign: '=',
+                        value: 'active'
+                    }]
                 })
+                if(!user) {
+                    throw new Error('Usuário não encontrado!')
+                }
                 return [user as UsersEntity, session]
             }
         }
