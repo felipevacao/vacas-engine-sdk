@@ -1,5 +1,6 @@
 import env from "@lib/env"
-import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata, PaginatedResult } from 'types/entity'
+import { MetadataService } from "@services/metadataServices"
+import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata, PaginatedResult, EnhancedTableMetadata } from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
     hateoas: boolean
@@ -200,7 +201,12 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
-    public async getMetadata(): Promise<Metadata | null>{
-        return await this.model.metadata()
+    public async getMetadata(): Promise<EnhancedTableMetadata | Metadata | null>{
+
+        const metadataService = new MetadataService();
+
+        const metadata = await metadataService.getTableMetadata(this.getModelTable());
+        
+        return metadata
     }
 }

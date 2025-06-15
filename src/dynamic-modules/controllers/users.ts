@@ -17,8 +17,8 @@ export class UsersController extends BaseController<UsersEntity> {
   public override async generateBodyCreate(
     input: InputRequest<unknown>
   ): Promise<CreateData<UsersEntity> | null> {
-
-      const body = input.body as CreateData<UsersEntity>;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { role, status, ...body } = input.body as CreateData<UsersEntity>;
       
       const options = {
         where: { "email": body.email },
@@ -37,7 +37,7 @@ export class UsersController extends BaseController<UsersEntity> {
         throw new Error('Login already exists')
       }
 
-      return body;
+      return body as CreateData<UsersEntity>;
   }
 
   /**
@@ -50,7 +50,7 @@ export class UsersController extends BaseController<UsersEntity> {
   ): Promise<UpdateData<UsersEntity> | null> {
       const body = input.body as Partial<UpdateData<UsersEntity>>;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...rest } = body;
+      const { password, role, status, ...rest } = body;
       return rest as UpdateData<UsersEntity>;
   }
 

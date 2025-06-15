@@ -41,14 +41,15 @@ export type QueryFields<T extends BaseEntity> = {
     // whereSign is used for specific conditions like 'greater than', 'less than', etc.
     // Example: whereSign: { field: 'age', sign: '>', value: '18' }
     whereSign?: {
-      field: string,
-      sign: string,
+      field: string
+      sign: string
       value: string
-    },
+    }[];
     paginated?: boolean;
 }
 
 export * from "./model";
+export * from "./metadata";
 // export * from './queryTypes';
 
 export interface IAdapter<T, U> {

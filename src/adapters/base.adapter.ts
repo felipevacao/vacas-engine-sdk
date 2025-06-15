@@ -53,11 +53,11 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         const fields = this.service.getAvailableFields(extraFields) as (keyof Model<T>)[];
         const where = input.query.where as Partial<T> ?? [];
         
-        const whereSign = input.query.whereSign ? {
+        const whereSign = input.query.whereSign ? [{
             field: input.query.whereSign.field,
             sign: input.query.whereSign.sign,
             value: input.query.whereSign.value
-        } : undefined;
+        }] : [];
 
         const limit = input.query.limit ? parseInt(input.query.limit as unknown as string) : undefined;
 

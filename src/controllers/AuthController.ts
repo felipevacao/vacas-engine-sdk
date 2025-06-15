@@ -41,6 +41,11 @@ export class AuthController extends UsersController {
 
     const options = {
       where: { "email": email },
+      whereSign: [{
+        field: "status",
+        sign: "=",
+        value: "active",
+      }]
     } as QueryFields<UsersEntity>
 
     const [userData] = await this.findByEntity(options);
@@ -110,6 +115,11 @@ export class AuthController extends UsersController {
     if(user.id){
       const options = {
         fields: ['login' as (keyof Model<UsersEntity>)],
+        whereSign: [{
+          field: "status",
+          sign: "=",
+          value: "active",
+        }]
       } as QueryFields<UsersEntity>
       try {
         await this.updateEntity(user.id, { password: passwordHash } as UpdateData<UsersEntity>, options);
