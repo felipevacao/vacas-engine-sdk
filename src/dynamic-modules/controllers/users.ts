@@ -48,7 +48,6 @@ export class UsersController extends BaseController<UsersEntity> {
   public override async generateBodyUpdate(
       input: InputRequest<unknown>
   ): Promise<UpdateData<UsersEntity> | null> {
-      console.log(input)
       const body = input.body as Partial<UpdateData<UsersEntity>>;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...rest } = body;

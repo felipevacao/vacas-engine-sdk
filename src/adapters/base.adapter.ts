@@ -49,16 +49,31 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
     protected generateQueryFields(
         input: InputRequest<V>
     ): QueryFields<T> {
-
         const extraFields = input.query.fields ? (input.query.fields as string).split(',') as (keyof Model<T>)[] : [];
         const fields = this.service.getAvailableFields(extraFields) as (keyof Model<T>)[];
         const where = input.query.where as Partial<T> ?? [];
+        
+        const whereSign = input.query.whereSign ? {
+            field: input.query.whereSign.field,
+            sign: input.query.whereSign.sign,
+            value: input.query.whereSign.value
+        } : undefined;
+
+        const limit = input.query.limit ? parseInt(input.query.limit as unknown as string) : undefined;
 
         return {
             links: input.query.links ? ( input.query.links == 'true' ? true : false ) : this.service.hateoas,
             fields,
             where,
+            whereSign,
+            limit: limit,
+            offset: input.query.offset ? parseInt(input.query.offset as unknown as string) : undefined,
+            orderBy: input.query.orderBy as string ?? 'id',
+            order: input.query.order as string ?? 'asc',
+            page: input.query.page ? parseInt(input.query.page as unknown as string) : undefined,
+            pageSize: input.query.pageSize ? parseInt(input.query.pageSize as unknown as string) : undefined
         }
+ 
     }
 
 }

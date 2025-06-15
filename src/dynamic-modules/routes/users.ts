@@ -12,6 +12,7 @@ router.post('/', expressAdapter.create.bind(expressAdapter));
 
 // R
 router.get('/metadata', expressAdapter.metadata.bind(expressAdapter))
+router.get('/search', expressAdapter.findBy.bind(expressAdapter));
 router.get('/', expressAdapter.findAll.bind(expressAdapter));
 router.get('/:id', expressAdapter.findById.bind(expressAdapter));
 
