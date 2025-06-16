@@ -43,7 +43,6 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         req: Request, 
         res: Response
         ): Promise<void> {
-
             try {
                 // validates input
                 const [login, password] = this.validateLoginFields(req.body)

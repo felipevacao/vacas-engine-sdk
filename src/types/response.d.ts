@@ -11,6 +11,7 @@ export interface ApiResponse<T = unknown> {
   meta?: {
     timestamp: string;
     requestId?: string;
+    metadataUrl?: string;
     pagination?: {
       page: number;
       limit: number;

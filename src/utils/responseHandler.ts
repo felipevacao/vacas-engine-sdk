@@ -72,6 +72,7 @@ export class ResponseHandler {
       meta: {
         timestamp: new Date().toISOString(),
         requestId: res.locals.requestId,
+        metadataUrl: res.req.baseUrl + '/metadata',
         pagination: {
           ...pagination,
           totalPages
