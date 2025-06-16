@@ -25,6 +25,7 @@ export const tokenMiddleware = async (
       error: 'Token de autenticação não fornecido',
       code: 'MISSING_TOKEN'
     })
+    return 
   }
 
   const token = authHeader?.split(' ')[1]

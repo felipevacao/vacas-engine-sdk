@@ -29,6 +29,7 @@ export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt'
 
 // Layout de Query
 export type QueryFields<T extends BaseEntity> = { 
+    originalUrl?: string;
     links?: boolean,
     fields?: (keyof Model<T>)[],
     where?: Partial<T>,
@@ -38,11 +39,11 @@ export type QueryFields<T extends BaseEntity> = {
     order?: string,
     page?: number,
     pageSize?: number,
-    // whereSign is used for specific conditions like 'greater than', 'less than', etc.
-    // Example: whereSign: { field: 'age', sign: '>', value: '18' }
-    whereSign?: {
+    // filter is used for specific conditions like 'greater than', 'less than', etc.
+    // Example: filter: { field: 'age', sign: '>', value: '18' }
+    filters?: {
       field: string
-      sign: string
+      operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
       value: string
     }[];
     paginated?: boolean;
@@ -71,16 +72,13 @@ export type PasswordChangeRequest = {
 
 // Layout de Entrada - Create
 export interface InputRequest<T> {
+  originalUrl?: string;
   body?: object | LoginRequest,
   params?: object,
   query: {
     fields?: string;
     where?: Partial<T>;
-    whereSign?: {
-      field: string;
-      sign: string;
-      value: string;
-    };
+    filter?: string | [];
     orderBy?: string;
     order?: string;
     limit?: number;
@@ -115,5 +113,7 @@ export interface PaginatedResult<T extends BaseEntity> {
         totalPages: number;
         hasNext: boolean;
         hasPrev: boolean;
+        nextPageUrl?: string | null;
+        prevPageUrl?: string | null;
     };
 }

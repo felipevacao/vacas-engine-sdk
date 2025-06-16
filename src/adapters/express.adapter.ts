@@ -85,6 +85,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         ): Promise<void> {
 
             try {
+                
                 // Valida Input
                 const options = this.generateQueryFields(req)
                 // Busca entidades

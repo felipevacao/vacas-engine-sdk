@@ -35,9 +35,9 @@ export class AuthController extends UsersController {
 
     const options = {
       where: { "email": email },
-      whereSign: [{
+      filters: [{
         field: "status",
-        sign: "=",
+        operator: "=",
         value: "active",
       }]
     } as QueryFields<UsersEntity>
@@ -109,9 +109,9 @@ export class AuthController extends UsersController {
     if(user.id){
       const options = {
         fields: ['login' as (keyof Model<UsersEntity>)],
-        whereSign: [{
+        filters: [{
           field: "status",
-          sign: "=",
+          operator: "=",
           value: "active",
         }]
       } as QueryFields<UsersEntity>

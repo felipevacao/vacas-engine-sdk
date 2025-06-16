@@ -17,9 +17,9 @@ export const update = <T extends BaseEntity>(table: string) => {
                             .where({ id })
                             .update(updateData)
                             .returning(options.fields ? options.fields.map(String) : '*')
-    if (options.whereSign) {
-      options.whereSign.forEach(sign => {
-        query = query.where(sign.field, sign.sign, sign.value);
+    if (options.filters) {
+      options.filters.forEach(filter => {
+        query = query.where(filter.field, filter.operator, filter.value);
       });
     }
     const [result] = await query;

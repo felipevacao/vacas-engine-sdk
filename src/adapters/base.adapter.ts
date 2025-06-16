@@ -40,7 +40,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         return await this.service.generateBodyUpdate(input) ?? input.body as UpdateData<T>;
         
     }
-
+    
     /**
      * Generates the query fields for the model based on the input request.
      * @param input The input request containing query parameters.
@@ -52,20 +52,18 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         const extraFields = input.query.fields ? (input.query.fields as string).split(',') as (keyof Model<T>)[] : [];
         const fields = this.service.getAvailableFields(extraFields) as (keyof Model<T>)[];
         const where = input.query.where as Partial<T> ?? [];
-        
-        const whereSign = input.query.whereSign ? [{
-            field: input.query.whereSign.field,
-            sign: input.query.whereSign.sign,
-            value: input.query.whereSign.value
-        }] : [];
+
+        const inputFilter = input.query.filter as string | [];
+        const filters = Array.isArray(inputFilter) ? inputFilter.map((filter) => this.parseFilter(filter)) : [this.parseFilter(inputFilter)];
 
         const limit = input.query.limit ? parseInt(input.query.limit as unknown as string) : undefined;
 
         return {
+            originalUrl: input.originalUrl as string ?? '',
             links: input.query.links ? ( input.query.links == 'true' ? true : false ) : this.service.hateoas,
             fields,
             where,
-            whereSign,
+            filters,
             limit: limit,
             offset: input.query.offset ? parseInt(input.query.offset as unknown as string) : undefined,
             orderBy: input.query.orderBy as string ?? 'id',
@@ -75,5 +73,41 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         }
  
     }
+
+    protected parseFilter = (filterString: string): {
+      field: string
+      operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
+      value: string
+    } => {
+
+        // Regex para capturar field, operator e value
+        const regex = /^([a-zA-Z_][a-zA-Z0-9_]*)\s*(==|!=|>=|<=|>|<|~)\s*(.+)$/;
+        const match = filterString.match(regex);
+        
+        if (!match) {
+            throw new Error('Invalid filter format');
+        }
+        
+        const [, field, operator, value] = match;
+        
+        // Mapear operadores para Knex
+        const operatorMap: Record<string, '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'> = {
+            '==': '=',
+            '!=': '!=',
+            '>': '>',
+            '<': '<',
+            '>=': '>=',
+            '<=': '<=',
+            '~': 'LIKE',
+            'IN': 'IN',
+            'BETWEEN': 'BETWEEN'
+        };
+        
+        return {
+            field,
+            operator: operatorMap[operator],
+            value: value.replace(/^['"]|['"]$/g, '') // Remove aspas se houver
+        };
+    };
 
 }

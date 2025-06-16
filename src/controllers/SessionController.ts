@@ -61,9 +61,9 @@ export class SessionController {
                 ip_address: ipAddress,
                 is_revoked: false
              },
-             whereSign: [{
+             filters: [{
                 field: 'expires_at',
-                sign: '>',
+                operator: '>',
                 value: new Date().toLocaleString()
              }]
         } as QueryFields<UserSessionsEntity>
@@ -131,9 +131,9 @@ export class SessionController {
                 ip_address: ipAddress,
                 is_revoked: false
              },
-             whereSign: [{
+             filters: [{
                 field: 'expires_at',
-                sign: '>',
+                operator: '>',
                 value: new Date().toLocaleString()
              }]
         } as QueryFields<UserSessionsEntity>
@@ -153,9 +153,9 @@ export class SessionController {
             if (isValid) {
                 const user = await this.user.findByIdEntity(session.userId, {
                     fields: this.user.getAvailableFields(),
-                    whereSign: [{
+                    filters: [{
                         field: 'status',
-                        sign: '=',
+                        operator: '=',
                         value: 'active'
                     }]
                 })

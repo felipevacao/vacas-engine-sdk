@@ -11,9 +11,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                 .select(options.fields || '*')
                 .where(options.where || {})
 
-        if (options.whereSign) {
-            options.whereSign.forEach(sign => {
-                query = query.where(sign.field, sign.sign, sign.value);
+        if (options.filters) {
+            options.filters.forEach(filter => {
+                query = query.where(filter.field, filter.operator, filter.value);
             });
         }
         
@@ -34,9 +34,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                 .select(options.fields || '*')
                 .where(options.where || {})
 
-        if (options.whereSign) {
-            options.whereSign.forEach(sign => {
-                query = query.where(sign.field, sign.sign, sign.value);
+        if (options.filters) {
+            options.filters.forEach(filter => {
+                query = query.where(filter.field, filter.operator, filter.value);
             });
         }
         
@@ -58,9 +58,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                         .count('* as count')
                         .whereNull('deletedAt')
                         .first();
-        if (options.whereSign) {
-            options.whereSign.forEach(sign => {
-                countQuery = countQuery.where(sign.field, sign.sign, sign.value);
+        if (options.filters) {
+            options.filters.forEach(filter => {
+                countQuery = countQuery.where(filter.field, filter.operator, filter.value);
             });
         }
 
@@ -71,6 +71,16 @@ export const read = <T extends BaseEntity>(table: string) => {
 
         const total = totalCount ? parseInt(totalCount.count as string) : 0 as number;
 
+        const newUrl = options.originalUrl?.replace(`&page=${currentPage}`,'').replace(`page=${currentPage}`,'') as string || '';
+        let urlChar = '&';
+        if(!newUrl.includes('?')) {
+            urlChar = '?';
+        }
+        const nextPage = (skipRecords || 0) + (options.limit || 10) < total ? currentPage + 1 : null;
+        const prevPage = (skipRecords || 0) > 0 ? currentPage - 1 : null;
+        const nextPageUrl = nextPage ? newUrl + urlChar + `page=${nextPage}` : null;
+        const prevPageUrl = prevPage ? newUrl + urlChar + `page=${prevPage}` : null;
+
         return {
             data: result as OutputData<T>[] ?? [],
             pagination: {
@@ -79,12 +89,13 @@ export const read = <T extends BaseEntity>(table: string) => {
                 total: total,
                 totalPages: Math.ceil(total / (options.limit || 10)),
                 hasNext: (skipRecords || 0) + (options.limit || 10) < total,
-                hasPrev: (skipRecords || 0) > 0
+                hasPrev: (skipRecords || 0) > 0,
+                nextPageUrl,
+                prevPageUrl,
             }
         } as PaginatedResult<T>;
         
-    }
-    
+    }    
     const findAll = async ( 
         options: QueryFields<T> = {} 
     ): Promise<OutputData<T>[]> => {
@@ -95,7 +106,7 @@ export const read = <T extends BaseEntity>(table: string) => {
             offset: options.offset || 0,
             orderBy: options.orderBy || 'id',
             order: options.order || 'asc',
-            whereSign: options.whereSign
+            filters: options.filters
         })
         return result || []
 
@@ -122,7 +133,7 @@ export const read = <T extends BaseEntity>(table: string) => {
             offset: 0,
             orderBy: options.orderBy || 'id',
             order: options.order || 'asc',
-            whereSign: options.whereSign
+            filters: options.filters
         })
 
         return result ? result[0] : undefined
