@@ -11,6 +11,17 @@ const userExpressAdapter = new UserExpressAdapter(authController);
 router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
 // change password
+router.get('/password/metadata', tokenMiddleware, (req, res) => {
+
+  res.json({
+    success: true,
+    data: {
+        "currentPassword": "string",
+        "newPassword": "string",
+    },
+  })
+})
+
 router.patch('/password', tokenMiddleware, userExpressAdapter.updatePassword.bind(userExpressAdapter));
 
 router.post('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));

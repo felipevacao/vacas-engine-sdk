@@ -4,6 +4,7 @@ import { CreateData, Model, QueryFields, UpdateData } from "types/entity"
 import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions"
 import { UsersController } from "@dynamic-modules/controllers/users"
 import { UsersEntity } from "@dynamic-modules/entities/users"
+import { hashUtils } from "@utils/hash"
 
 export class SessionController {
     private userSessions: UserSessionsController
@@ -106,7 +107,7 @@ export class SessionController {
                           value: "guest",
                         }]
                       } as QueryFields<UsersEntity>
-                this.user.updateEntity(user.id as number, { password: '' } as UpdateData<UsersEntity>, options)
+                this.user.updateEntity(user.id as number, { password: hashUtils.generateHash(cryptoUtils.generateToken()) } as UpdateData<UsersEntity>, options)
                 break
         }
         // Create a new session entity
