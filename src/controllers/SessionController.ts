@@ -1,6 +1,6 @@
 import { UserSessionsController } from "@dynamic-modules/controllers/userSessions"
 import { cryptoUtils } from "@utils/crypto"
-import { CreateData, QueryFields, UpdateData } from "types/entity"
+import { CreateData, Model, QueryFields, UpdateData } from "types/entity"
 import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions"
 import { UsersController } from "@dynamic-modules/controllers/users"
 import { UsersEntity } from "@dynamic-modules/entities/users"
@@ -91,11 +91,29 @@ export class SessionController {
         // Generate a new token and its hash
         const { token, hash } = this.createToken()
 
+        let expiresAt = 60
+        switch (user.role) {
+            case 'admin':
+                expiresAt = 120
+                break
+            case 'guest':
+                expiresAt = 5
+                const options = {
+                        fields: ['login' as (keyof Model<UsersEntity>)],
+                        filters: [{
+                          field: "role",
+                          operator: "=",
+                          value: "guest",
+                        }]
+                      } as QueryFields<UsersEntity>
+                this.user.updateEntity(user.id as number, { password: '' } as UpdateData<UsersEntity>, options)
+                break
+        }
         // Create a new session entity
         await this.userSessions.createEntity({
             userId: user.id as number,
             tokenHash: hash,
-            expiresAt: cryptoUtils.getExpiresAt(),
+            expiresAt: cryptoUtils.getExpiresAt(expiresAt),
             ipAddress: ipAddress,
         } as CreateData<UserSessionsEntity>, {})
 

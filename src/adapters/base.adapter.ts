@@ -53,8 +53,8 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         const fields = this.service.getAvailableFields(extraFields) as (keyof Model<T>)[];
         const where = input.query.where as Partial<T> ?? [];
 
-        const inputFilter = input.query.filter as string | [];
-        const filters = Array.isArray(inputFilter) ? inputFilter.map((filter) => this.parseFilter(filter)) : [this.parseFilter(inputFilter)];
+        const inputFilter = input.query.filter ?? [];
+        const filters = Array.isArray(inputFilter) ? inputFilter.length > 0 ? inputFilter.map((filter) => this.parseFilter(filter)) : [] : [this.parseFilter(inputFilter)];
 
         const limit = input.query.limit ? parseInt(input.query.limit as unknown as string) : undefined;
 

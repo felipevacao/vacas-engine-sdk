@@ -38,9 +38,9 @@ export const cryptoUtils = {
      * Generates an expiration date for a token.
      * @returns A Date object representing the expiration time (1 hour from now).
      */
-    getExpiresAt(): Date {
+    getExpiresAt(minutes: number = 60): Date {
         const now = new Date();
-        const expiresAt = new Date(now.getTime() + 1 * 60 * 60 * 1000); // 1 hora
+        const expiresAt = new Date(now.getTime() + minutes * 60 * 1000);
         return expiresAt;
     }
 }

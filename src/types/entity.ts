@@ -78,7 +78,7 @@ export interface InputRequest<T> {
   query: {
     fields?: string;
     where?: Partial<T>;
-    filter?: string | [];
+    filter?: string | [] | undefined;
     orderBy?: string;
     order?: string;
     limit?: number;
