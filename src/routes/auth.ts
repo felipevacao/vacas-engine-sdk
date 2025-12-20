@@ -24,6 +24,6 @@ router.get('/password/metadata', tokenMiddleware, (req, res) => {
 
 router.patch('/password', tokenMiddleware, userExpressAdapter.updatePassword.bind(userExpressAdapter));
 
-router.post('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));
+router.get('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));
 
 export default router;

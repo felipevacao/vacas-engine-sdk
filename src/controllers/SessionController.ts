@@ -144,7 +144,6 @@ export class SessionController {
         token: string, 
         ipAddress: string
     ): Promise<[UsersEntity, UserSessionsEntity]> {
-        
         const options = {
             where: { 
                 ip_address: ipAddress,
@@ -159,7 +158,9 @@ export class SessionController {
         // Find active sessions for the given IP address
         const activeSessions = await this.userSessions.findByEntity(options)
         if(activeSessions.length === 0) {
-            throw new Error('Sessão inválida!')
+            const error = new Error('Sessão inválida!')
+            error.name = 'TokenExpiredError'
+            throw error
         }
 
         // Validate the token for each active session

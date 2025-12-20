@@ -19,6 +19,7 @@ const env = cleanEnv(
         ENABLE_HATEOAS: bool({ default: true }),
         ENABLE_RETURN_ERRORS: bool({ default: false }),
         SALT_ROUNDS: port({ default: 10 }),
+        ORIGIN: str({ default: 'http://localhost' })
     }
 )
 

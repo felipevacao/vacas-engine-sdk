@@ -19,13 +19,12 @@ export const tokenMiddleware = async (
   
   // 1. Verificar se o token foi enviado
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-
     res.status(401).json({
       success: false,
       error: 'Token de autenticação não fornecido',
       code: 'MISSING_TOKEN'
     })
-    return 
+    return
   }
 
   const token = authHeader?.split(' ')[1]
@@ -58,6 +57,7 @@ export const tokenMiddleware = async (
 
     }catch (error) {
         handleTokenError(error as Error, res)
+        
     }
   
 
@@ -70,16 +70,16 @@ function handleTokenError(
   error: Error, 
   res: Response
 ) {    
-  if (error.name === 'TokenExpiredError') {
-    ResponseHandler.error(
+  if (error.name === 'InvalidSessionError') {
+    return ResponseHandler.error(
         res,
-        'Token expirado',
-        ERROR_CODES.EXPIRED_TOKEN,
+        'Sessão inválida',
+        ERROR_CODES.INVALID_SESSION,
         401
     )
   }
 
-  ResponseHandler.error(
+  return ResponseHandler.error(
       res,
       'Erro durante a validação do token',
       ERROR_CODES.INTERNAL_ERROR,
