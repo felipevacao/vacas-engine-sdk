@@ -1,4 +1,3 @@
-// api/src/routes/index.ts
 import express, { Request, Response } from 'express'
 import testRoutes from "./test"
 import eg from "./eg"
@@ -8,52 +7,66 @@ import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
 import authRoutes from './auth';
+import env from '@lib/env';
+import { MESSAGES } from '@constants/messages/index';
 
-
+/**
+ * Configuração do roteador principal do Express
+ */
 const router = express.Router()
 
-router.use(logging)
+if (env.NODE_ENV === 'development') {
+    router.use(logging)
+}
 
-
-// Carrega rotas automaticamente, de acordo com cada entidade
+/**
+ * Função para carregar rotas dinamicamente a partir do diretório `src/dynamic-modules/routes`
+ * Ela lê os arquivos de rota, importa os módulos e registra as rotas no roteador principal.
+ * Cada arquivo de rota deve exportar um roteador Express como `default` e pode opcionalmente exportar um array de middlewares.
+ * O nome do arquivo de rota é usado para definir o caminho da rota (por exemplo, `userSessions.ts` se torna `/userSessions`).
+ */
 const loadRoutes = async () => {
 
-    // load routes from dynamic modules
-    const routesDir = path.join(__dirname, '../dynamic-modules/routes'); 
+    const routesDir = path.join(__dirname, '../dynamic-modules/routes');
     const items = fs.readdirSync(routesDir, { withFileTypes: true });
     for (const item of items) {
         const routeFile = path.join(routesDir, item.name);
         if (fs.existsSync(routeFile)) {
             const routeModule = await import(routeFile);
-            const routeName = item.name.replace('.ts', '').replace('.js','')
-            const routePath = `/${routeName}`; 
+            const routeName = item.name.replace('.ts', '').replace('.js', '')
+            const routePath = `/${routeName}`;
             const middleware = routeModule.middleware || [];
-            router.use(routePath, middleware, routeModule.default); 
+            router.use(routePath, middleware, routeModule.default);
         }
     }
 
     router.get('/', (req: Request, res: Response) => {
-        res.send('API Treis está funcionando! ')
+        res.send(MESSAGES.API.HOME)
     })
 
     router.use('/auth', authRoutes)
-
     router.use('/test', testRoutes)
-    router.use(eg)
 
-    router.get('/test/routes', (req: Request, res: Response) => {
-        const endpoints = listEndpoints(router);
-        console.log('Rotas registradas:');
-        console.table(endpoints);
-        res.json(endpoints);
-    });
-    
+    router.use(eg) // Easter Egg Routes
+
+    if (env.NODE_ENV === 'development') {
+        /**
+         * Rota para listar todas as rotas registradas no roteador principal.
+         */
+        router.get('/test/routes', (req: Request, res: Response) => {
+            const endpoints = listEndpoints(router);
+            console.log(MESSAGES.ROUTES.LIST);
+            console.table(endpoints);
+            res.json(endpoints);
+        });
+    }
+
     router.use(routeNotFound)
     router.use(errorHandler)
 
 };
 loadRoutes().catch((err) => {
-    console.error('Erro ao carregar rotas:', err);
+    console.error(MESSAGES.ROUTES.ERROR, err);
 });
 
 export default router

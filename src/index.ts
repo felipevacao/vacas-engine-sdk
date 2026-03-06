@@ -1,11 +1,10 @@
-// Importação de módulos
 import './alias'
-
 import env from "./lib/env"
 import express from 'express'
 import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
+import { MESSAGES } from '@constants/messages/index';
 
 /**
  * Configuração do servidor Express
@@ -18,9 +17,9 @@ const app = express()
  * Origin deve ser a URL do frontend ou cliente que irá consumir a API 
 */
 app.use(cors({
-  // origin: env.ORIGIN, 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+	origin: env.ORIGIN,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 /**
@@ -42,8 +41,9 @@ app.use(router)
  */
 const port = env.API_PORT
 app.listen(
-    port,
-    () => {
-      console.log(`Servidor rodando na porta ${port}`)
-    }
+	port,
+	() => {
+		console.log(MESSAGES.API.START)
+		console.log(`${MESSAGES.API.INIT_PORT} ${port}`)
+	}
 )

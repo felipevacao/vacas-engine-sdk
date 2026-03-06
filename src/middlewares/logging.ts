@@ -1,19 +1,13 @@
-// api/src/middlewares/logging.ts
 import { Request, Response, NextFunction } from 'express';
 
 /**
- * Middleware to log incoming requests.
- * @param req - The Express request object.
- * @param res - The Express response object.
- * @param next - The next middleware function.
+ * Middleware para logar as requisições recebidas.
+ * Usado em ambiente DEVELOPMENT para facilitar o monitoramento das requisições e depuração.
+ * @param req Objeto de requisição do Express.
+ * @param res Objeto de resposta do Express.
+ * @param next Função do próximo middleware.
  */
-export const logging = (
-  req: Request, 
-  res: Response, 
-  next: NextFunction
-) => {
-
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-
-};
+export const logging = (req: Request, res: Response, next: NextFunction) => {
+	console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+	next()
+}

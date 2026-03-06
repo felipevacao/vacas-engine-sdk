@@ -7,8 +7,10 @@ import { cleanEnv, str, port, bool } from "envalid";
  * It ensures that required variables are present and have the correct types.
  */
 const env = cleanEnv(
-    process.env, 
+    process.env,
     {
+        API_NAME: str({ default: 'API' }),
+        NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
         DB_USER: str(),
         DB_PASSWORD: str(),
         DB_NAME: str(),

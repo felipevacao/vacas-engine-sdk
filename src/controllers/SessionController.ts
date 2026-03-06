@@ -171,6 +171,9 @@ export class SessionController {
                             )
             
             if (isValid) {
+                session.lastUsedAt = new Date()
+                await this.userSessions.updateEntity(session.id, session, {})
+                // Find the user associated with the session
                 const user = await this.user.findByIdEntity(session.userId, {
                     fields: this.user.getAvailableFields(),
                     filters: [{

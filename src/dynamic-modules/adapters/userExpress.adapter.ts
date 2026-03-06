@@ -21,55 +21,55 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
      */
     private validateLoginFields(
         input: unknown
-        ): [string, string] {
+    ): [string, string] {
 
-            if(!input || typeof input !== 'object') {
-                throw new Error('Invalid input')
-            }
-            const { email, password } = input as LoginRequest
-            if(!email || !password) {
-                throw new Error('Invalid input')
-            }
-            
-            return [ email, password ]
+        if (!input || typeof input !== 'object') {
+            throw new Error('Invalid input')
+        }
+        const { email, password } = input as LoginRequest
+        if (!email || !password) {
+            throw new Error('Invalid input')
+        }
+
+        return [email, password]
     }
-    
+
     /**
      * Handles user login.
      * @param req - Express request object containing the login credentials
      * @param res - Express response object to send the result
      */
     async login(
-        req: Request, 
+        req: Request,
         res: Response
-        ): Promise<void> {
-            try {
-                // validates input
-                const [login, password] = this.validateLoginFields(req.body)
+    ): Promise<void> {
+        try {
+            // validates input
+            const [login, password] = this.validateLoginFields(req.body)
 
-                // validates login
-                const session = await this.service.login(login, password, '127.0.0.1')
-                if(!session){
-                    ResponseHandler.error(
-                        res,
-                        'Invalid login or password',
-                        ERROR_CODES.UNAUTHORIZED,
-                        401
-                    )
-                    return
-                }
-
-                // resposta
-                ResponseHandler.success(res, session, 'Login realizado com sucesso');
-            } catch (error) {
+            // validates login
+            const session = await this.service.login(login, password, '127.0.0.1')
+            if (!session) {
                 ResponseHandler.error(
                     res,
-                    'Erro ao verificar Login',
-                    ERROR_CODES.INTERNAL_ERROR,
-                    500,
-                    error as Error
+                    'Invalid login or password',
+                    ERROR_CODES.UNAUTHORIZED,
+                    401
                 )
+                return
             }
+
+            // resposta
+            ResponseHandler.success(res, session, 'Login realizado com sucesso');
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                'Erro ao verificar Login',
+                ERROR_CODES.INTERNAL_ERROR,
+                500,
+                error as Error
+            )
+        }
 
     }
 
@@ -79,9 +79,9 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
      * @param res - Express response object to send the result
      */
     async logout(
-        req: Request, 
+        req: Request,
         res: Response
-        ): Promise<void> {
+    ): Promise<void> {
         try {
             if (!req.session) {
                 throw new Error('No active session')
@@ -108,63 +108,64 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
      */
     private validateUpdatePasswordFields(
         input: unknown
-        ): [ string, string ] {
+    ): [string, string] {
 
-            if(!input || typeof input !== 'object') {
-                throw new Error('Invalid input')
-            }
-            const { currentPassword, newPassword } = input as PasswordChangeRequest
-            if( !currentPassword || !newPassword) {
-                throw new Error('Invalid input')
-            }
-            
-            return [ currentPassword, newPassword ]
+        if (!input || typeof input !== 'object') {
+            throw new Error('Invalid input')
+        }
+        const { currentPassword, newPassword } = input as PasswordChangeRequest
+        if (!currentPassword || !newPassword) {
+            throw new Error('Invalid input')
+        }
+
+        return [currentPassword, newPassword]
     }
-        /** * Handles updating the user's password.
-     * @param req - Express request object containing the current and new passwords
-     * @param res - Express response object to send the result
-     */
+    /** * Handles updating the user's password.
+ * @param req - Express request object containing the current and new passwords
+ * @param res - Express response object to send the result
+ */
     async updatePassword(
-        req: Request, 
+        req: Request,
         res: Response
-        ): Promise<void> {
+    ): Promise<void> {
 
-            try {
-                // validates input
-                const [ currentPassword, newPassword ] = this.validateUpdatePasswordFields(req.body)
-                const user = await this.service.findByIdEntity(req.session.userId as number)
-                if(!user){
-                    ResponseHandler.error(
-                        res,
-                        'Usuário não encontrado',
-                        ERROR_CODES.NOT_FOUND,
-                        404
-                    )
-                    return
-                }
-                
-                const isPasswordValid = await this.service.validatePassword(user, currentPassword)
-                if (!isPasswordValid) {
-                    ResponseHandler.error(
-                        res,
-                        'Senha atual inválida',
-                        ERROR_CODES.UNAUTHORIZED,
-                        401
-                    )
-                    return
-                }
-
-                await this.service.updatePassword(user, newPassword)
-                ResponseHandler.success(res, { message: 'Senha alterada com sucesso' });
-
-            } catch (error) {
+        try {
+            // validates input
+            const [currentPassword, newPassword] = this.validateUpdatePasswordFields(req.body)
+            const user = await this.service.findByIdEntity(req.session.userId as number)
+            if (!user) {
                 ResponseHandler.error(
                     res,
-                    'Erro ao verificar Login',
-                    ERROR_CODES.INTERNAL_ERROR,
-                    500,
-                    error as Error
+                    'Usuário não encontrado',
+                    ERROR_CODES.NOT_FOUND,
+                    404
                 )
+                return
             }
 
-    }}
+            const isPasswordValid = await this.service.validatePassword(user, currentPassword)
+            if (!isPasswordValid) {
+                ResponseHandler.error(
+                    res,
+                    'Senha atual inválida',
+                    ERROR_CODES.UNAUTHORIZED,
+                    401
+                )
+                return
+            }
+
+            await this.service.updatePassword(user, newPassword)
+            ResponseHandler.success(res, { message: 'Senha alterada com sucesso' });
+
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                'Erro ao verificar Login',
+                ERROR_CODES.INTERNAL_ERROR,
+                500,
+                error as Error
+            )
+        }
+
+    }
+}
