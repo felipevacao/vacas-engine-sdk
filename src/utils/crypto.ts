@@ -2,45 +2,39 @@ import crypto from 'crypto';
 
 export const cryptoUtils = {
     /**
-     * Generates a random token.
-     * @returns A random token as a hexadecimal string.
+     * Gera um token aleatório usando o módulo crypto do Node.js.
      */
     generateToken(): string {
         return crypto.randomBytes(32).toString('hex');
     },
     /**
-     * Hashes a token using SHA-256.
-     * @param token The token to hash.
-     * @returns The hashed token as a hexadecimal string.
+    * Gera um hash de um token usando o algoritmo SHA-256. O hash é retornado como uma string hexadecimal.
      */
     hashToken(token: string): string {
         return crypto.createHash('sha256').update(token).digest('hex');
     },
     /**
-     * Verifies a token against a stored hash.
-     * @param token The token to verify.
-     * @param hash The stored hash to compare against.
-     * @returns True if the token matches the hash, false otherwise.
+     * Verifica se um token corresponde a um hash usando uma comparação segura contra ataques de timing.
      */
     verifyToken(
-        token: string, 
+        token: string,
         hash: string
     ): boolean {
 
         const newHash = this.hashToken(token);
         return crypto.timingSafeEqual(
-        Buffer.from(newHash, 'hex'),
-        Buffer.from(hash, 'hex')
+            Buffer.from(newHash, 'hex'),
+            Buffer.from(hash, 'hex')
         );
-        
+
     },
+
     /**
-     * Generates an expiration date for a token.
-     * @returns A Date object representing the expiration time (1 hour from now).
+     * Gera uma data de expiração para um token, adicionando um número especificado de minutos à data atual. O valor padrão é 60 minutos.
      */
     getExpiresAt(minutes: number = 60): Date {
         const now = new Date();
-        const expiresAt = new Date(now.getTime() + minutes * 60 * 1000);
+        const expiresAt = new Date(now.getTime() + (minutes * 60 * 1000));
         return expiresAt;
     }
 }

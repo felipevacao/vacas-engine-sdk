@@ -6,11 +6,11 @@ import config from './knexfile'
 
 // Configurações do banco de dados
 const dbConfig: PoolConfig = {
-  user: env.DB_USER,
-  host: env.DB_HOST,
-  database: env.DB_NAME,
-  password: env.DB_PASSWORD,
-  port: env.DB_PORT || 5432,
+	user: env.DB_USER,
+	host: env.DB_HOST,
+	database: env.DB_NAME,
+	password: env.DB_PASSWORD,
+	port: env.DB_PORT || 5432,
 }
 
 export const pool = new Pool(dbConfig)

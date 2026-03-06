@@ -2,9 +2,8 @@ import "dotenv/config";
 import { cleanEnv, str, port, bool } from "envalid";
 
 /**
- * Environment variables configuration for the application.
- * This module uses `envalid` to validate and clean environment variables.
- * It ensures that required variables are present and have the correct types.
+ * Carrega e valida as variáveis de ambiente usando a biblioteca envalid. As variáveis de ambiente são definidas com seus tipos e valores padrão, 
+ * garantindo que a aplicação tenha as configurações necessárias para funcionar corretamente.
  */
 const env = cleanEnv(
     process.env,

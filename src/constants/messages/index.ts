@@ -7,7 +7,9 @@ export const MESSAGES = {
 		START: `${env.API_NAME} iniciada com sucesso!`,
 		ERROR: `${env.API_NAME} - Erro ao iniciar a API!`,
 		HOME: `${env.API_NAME} está funcionando!`,
-		INIT_PORT: 'Servidor rodando na porta'
+		INIT_PORT: 'Servidor rodando na porta',
+		SUCCESS: 'Operação realizada com sucesso',
+		SUCCESS_DATA: 'Dados obtidos com sucesso',
 	},
 	ROUTES: {
 		LIST: 'Rotas registradas:',

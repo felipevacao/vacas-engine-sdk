@@ -25,6 +25,8 @@ export const CODES = {
   INTERNAL_ERROR: 'Erro interno do servidor',
   // DATABASE_ERROR: 'Erro na base de dados',
   // EXTERNAL_SERVICE_ERROR: 'Erro em serviço externo'
+  OPERATION_ERROR: 'Erro na operação',
+  UNKNOWN: 'Erro desconhecido',
 } as const;
 
 
