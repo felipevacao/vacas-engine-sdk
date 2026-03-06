@@ -84,7 +84,7 @@ export class SessionController {
     public async createSession(
         user: UsersEntity, 
         ipAddress: string
-    ): Promise<{ token: string }> {
+    ): Promise<{ token: string, expiresAt: Date }> {
         // Check if the user already has an active session
         if(await this.verifySession(user, ipAddress)) {
             throw new Error('Usuário já autenticado!')
@@ -110,15 +110,16 @@ export class SessionController {
                 this.user.updateEntity(user.id as number, { password: hashUtils.generateHash(cryptoUtils.generateToken()) } as UpdateData<UsersEntity>, options)
                 break
         }
+        const expiresAtDate = cryptoUtils.getExpiresAt(expiresAt)
         // Create a new session entity
         await this.userSessions.createEntity({
             userId: user.id as number,
             tokenHash: hash,
-            expiresAt: cryptoUtils.getExpiresAt(expiresAt),
+            expiresAt: expiresAtDate,
             ipAddress: ipAddress,
         } as CreateData<UserSessionsEntity>, {})
 
-        return { token: token }
+        return { token: token, expiresAt: expiresAtDate }
 
     }
 

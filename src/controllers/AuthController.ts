@@ -137,7 +137,7 @@ export class AuthController extends UsersController {
     login: string, 
     password: string, 
     ipAdress: string
-  ): Promise<{ token: string } | boolean> {
+  ): Promise<{ token: string, expiresAt: Date } | boolean> {
 
       const user = await this.verifyUserPassword(login, password);
       if (!user) {
