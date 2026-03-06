@@ -1,4 +1,5 @@
 import { DATABASE_MESSAGES } from './database';
+import { ERROR_CODES } from './errorCodes';
 import env from '@lib/env';
 
 export const MESSAGES = {
@@ -12,7 +13,8 @@ export const MESSAGES = {
 		LIST: 'Rotas registradas:',
 		ERROR: 'Erro ao carregar rotas:'
 	},
-	DATABASE: DATABASE_MESSAGES
+	DATABASE: DATABASE_MESSAGES,
+	ERROR_CODES: ERROR_CODES
 } as const;
 
 export type Messages = typeof MESSAGES;

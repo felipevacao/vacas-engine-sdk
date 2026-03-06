@@ -3,7 +3,7 @@ import { ExpressAdapter } from "@adapters/express.adapter"
 import { AuthController } from "@controllers/AuthController"
 import { UsersEntity } from "@dynamic-modules/entities/users"
 import { LoginRequest, PasswordChangeRequest } from "types/entity"
-import { ERROR_CODES } from '@constants/errorCodes';
+import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 
 
@@ -53,7 +53,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 ResponseHandler.error(
                     res,
                     'Invalid login or password',
-                    ERROR_CODES.UNAUTHORIZED,
+                    MESSAGES.ERROR_CODES.UNAUTHORIZED,
                     401
                 )
                 return
@@ -65,7 +65,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             ResponseHandler.error(
                 res,
                 'Erro ao verificar Login',
-                ERROR_CODES.INTERNAL_ERROR,
+                MESSAGES.ERROR_CODES.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -93,7 +93,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             ResponseHandler.error(
                 res,
                 'Erro ao realizar o Logout',
-                ERROR_CODES.INTERNAL_ERROR,
+                MESSAGES.ERROR_CODES.INTERNAL_ERROR,
                 400,
                 error as Error
             )
@@ -137,7 +137,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 ResponseHandler.error(
                     res,
                     'Usuário não encontrado',
-                    ERROR_CODES.NOT_FOUND,
+                    MESSAGES.ERROR_CODES.NOT_FOUND,
                     404
                 )
                 return
@@ -148,7 +148,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 ResponseHandler.error(
                     res,
                     'Senha atual inválida',
-                    ERROR_CODES.UNAUTHORIZED,
+                    MESSAGES.ERROR_CODES.UNAUTHORIZED,
                     401
                 )
                 return
@@ -161,7 +161,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             ResponseHandler.error(
                 res,
                 'Erro ao verificar Login',
-                ERROR_CODES.INTERNAL_ERROR,
+                MESSAGES.ERROR_CODES.INTERNAL_ERROR,
                 500,
                 error as Error
             )

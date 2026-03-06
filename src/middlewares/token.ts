@@ -1,13 +1,14 @@
-import { ERROR_CODES } from '@constants/errorCodes'
+import { MESSAGES } from '@constants/messages/index'
 import { SessionController } from '@controllers/SessionController'
 import { ResponseHandler } from '@utils/responseHandler'
 import { Request, Response, NextFunction } from 'express'
 import { Session, SessionData } from 'express-session'
 
-/** * Middleware to validate the authentication token.
- * It checks if the token is present in the request headers,
- * validates it, and attaches the session information to the request object.
- * If the token is missing or invalid, it responds with an error.
+/**
+ * 
+ * Middleware para validar o token de autenticação em rotas protegidas.
+ * Verifica se o token está presente no header Authorization, valida o token e, se válido, adiciona as informações da sessão ao objeto de requisição.
+ * Em caso de erro, retorna uma resposta JSON com a mensagem de erro apropriada.
  */
 export const tokenMiddleware = async (
 	req: Request,
@@ -17,37 +18,51 @@ export const tokenMiddleware = async (
 
 	const authHeader = req.headers.authorization
 
-	// 1. Verificar se o token foi enviado
+	/**
+	 * VERIFICAÇÃO DO TOKEN - INICIO
+	 * Verificar se o token está presente no header Authorization e se segue o formato
+	 */
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
 		res.status(401).json({
 			success: false,
-			error: 'Token de autenticação não fornecido',
+			error: MESSAGES.ERROR_CODES.MISSING_TOKEN,
 			code: 'MISSING_TOKEN'
 		})
 		return
 	}
-
 	const token = authHeader?.split(' ')[1]
 	if (!token) {
 		res.status(401).json({
 			success: false,
-			error: 'Token não fornecido',
+			error: MESSAGES.ERROR_CODES.MISSING_TOKEN,
 			code: 'MISSING_TOKEN'
 		})
 	}
+	/**
+	 * VERIFICAÇÃO DO TOKEN - FIM
+	 */
 
 	try {
-		// 2. Validar o token
+		/**
+		 * VALIDAÇÃO DO TOKEN
+		 * Validar o token usando o SessionController e obter as informações do usuário e da sessão.
+		 * Se a sessão ou o usuário não forem encontrados, retornar um erro de sessão inválida.
+		 * Se a validação for bem-sucedida, adicionar as informações da sessão ao objeto de requisição e chamar o próximo middleware ou rota.
+		 */
 		const sessionController = new SessionController()
 		const [user, session] = await sessionController.validateUser(token as string, '127.0.0.1')
 		if (!session || !user) {
 			res.status(401).json({
 				success: false,
-				error: 'Sessão inválida ou usuário não encontrado',
-				code: 'INVALID_SESSION'
+				error: MESSAGES.ERROR_CODES.INVALID_SESSION,
+				code: 'INVALID_SESSIONS'
 			})
 		}
 
+		/**
+		 * Informações da sessão adicionadas ao objeto de requisição para uso em rotas protegidas.
+		 * O tipo SessionData é usado para garantir que as propriedades sessionId e userId estejam presentes no objeto de sessão.
+		 */
 		req.session = {
 			sessionId: session.id,
 			userId: user.id as number,
@@ -60,11 +75,8 @@ export const tokenMiddleware = async (
 
 	}
 
-
 	/**
-	 * Handle token validation errors.
-	 * @param error - The error object.
-	 * @param res - The Express response object.
+	 * Função para lidar com erros durante a validação do token.
 	 */
 	function handleTokenError(
 		error: Error,
@@ -73,16 +85,16 @@ export const tokenMiddleware = async (
 		if (error.name === 'InvalidSessionError') {
 			return ResponseHandler.error(
 				res,
-				'Sessão inválida',
-				ERROR_CODES.INVALID_SESSION,
+				MESSAGES.ERROR_CODES.INVALID_CREDENTIALS,
+				'INVALID_CREDENTIALS',
 				401
 			)
 		}
 
 		return ResponseHandler.error(
 			res,
-			'Erro durante a validação do token',
-			ERROR_CODES.INTERNAL_ERROR,
+			MESSAGES.ERROR_CODES.TOKEN_VALIDATION_ERROR,
+			'INTERNAL_ERROR',
 			500,
 			error as Error
 		)

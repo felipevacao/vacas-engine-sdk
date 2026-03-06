@@ -1,5 +1,4 @@
-// api/src/utils/errorHandlers.ts
-import { ERROR_CODES } from '@constants/errorCodes';
+import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 import { Request, Response } from 'express';
 
@@ -9,16 +8,16 @@ import { Request, Response } from 'express';
  * @param message - Optional custom message for the not found error.
  */
 export const notFound = (
-    res: Response, 
-    message: string = 'Rota não encontrada.'
-  ) => {
+  res: Response,
+  message: string = 'Rota não encontrada.'
+) => {
 
-    ResponseHandler.error(
-          res,
-          message,
-          ERROR_CODES.NOT_FOUND,
-          404
-      )
+  ResponseHandler.error(
+    res,
+    message,
+    MESSAGES.ERROR_CODES.NOT_FOUND,
+    404
+  )
 
 };
 
@@ -28,7 +27,7 @@ export const notFound = (
  * @param res - The Express response object.
  */
 export const routeNotFound = (
-  req: Request, 
+  req: Request,
   res: Response
 ) => {
 
@@ -44,8 +43,8 @@ export const routeNotFound = (
  * @param res - The Express response object.
  */
 export const errorHandler = (
-  err: Error, 
-  req: Request, 
+  err: Error,
+  req: Request,
   res: Response
 ) => {
 
@@ -54,7 +53,7 @@ export const errorHandler = (
   ResponseHandler.error(
     res,
     err.message || 'Erro interno do servidor.',
-    ERROR_CODES.INTERNAL_ERROR,
+    MESSAGES.ERROR_CODES.INTERNAL_ERROR,
     500
   );
 
