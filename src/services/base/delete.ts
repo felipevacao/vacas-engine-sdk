@@ -1,9 +1,13 @@
 import { db } from '@utils/db'
 
-/* SOFT DELETE */
 export const deleteById = (table: string) => {
-
-  return async (
+  /**
+   * Função de exclusão genérica para marcar um registro como deletado em uma tabela específica do banco de dados.
+   * Em vez de remover fisicamente o registro, ela atualiza o campo 'deletedAt' com a data atual, permitindo a recuperação futura dos dados se necessário.
+   * Retorna um booleano indicando se a operação foi bem-sucedida ou se o registro não foi encontrado.
+   * soft delete
+   */
+  return async ( 
     id: number | string
   ): Promise<boolean> => {
 
@@ -22,6 +26,11 @@ export const deleteById = (table: string) => {
 
 }
 
+/**
+ * Função de exclusão forçada para remover permanentemente um registro de uma tabela específica do banco de dados.
+ * Esta função realiza uma exclusão física, eliminando completamente o registro do banco de dados.
+ * Retorna um booleano indicando se a operação foi bem-sucedida ou se o registro não foi encontrado.
+ */
 export const forceDelete = (table: string) => {
 
   return async (

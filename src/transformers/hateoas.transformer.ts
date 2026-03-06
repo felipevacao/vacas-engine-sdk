@@ -1,5 +1,9 @@
 import { HateoasEntity, HateoasLink, BaseEntity } from 'types/entity';
 
+/**
+ * Classe utilitária para transformar entidades em formato HATEOAS, adicionando links de navegação conforme necessário.
+ * Permite configurar se os links devem ser incluídos ou não, facilitando a adaptação da resposta conforme o contexto da aplicação.
+ */
 export class HateoasTransformer {
     static addLinks<T extends BaseEntity>(
         entity: T,

@@ -9,7 +9,7 @@ export const update = <T extends BaseEntity>(table: string) => {
     options: QueryFields<T> = {}
   ): Promise<OutputData<T>> => {
 
-    const updateData = {
+    const updateData = { 
       ...data,
       updatedAt: new Date()
     }

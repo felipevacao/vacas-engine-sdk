@@ -8,16 +8,16 @@ import { Request, Response } from 'express';
  * @param message - Optional custom message for the not found error.
  */
 export const notFound = (
-  res: Response,
-  message: string = 'Rota não encontrada.'
+	res: Response,
+	message: string = 'Rota não encontrada.'
 ) => {
 
-  ResponseHandler.error(
-    res,
-    message,
-    MESSAGES.ERROR_CODES.NOT_FOUND,
-    404
-  )
+	ResponseHandler.error(
+		res,
+		message,
+		MESSAGES.ERROR_CODES.NOT_FOUND,
+		404
+	)
 
 };
 
@@ -27,11 +27,11 @@ export const notFound = (
  * @param res - The Express response object.
  */
 export const routeNotFound = (
-  req: Request,
-  res: Response
+	req: Request,
+	res: Response
 ) => {
 
-  notFound(res, 'Rota não encontrada.');
+	notFound(res, 'Rota não encontrada.');
 
 };
 
@@ -43,18 +43,18 @@ export const routeNotFound = (
  * @param res - The Express response object.
  */
 export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response
+	err: Error,
+	req: Request,
+	res: Response
 ) => {
 
-  console.error('Erro:', err.message);
-  res.status(500).json({ error: 'Algo deu errado.' })
-  ResponseHandler.error(
-    res,
-    err.message || 'Erro interno do servidor.',
-    MESSAGES.ERROR_CODES.INTERNAL_ERROR,
-    500
-  );
+	console.error('Erro:', err.message);
+	res.status(500).json({ error: 'Algo deu errado.' })
+	ResponseHandler.error(
+		res,
+		err.message || 'Erro interno do servidor.',
+		MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+		500
+	);
 
 };

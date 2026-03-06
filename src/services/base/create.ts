@@ -3,6 +3,10 @@ import { BaseEntity, CreateData, OutputData, QueryFields } from 'types/entity'
 
 export const create = <T extends BaseEntity>(table: string) => {
 
+    /**
+     * Função de criação genérica para inserir um novo registro em uma tabela específica do banco de dados.
+     * Aceita os dados a serem inseridos e opções de consulta para personalizar os campos retornados.
+     */
     return async (
         data: CreateData<T>, 
         options: QueryFields<T> = {}

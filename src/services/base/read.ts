@@ -1,8 +1,75 @@
 import { db } from '@utils/db'
 import { BaseEntity, OutputData, PaginatedResult, QueryFields } from 'types/entity'
 
+/**
+ * Operações de leitura para entidades, incluindo métodos para buscar todos os registros, buscar por ID, buscar por critérios específicos e realizar consultas paginadas.
+ */
 export const read = <T extends BaseEntity>(table: string) => {
 
+    const findAll = async ( 
+        options: QueryFields<T> = {} 
+    ): Promise<OutputData<T>[]> => {
+        
+        const result = await queryGenerator({
+            fields: options.fields,
+            limit: options.limit || 10,
+            offset: options.offset || 0,
+            orderBy: options.orderBy || 'id',
+            order: options.order || 'asc',
+            filters: options.filters
+        })
+        return result || []
+
+    }
+
+    const findAllPaginated = async ( 
+        options: QueryFields<T> = {} 
+    ): Promise<PaginatedResult<T>> => {
+        
+        const result = await queryGeneratorPaginated(options)
+        return result || []
+
+    }
+
+    const findById = async (
+        id: number | string, 
+        options: QueryFields<T> = {} 
+    ): Promise<OutputData<T> | undefined> => {
+
+        const result = await queryGenerator({
+            fields: options.fields,
+            where: { id: id } as Partial<T>,
+            limit: 1,
+            offset: 0,
+            orderBy: options.orderBy || 'id',
+            order: options.order || 'asc',
+            filters: options.filters
+        })
+
+        return result ? result[0] : undefined
+    }
+
+    const findBy = async (
+        options: QueryFields<T>
+    ): Promise<OutputData<T>[] | undefined> => {
+
+         return await queryGenerator(options)
+
+    }
+
+    const findByPaginated = async (
+        options: QueryFields<T>
+    ): Promise<PaginatedResult<T>> => {
+
+         return await queryGeneratorPaginated(options)
+
+    }
+
+    /**
+     * Gerador de consultas para operações de leitura, permitindo a construção dinâmica de queries com base em diversos parâmetros, 
+     * como campos selecionados, filtros, ordenação e paginação. Essa função centraliza a lógica de consulta, 
+     * facilitando a reutilização e manutenção do código, além de garantir consistência nas operações de leitura em toda a aplicação.
+     */
     const queryGenerator = async (
         options: QueryFields<T>
     ): Promise<OutputData<T>[] | undefined> => {
@@ -26,6 +93,11 @@ export const read = <T extends BaseEntity>(table: string) => {
         return query
     }
 
+    /**
+     * Gerador de consultas paginadas para operações de leitura, permitindo a construção dinâmica de queries com suporte a paginação,
+     * além de incluir informações de navegação, como URLs para as próximas e anteriores páginas. Essa função centraliza a lógica de consulta paginada,
+     * facilitando a reutilização e manutenção do código, além de garantir consistência nas operações de leitura paginada em toda a aplicação.
+     */
     const queryGeneratorPaginated = async (
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> => {
@@ -95,65 +167,7 @@ export const read = <T extends BaseEntity>(table: string) => {
             }
         } as PaginatedResult<T>;
         
-    }    
-    const findAll = async ( 
-        options: QueryFields<T> = {} 
-    ): Promise<OutputData<T>[]> => {
-        
-        const result = await queryGenerator({
-            fields: options.fields,
-            limit: options.limit || 10,
-            offset: options.offset || 0,
-            orderBy: options.orderBy || 'id',
-            order: options.order || 'asc',
-            filters: options.filters
-        })
-        return result || []
-
-    }
-
-    const findAllPaginated = async ( 
-        options: QueryFields<T> = {} 
-    ): Promise<PaginatedResult<T>> => {
-        
-        const result = await queryGeneratorPaginated(options)
-        return result || []
-
-    }
-
-    const findById = async (
-        id: number | string, 
-        options: QueryFields<T> = {} 
-    ): Promise<OutputData<T> | undefined> => {
-
-        const result = await queryGenerator({
-            fields: options.fields,
-            where: { id: id } as Partial<T>,
-            limit: 1,
-            offset: 0,
-            orderBy: options.orderBy || 'id',
-            order: options.order || 'asc',
-            filters: options.filters
-        })
-
-        return result ? result[0] : undefined
-    }
-
-    const findBy = async (
-        options: QueryFields<T>
-    ): Promise<OutputData<T>[] | undefined> => {
-
-         return await queryGenerator(options)
-
-    }
-
-    const findByPaginated = async (
-        options: QueryFields<T>
-    ): Promise<PaginatedResult<T>> => {
-
-         return await queryGeneratorPaginated(options)
-
-    }
+    }   
 
     return { findAll, findById, findBy, findByPaginated, findAllPaginated }
     

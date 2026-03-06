@@ -102,11 +102,11 @@ export const metadata = (table: string) => {
 
   function generateLabel(fieldName: string): string {
     return fieldName
-      .replace(/_/g, ' ')
-      .replace(/([A-Z])/g, ' $1')
-      .toLowerCase()
-      .replace(/^./, str => str.toUpperCase())
-      .trim();
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .toLowerCase()
+        .replace(/^./, str => str.toUpperCase())
+        .trim();
   }
 }
 
