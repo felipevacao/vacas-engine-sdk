@@ -7,26 +7,43 @@ import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
 
-// Configurações do servidor
+/**
+ * Configuração do servidor Express
+ */
 const app = express()
 
+/**
+ * Configuração do CORS
+ * Especificar a origem permitida para evitar problemas de CORS
+ * Origin deve ser a URL do frontend ou cliente que irá consumir a API 
+*/
 app.use(cors({
-  origin: env.ORIGIN, // Permitir requisições do frontend
+  // origin: env.ORIGIN, 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
-const port = 3015 //env.API_PORT
-
+/**
+ * Configuração do body-parser
+ * Permite que o Express entenda requisições com payload JSON e urlencoded
+ */
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-// Rotas
+/** 
+ * Configuração das rotas
+ * Todas as rotas definidas em src/routes/index.ts serão usadas a partir da raiz '/'
+ */
 app.use(router)
 
-
-
-// Inicialização do servidor
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`)
-})
+/**
+ * Inicia o servidor na porta especificada em env.API_PORT
+ * Exibe uma mensagem no console indicando que o servidor está rodando
+ */
+const port = env.API_PORT
+app.listen(
+    port,
+    () => {
+      console.log(`Servidor rodando na porta ${port}`)
+    }
+)

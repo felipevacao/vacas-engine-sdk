@@ -1,6 +1,7 @@
 // api/src/routes/index.ts
 import express, { Request, Response } from 'express'
 import testRoutes from "./test"
+import eg from "./eg"
 import { logging } from '@middlewares/logging'
 import { routeNotFound, errorHandler } from '@middlewares/errorHandlers'
 import path from 'path';
@@ -38,14 +39,15 @@ const loadRoutes = async () => {
     router.use('/auth', authRoutes)
 
     router.use('/test', testRoutes)
+    router.use(eg)
 
     router.get('/test/routes', (req: Request, res: Response) => {
         const endpoints = listEndpoints(router);
         console.log('Rotas registradas:');
         console.table(endpoints);
         res.json(endpoints);
-      });
-
+    });
+    
     router.use(routeNotFound)
     router.use(errorHandler)
 
