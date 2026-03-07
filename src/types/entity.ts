@@ -44,7 +44,7 @@ export type QueryFields<T extends BaseEntity> = {
     filters?: {
       field: string
       operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
-      value: string
+      value: string | number | boolean | Date
     }[];
     paginated?: boolean;
 }

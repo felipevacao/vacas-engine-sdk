@@ -54,7 +54,7 @@ export class SessionController {
     private async verifySession(
         user: UsersEntity, 
         ipAddress: string
-    ): Promise<boolean> {
+    ): Promise<UserSessionsEntity | boolean> {
 
         const options = {
             where: { 
@@ -65,13 +65,13 @@ export class SessionController {
              filters: [{
                 field: 'expires_at',
                 operator: '>',
-                value: new Date().toLocaleString()
+                value: new Date()
              }]
         } as QueryFields<UserSessionsEntity>
 
         const userSessions = await this.userSessions.findByEntity(options)
 
-        return userSessions && userSessions.length > 0
+        return userSessions[0] || false
 
     }
 
@@ -85,9 +85,12 @@ export class SessionController {
         user: UsersEntity, 
         ipAddress: string
     ): Promise<{ token: string, expiresAt: Date }> {
-        // Check if the user already has an active session
-        if(await this.verifySession(user, ipAddress)) {
-            throw new Error('Usuário já autenticado!')
+        /**
+         * Se 
+         */
+        const previousSession = await this.verifySession(user, ipAddress)
+        if (previousSession && typeof previousSession !== 'boolean') {
+            this.deleteSession(previousSession.id)
         }
         // Generate a new token and its hash
         const { token, hash } = this.createToken()
@@ -130,8 +133,41 @@ export class SessionController {
     public async deleteSession(
         sessionId: string | number
     ): Promise<void> {
-        // Marks the  session as revoked
-        await this.userSessions.updateEntity(sessionId, { isRevoked: true } as UpdateData<UserSessionsEntity>, {})
+        
+        /**
+         * Marca a sessão como revogada e atualiza a data de último uso. Em seguida, verifica se existem outras sessões ativas para o mesmo usuário e as revoga também, 
+         * garantindo que o usuário seja desconectado de todas as sessões ativas.
+         */
+        const updatedSession = await this.userSessions.updateEntity(
+            sessionId,
+            {
+                isRevoked: true,
+                lastUsedAt: new Date()
+            } as UpdateData<UserSessionsEntity>,
+            {})
+
+        const notRevokedSession = await this.userSessions.findAllEntity({
+            filters: [{
+                field: 'is_revoked',
+                operator: '=',
+                value: 'false'
+            }, {
+                field: 'user_id',
+                operator: '=',
+                value: `${updatedSession.userId}`
+            }]
+        })
+        if (notRevokedSession.length > 0) {
+            for (const session of notRevokedSession) {
+                await this.userSessions.updateEntity(
+                    session.id,
+                    {
+                        isRevoked: true,
+                        lastUsedAt: new Date()
+                    } as UpdateData<UserSessionsEntity>,
+                    {})
+            }
+        }
 
     }
     
@@ -153,7 +189,7 @@ export class SessionController {
              filters: [{
                 field: 'expires_at',
                 operator: '>',
-                value: new Date().toLocaleString()
+                value: new Date()
              }]
         } as QueryFields<UserSessionsEntity>
         // Find active sessions for the given IP address

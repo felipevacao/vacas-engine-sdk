@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { tokenMiddleware } from '@middlewares/token';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
 /**
  * ASCI Art Route - José Geraldo Trevenzoli (1958-03-03 - 2021-03-31)
  */
-router.get('/ze', (req: Request, res: Response) => {
+router.get('/ze', tokenMiddleware, (req: Request, res: Response) => {
     res.type('text/plain');
     res.send(`
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxXXxxxxxxxxxxxxxxxxxxxxxx

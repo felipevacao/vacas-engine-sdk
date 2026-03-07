@@ -75,7 +75,44 @@ export const tokenMiddleware = async (
 
 	}
 
-	/**
+}
+/**
+ * Middleware para verificar se já existe um token válido na requisição.
+ * Se um token válido for encontrado, retorna uma resposta JSON indicando que uma sessão ativa foi encontrada, junto com a data de expiração do token.
+ * Se nenhum token válido for encontrado, chama o próximo middleware ou rota.
+ */
+export const checkExistingToken = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+
+	const authHeader = req.headers.authorization
+
+	if (authHeader && authHeader.startsWith('Bearer ')) {
+		const token = authHeader?.split(' ')[1]
+		if (token) {
+			try {
+				const sessionController = new SessionController()
+				const [user, session] = await sessionController.validateUser(token as string, '127.0.0.1')
+				if (session && user) {
+					ResponseHandler.success(res, {
+						mensagem: 'Sessão ativa encontrada',
+						expiresAt: session.expiresAt,
+					}, 'Token válido')
+					return
+				}
+			} catch (error) {
+				handleTokenError(error as Error, res)
+			}
+		}
+	}
+
+	next()
+
+}
+
+/**
 	 * Função para lidar com erros durante a validação do token.
 	 */
 	function handleTokenError(
@@ -99,5 +136,3 @@ export const tokenMiddleware = async (
 			error as Error
 		)
 	}
-
-}
