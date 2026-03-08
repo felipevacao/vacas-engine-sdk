@@ -110,29 +110,29 @@ export const checkExistingToken = async (
 
 	next()
 
-}
+} 
 
 /**
-	 * Função para lidar com erros durante a validação do token.
-	 */
-	function handleTokenError(
-		error: Error,
-		res: Response
-	) {
-		if (error.name === 'InvalidSessionError') {
-			return ResponseHandler.error(
-				res,
-				MESSAGES.ERROR_CODES.INVALID_CREDENTIALS,
-				'INVALID_CREDENTIALS',
-				401
-			)
-		}
-
+ * Função para lidar com erros durante a validação do token.
+ */
+function handleTokenError(
+	error: Error,
+	res: Response
+) {
+	if (error.name === 'InvalidSessionError') {
 		return ResponseHandler.error(
 			res,
-			MESSAGES.ERROR_CODES.TOKEN_VALIDATION_ERROR,
-			'INTERNAL_ERROR',
-			500,
-			error as Error
+			MESSAGES.ERROR_CODES.INVALID_CREDENTIALS,
+			'INVALID_CREDENTIALS',
+			401
 		)
 	}
+
+	return ResponseHandler.error(
+		res,
+		MESSAGES.ERROR_CODES.TOKEN_VALIDATION_ERROR,
+		'INTERNAL_ERROR',
+		500,
+		error as Error
+	)
+}
