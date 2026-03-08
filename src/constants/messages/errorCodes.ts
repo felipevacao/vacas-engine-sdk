@@ -1,4 +1,3 @@
-// constants/error-codes.ts
 export const CODES = {
   // Autenticação
   MISSING_TOKEN: 'Token de autenticação não fornecido',
@@ -10,21 +9,15 @@ export const CODES = {
 
   // Autorização  
   UNAUTHORIZED: 'Acesso não autorizado',
-  // FORBIDDEN: 'Acesso negado',
 
   // Validação
-  // VALIDATION_ERROR: 'Dados de entrada inválidos',
-  // MISSING_REQUIRED_FIELD: 'Campo obrigatório não informado',
   INVALID_FORMAT: 'Formato inválido',
 
   // Recursos
   NOT_FOUND: 'Recurso não encontrado',
-  // ALREADY_EXISTS: 'Recurso já existe',
 
   // Sistema
   INTERNAL_ERROR: 'Erro interno do servidor',
-  // DATABASE_ERROR: 'Erro na base de dados',
-  // EXTERNAL_SERVICE_ERROR: 'Erro em serviço externo'
   OPERATION_ERROR: 'Erro na operação',
   UNKNOWN: 'Erro desconhecido',
 } as const;

@@ -6,14 +6,14 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         this.service = service;
     }
 
-    abstract create(input: V, output: U): Promise<void>;
-    abstract findAll(input: V, output: U): Promise<void>;
-    abstract findById(input: V, output: U): Promise<void>;
-    abstract findBy(input: V, output: U): Promise<void>;
-    abstract update(input: V, output: U): Promise<void>;
-    abstract delete(input: V, output: U): Promise<void>;
+    abstract create     (input: V, output: U): Promise<void>;
+    abstract findAll    (input: V, output: U): Promise<void>;
+    abstract findById   (input: V, output: U): Promise<void>;
+    abstract findBy     (input: V, output: U): Promise<void>;
+    abstract update     (input: V, output: U): Promise<void>;
+    abstract delete     (input: V, output: U): Promise<void>;
     abstract forceDelete(input: V, output: U): Promise<void>;
-    abstract metadata(input: V, output: U): Promise<void>;
+    abstract metadata   (input: V, output: U): Promise<void>;
 
     /**
      * Validates the input for creating a new entity.
@@ -24,7 +24,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         input: InputRequest<V>
     ): Promise<CreateData<T>> {
 
-            return await this.service.generateBodyCreate(input) ?? input.body as CreateData<T>;
+        return await this.service.generateBodyCreate(input) ?? input.body as CreateData<T>;
 
     }
 
@@ -49,6 +49,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
     protected generateQueryFields(
         input: InputRequest<V>
     ): QueryFields<T> {
+
         const extraFields = input.query.fields ? (input.query.fields as string).split(',') as (keyof Model<T>)[] : [];
         const fields = this.service.getAvailableFields(extraFields) as (keyof Model<T>)[];
         const where = input.query.where as Partial<T> ?? [];
@@ -75,9 +76,9 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
     }
 
     protected parseFilter = (filterString: string): {
-      field: string
-      operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
-      value: string
+        field: string
+        operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
+        value: string
     } => {
 
         // Regex para capturar field, operator e value

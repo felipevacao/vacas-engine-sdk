@@ -10,8 +10,9 @@ export const hashUtils = {
 	 * Gera um hash de senha usando bcrypt.
 	 */
 	generateHash(password: string): string {
+		const pepperedPassword = password + env.PASS_PEPPER;
 		const salt = bcrypt.genSaltSync(env.SALT_ROUNDS || 10);
-		const passwordHash = bcrypt.hashSync(password, salt);
+		const passwordHash = bcrypt.hashSync(pepperedPassword, salt);
 		return passwordHash;
 	},
 
@@ -21,7 +22,8 @@ export const hashUtils = {
 	 * O método compareAsync é uma versão assíncrona do bcrypt.compare, que é convertida para retornar uma Promise usando util.promisify.
 	 */
 	async compareAsync(password: string, passwordHash: string): Promise<boolean> {
-		return await compareAsync(password, passwordHash);
+		const pepperedPassword = password + env.PASS_PEPPER;
+		return await compareAsync(pepperedPassword, passwordHash);
 	}
 
 }
