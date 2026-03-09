@@ -288,7 +288,17 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 )
                 return
             }
-
+            // Valida usuário guest
+            const user = await (new UsersController()).findByIdEntity(req.session.userId as number)
+            if (!user || user.role === 'guest') {
+                ResponseHandler.error(
+                    res,
+                    'Error deleting entity',
+                    MESSAGES.ERROR_CODES.UNAUTHORIZED,
+                    401
+                )
+                return
+            }
             // Deleta entidade
             const success = await this.service.deleteEntity(id)
             if (!success) {
