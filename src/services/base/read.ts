@@ -53,7 +53,7 @@ export const read = <T extends BaseEntity>(table: string) => {
         options: QueryFields<T>
     ): Promise<OutputData<T>[] | undefined> => {
 
-         return await queryGenerator(options)
+        return await queryGenerator(options)
 
     }
 
@@ -61,7 +61,7 @@ export const read = <T extends BaseEntity>(table: string) => {
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> => {
 
-         return await queryGeneratorPaginated(options)
+        return await queryGeneratorPaginated(options)
 
     }
 

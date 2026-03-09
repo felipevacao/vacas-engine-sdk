@@ -5,6 +5,7 @@ import { BaseController } from '@controllers/baseController'
 import { HateoasTransformer } from '@transformers/hateoas.transformer'
 import { ResponseHandler } from '@utils/responseHandler'
 import { MESSAGES } from '@constants/messages'
+import { UsersController } from '@dynamic-modules/controllers/users'
 
 export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
     constructor(protected service: BaseController<T>) {
@@ -338,6 +339,17 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     'Invalid ID format',
                     MESSAGES.ERROR_CODES.INVALID_FORMAT,
                     400
+                )
+                return
+            }
+            // Valida usuário admin
+            const user = await (new UsersController()).findByIdEntity(req.session.userId as number)
+            if (!user || user.role !== 'admin') {
+                ResponseHandler.error(
+                    res,
+                    'Error deleting entity',
+                    MESSAGES.ERROR_CODES.UNAUTHORIZED,
+                    401
                 )
                 return
             }

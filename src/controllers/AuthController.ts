@@ -116,35 +116,26 @@ export class AuthController extends UsersController {
 		}
 
 	}
-	/** * Logs in a user by verifying their credentials and creating a session.
-	 * @param login The user's login or email.
-	 * @param password The user's password.
-	 * @param ipAdress The IP address of the user.
-	 * @returns An object containing the session token if successful, otherwise false.
-	 */
+
 	public async login(
 		login: string, 
 		password: string, 
 		ipAdress: string
 	): Promise<{ token: string, expiresAt: Date } | boolean> {
 
-			const user = await this.verifyUserPassword(login, password);
-			if (!user) {
-					return false;
-			}
-			const session = await this.session.createSession(user, ipAdress);
-			return session;
+		const user = await this.verifyUserPassword(login, password);
+		if (!user) {
+			return false;
+		}
+		const session = await this.session.createSession(user, ipAdress);
+		return session;
 	}
-	/**
-	 * Logs out a user by deleting their session.
-	 * @param sessionId The ID of the session to delete.
-	 * @returns A promise that resolves when the session is deleted.
-	 */
+
 	public async logout(
 		sessionId: string | number
 	): Promise<void> {
 
-			await this.session.deleteSession(sessionId);
+		await this.session.deleteSession(sessionId);
 			
 	}
 

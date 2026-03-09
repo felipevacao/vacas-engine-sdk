@@ -3,6 +3,7 @@ import { MetadataService } from "@services/metadataServices"
 import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata, PaginatedResult, EnhancedTableMetadata } from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
+
     hateoas: boolean
     _bodyCreateExtended: boolean
     _bodyUpdateExtended: boolean
@@ -16,8 +17,8 @@ export class BaseController<T extends BaseEntity> {
     }
 
     /**
-     * Gets the table name of the model.
-     * @returns string
+     * Retorna o nome da tabela associada ao modelo. Este método é utilizado para obter a tabela do banco de dados relacionada ao modelo, 
+     * permitindo que as operações de banco de dados sejam realizadas corretamente.
      */
     public getModelTable(): string {
         return this.model.table

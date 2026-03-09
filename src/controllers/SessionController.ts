@@ -10,10 +10,6 @@ export class SessionController {
     private userSessions: UserSessionsController
     private user: UsersController
 
-    /**
-     * Creates an instance of SessionController.
-     * Initializes the userSessions and user controllers.
-     */
     constructor() {
         this.userSessions = new UserSessionsController()
         this.user = new UsersController()
