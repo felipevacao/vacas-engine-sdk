@@ -13,10 +13,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     }
 
     /**
-     * Generates HATEOAS links for a specific entity.
-     * @param table The name of the table (model) the entity belongs to.
-     * @param id The ID of the entity.
-     * @returns An array of HATEOAS links for the entity.
+    * Gera os links HATEOAS para uma entidade, com base no nome da tabela e ID.
      */
     protected generateHateoasLinks(
         table: string,
@@ -31,10 +28,21 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }
 
+    protected getResourceUrl(req: Request, id: number | string | undefined): string {
+        // Remove versão da API se existir (opcional)
+        const basePath = req.baseUrl;
+        
+        // Se a rota termina com '/', remove
+        const cleanPath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        
+        // Remove 'create' ou 'novo' se estiver na URL (dependendo da sua rota)
+        const resourcePath = cleanPath.replace(/\/?(create|new|\/)?$/, '');
+        
+        return `${resourcePath}/${id}`;
+    }
+
     /**
-     * Creates a new entity.
-     * @param req The request object containing the entity data.
-     * @param res The response object to send the result.
+     * Cria uma nova entidade.
      */
     async create(
         req: Request,
@@ -47,7 +55,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const data = await this.validateCreate(req)
             // Cria entidade
             const result = await this.service.createEntity(data, options)
-            // Retorno
+            // Estrutura resposta 
             const response = HateoasTransformer.addLinks(
                 result,
                 this.generateHateoasLinks(
@@ -57,28 +65,33 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 options.links
             )
 
+            const resourceUrl = this.getResourceUrl(req, result.id);
+
+            // Retorno de sucesso
             ResponseHandler.success(
                 res,
                 response,
-                'Usuário criado com sucesso',
-                201
+                MESSAGES.DATABASE.ENTITY.CREATED,
+                201,
+                { 'Location': resourceUrl }
             )
+
         } catch (error) {
+
             ResponseHandler.error(
                 res,
-                'Error creating entity',
+                MESSAGES.DATABASE.ENTITY.CREATED_ERROR,
                 MESSAGES.ERROR_CODES.INTERNAL_ERROR,
                 500,
                 error
             )
+
         }
 
     }
 
     /**
-     * Retrieves all entities, paginated.
-     * @param req The request object containing query parameters.
-     * @param res The response object to send the result.
+     * Busca todas as entidades, com suporte a paginação e filtros.
      */
     async findAll(
         req: Request,
@@ -91,7 +104,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const options = this.generateQueryFields(req)
             // Busca entidades
             const result = await this.service.findAllEntityPaginated(options)
-            // Retorno Hateoas
+            // Estrutura resposta
             result.data = HateoasTransformer.addCollectionLinks(
                 result.data,
                 (item) => this.generateHateoasLinks(
@@ -101,14 +114,14 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 options.links
             )
 
-            // resposta
+            // Retorno de sucesso
             ResponseHandler.paginated(res, result.data, result.pagination)
 
         } catch (error) {
-            console.log(error)
+
             ResponseHandler.error(
                 res,
-                'Error fetching entities',
+                MESSAGES.DATABASE.ENTITY.READ_ERROR,
                 MESSAGES.ERROR_CODES.INTERNAL_ERROR,
                 500,
                 error
@@ -152,7 +165,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ),
                 options.links
             )
-
+            
             // resposta
             ResponseHandler.success(res, response)
 

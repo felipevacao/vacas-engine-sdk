@@ -11,7 +11,7 @@ const env = cleanEnv(
         API_NAME: str({ default: 'API' }),
         NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
         DB_USER: str(),
-        DB_PASSWORD: str(),
+        DB_PASS: str(),
         DB_NAME: str(),
         DB_HOST: str(),
         DB_PORT: port({ default: 5432 }),

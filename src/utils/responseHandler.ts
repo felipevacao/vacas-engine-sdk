@@ -13,7 +13,8 @@ export class ResponseHandler {
 		res: Response,
 		data?: T,
 		message: string = MESSAGES.API.SUCCESS,
-		statusCode: number = 200
+		statusCode: number = 200,
+		headers?: Record<string, string>
 	): Response<ApiResponse<T>> {
 		const response: ApiResponse<T> = {
 			success: true,
@@ -24,6 +25,12 @@ export class ResponseHandler {
 				requestId: res.locals.requestId
 			}
 		};
+
+		if (headers) {
+			for (const [key, value] of Object.entries(headers)) {
+				res.header(key, value);
+			}
+		}
 
 		return res.status(statusCode).json(response);
 	}
@@ -40,7 +47,8 @@ export class ResponseHandler {
 		message: string,
 		errorCode: string,
 		statusCode: number = 400,
-		details?: unknown | Error
+		details?: unknown | Error,
+		headers?: Record<string, string>
 	): Response<ApiResponse> {
 		const response: ApiResponse = {
 			success: false,
@@ -55,6 +63,11 @@ export class ResponseHandler {
 				requestId: res.locals.requestId
 			}
 		};
+		if (headers) {
+			for (const [key, value] of Object.entries(headers)) {
+				res.header(key, value);
+			}
+		}
 
 		return res.status(statusCode).json(response);
 	}
@@ -75,7 +88,8 @@ export class ResponseHandler {
 			hasNext: boolean;
 			hasPrev: boolean;
 		},
-		message: string = MESSAGES.API.SUCCESS_DATA
+		message: string = MESSAGES.API.SUCCESS_DATA,
+		headers?: Record<string, string>
 	): Response<ApiResponse<T[]>> {
 		const totalPages = Math.ceil(pagination.total / pagination.limit);
 
@@ -94,6 +108,12 @@ export class ResponseHandler {
 			}
 		};
 
+		if (headers) {
+			for (const [key, value] of Object.entries(headers)) {
+				res.header(key, value);
+			}
+		}
+
 		return res.status(200).json(response);
 	}
 
@@ -105,9 +125,10 @@ export class ResponseHandler {
 	 */
 	static unauthorized(
 		res: Response,
-		message: string = MESSAGES.ERROR_CODES.UNAUTHORIZED
+		message: string = MESSAGES.ERROR_CODES.UNAUTHORIZED,
+		headers?: Record<string, string>
 	): Response<ApiResponse> {
-		return this.error(res, message, 'UNAUTHORIZED', 401);
+		return this.error(res, message, 'UNAUTHORIZED', 401, headers);
 	}
 
 	/**
@@ -118,13 +139,15 @@ export class ResponseHandler {
 	 */
 	static notFound(
 		res: Response,
-		resource: string
+		resource: string,
+		headers?: Record<string, string>
 	): Response<ApiResponse> {
 		return this.error(
 			res,
 			`${resource} ${MESSAGES.ERROR_CODES.NOT_FOUND}`,
 			'NOT_FOUND',
-			404
+			404,
+			headers
 		);
 	}
 
@@ -136,8 +159,9 @@ export class ResponseHandler {
 	 */
 	static internal(
 		res: Response,
-		message: string = MESSAGES.ERROR_CODES.INTERNAL_ERROR
+		message: string = MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+		headers?: Record<string, string>
 	): Response<ApiResponse> {
-		return this.error(res, message, 'INTERNAL_ERROR', 500);
+		return this.error(res, message, 'INTERNAL_ERROR', 500, headers);
 	}
 }

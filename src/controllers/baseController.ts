@@ -59,9 +59,9 @@ export class BaseController<T extends BaseEntity> {
     ): (keyof Model<T>)[] {
 
         return ([
-          ...this.model.defaultFields,
-          ...this.model.selectAbleFields,
-          ...extraFields
+            ...this.model.defaultFields,
+            ...this.model.selectAbleFields,
+            ...extraFields
         ] as (keyof Model<T>)[])
             .filter(
                 (field) => !this.model.excludedFields.includes(field as keyof T)

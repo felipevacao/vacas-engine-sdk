@@ -6,19 +6,19 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         this.service = service;
     }
 
-    abstract create     (input: V, output: U): Promise<void>;
-    abstract findAll    (input: V, output: U): Promise<void>;
-    abstract findById   (input: V, output: U): Promise<void>;
-    abstract findBy     (input: V, output: U): Promise<void>;
-    abstract update     (input: V, output: U): Promise<void>;
-    abstract delete     (input: V, output: U): Promise<void>;
-    abstract forceDelete(input: V, output: U): Promise<void>;
-    abstract metadata   (input: V, output: U): Promise<void>;
+    abstract create         (input: V, output: U): Promise<void>;
+    abstract findAll        (input: V, output: U): Promise<void>;
+    abstract findById       (input: V, output: U): Promise<void>;
+    abstract findBy         (input: V, output: U): Promise<void>;
+    abstract update         (input: V, output: U): Promise<void>;
+    abstract delete         (input: V, output: U): Promise<void>;
+    abstract forceDelete    (input: V, output: U): Promise<void>;
+    abstract metadata       (input: V, output: U): Promise<void>;
 
     /**
-     * Validates the input for creating a new entity.
-     * @param input The input request containing the entity data.
-     * @returns The validated create data for the entity.
+     * Valida o input para criação de uma nova entidade.
+     * @param input O input contendo os dados da entidade a ser criada.
+     * @returns Os dados validados para criação da entidade.
      */
     protected async validateCreate(
         input: InputRequest<V>
@@ -29,9 +29,9 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
     }
 
     /**
-     * Validates the input for updating an existing entity.
-     * @param input The input request containing the entity data.
-     * @returns The validated update data for the entity.
+     * Valida o input para atualização de uma entidade existente.
+     * @param input O input contendo os dados da entidade a ser atualizada.
+     * @returns Os dados validados para atualização da entidade.
      */
     protected async validateUpdate(
         input: InputRequest<V>
@@ -42,9 +42,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
     }
     
     /**
-     * Generates the query fields for the model based on the input request.
-     * @param input The input request containing query parameters.
-     * @returns The query fields for the model.
+     * Gera os campos de consulta a partir do input, incluindo filtros, ordenação e paginação.
      */
     protected generateQueryFields(
         input: InputRequest<V>
@@ -72,9 +70,12 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
             page: input.query.page ? parseInt(input.query.page as unknown as string) : undefined,
             pageSize: input.query.pageSize ? parseInt(input.query.pageSize as unknown as string) : undefined
         }
- 
+
     }
 
+    /**
+     * Analisa uma string de filtro e extrai o campo, operador e valor.
+     */
     protected parseFilter = (filterString: string): {
         field: string
         operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
