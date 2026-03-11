@@ -15,6 +15,7 @@ export const CODES = {
 
   // Validação
   INVALID_FORMAT: 'Formato inválido',
+  INVALID_FILTER_FORMAT: 'Formato de filtro inválido',
 
   // Recursos
   NOT_FOUND: 'Recurso não encontrado',

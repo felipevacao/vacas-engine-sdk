@@ -1,3 +1,4 @@
+import { MESSAGES } from "@constants/messages";
 import { BaseController } from "@controllers/baseController";
 import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData } from "types/entity";
 
@@ -87,7 +88,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         const match = filterString.match(regex);
         
         if (!match) {
-            throw new Error('Invalid filter format');
+            throw new Error(MESSAGES.ERROR.INVALID_FILTER_FORMAT);
         }
         
         const [, field, operator, value] = match;

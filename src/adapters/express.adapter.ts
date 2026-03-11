@@ -172,7 +172,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Error fetching entity',
+                MESSAGES.DATABASE.ENTITY.READ_ERROR,
                 MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
@@ -221,7 +221,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Error fetching entity',
+                MESSAGES.DATABASE.ENTITY.READ_ERROR,
                 MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
@@ -247,7 +247,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (isNaN(id)) {
                 ResponseHandler.error(
                     res,
-                    'Invalid ID format',
+                    MESSAGES.DATABASE.ENTITY.INVALID_ID,
                     MESSAGES.ERROR.INVALID_FORMAT,
                     400
                 )
@@ -270,7 +270,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Error updating entity',
+                MESSAGES.DATABASE.ENTITY.UPDATE_ERROR,
                 MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
@@ -295,7 +295,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (isNaN(id)) {
                 ResponseHandler.error(
                     res,
-                    'Invalid ID format',
+                    MESSAGES.DATABASE.ENTITY.INVALID_ID,
                     MESSAGES.ERROR.INVALID_FORMAT,
                     400
                 )
@@ -306,7 +306,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (!user || user.role === 'guest') {
                 ResponseHandler.error(
                     res,
-                    'Error deleting entity',
+                    MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
                     MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
@@ -317,7 +317,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (!success) {
                 ResponseHandler.error(
                     res,
-                    'Entity not found',
+                    MESSAGES.DATABASE.ENTITY.NOT_FOUND,
                     MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
@@ -327,14 +327,14 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.success(
                 res,
                 {},
-                'Entity deleted successfully',
+                MESSAGES.DATABASE.ENTITY.DELETED,
                 204
             )
 
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Error deleting entity',
+                MESSAGES.DATABASE.ENTITY.DELETED,
                 MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
@@ -359,7 +359,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (isNaN(numericId)) {
                 ResponseHandler.error(
                     res,
-                    'Invalid ID format',
+                    MESSAGES.DATABASE.ENTITY.INVALID_ID,
                     MESSAGES.ERROR.INVALID_FORMAT,
                     400
                 )
@@ -370,7 +370,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (!user || user.role !== 'admin') {
                 ResponseHandler.error(
                     res,
-                    'Error deleting entity',
+                    MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
                     MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
@@ -381,7 +381,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (!success) {
                 ResponseHandler.error(
                     res,
-                    'Entity not found',
+                    MESSAGES.DATABASE.ENTITY.NOT_FOUND,
                     MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
@@ -391,14 +391,14 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.success(
                 res,
                 {},
-                'Entity deleted successfully',
+                MESSAGES.DATABASE.ENTITY.DELETED,
                 204
             )
 
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Error deleting entity',
+                MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
                 MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
@@ -414,7 +414,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         if (!metadata) {
             ResponseHandler.error(
                 res,
-                'Metadata not found',
+                MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND,
                 MESSAGES.ERROR.NOT_FOUND,
                 404
             );

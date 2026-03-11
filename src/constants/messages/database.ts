@@ -9,8 +9,11 @@ export const DATABASE_MESSAGES = {
 		CREATED_ERROR: 'Erro ao criar entidade!',
 		READ_ERROR: 'Erro ao buscar entidade!',
 		UPDATED: 'Entidade atualizada com sucesso!',
+		UPDATE_ERROR: 'Erro ao atualizar entidade!',
 		DELETED: 'Entidade deletada com sucesso!',
+		DELETE_ERROR: 'Erro ao deletar entidade!',
 		NOT_FOUND: 'Entidade não encontrada!',
+		METADATA_NOT_FOUND: 'Metadata não encontrada!'
 	},
 	LOGIN: {
 		SUCCESS: 'Login realizado com sucesso'
