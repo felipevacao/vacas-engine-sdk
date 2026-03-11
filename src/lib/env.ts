@@ -23,6 +23,7 @@ const env = cleanEnv(
         ORIGIN: str({ default: 'http://localhost' }),
         PEPPER_VERSIONS: str({ default: '{"1": ""}' }),
         PEPPER_CURRENT: str({ default: '1' }),
+        ENABLE_CONSOLE_LOG: bool({ default: false }),
     }
 )
 

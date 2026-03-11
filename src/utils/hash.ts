@@ -29,7 +29,8 @@ export const hashUtils = {
 		password: string,
 		passwordHash: string,
 		pepper?: number
-	): Promise<[ boolean, pepper: number ]> {
+	): Promise<[boolean, pepper: number]> {
+		
 		let pepperVersion = pepper || pepperConfig.getCurrentVersion();
 		const currentPepper = pepperConfig.getPepperByVersion(pepperVersion.toString());
 		const pepperedPassword = password + currentPepper;

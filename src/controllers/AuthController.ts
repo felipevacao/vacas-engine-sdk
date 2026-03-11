@@ -62,6 +62,7 @@ export class AuthController extends UsersController {
 		const user = await this.getEntityByEmail(email);
 		if (user) {
 			const [match, pepper] = await this.comparePassword(password, user?.password, parseInt(user.pepper));
+
 			if (match) {
 				if (user.pepper !== pepper.toString() || hashUtils.checkUpdatePepper(parseInt(user.pepper))) {
 					this.updatePassword(user, password);
