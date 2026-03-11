@@ -24,11 +24,11 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     ): [string, string] {
 
         if (!input || typeof input !== 'object') {
-            throw new Error('Invalid input')
+            throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
         }
         const { email, password } = input as LoginRequest
         if (!email || !password) {
-            throw new Error('Invalid input')
+            throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
         }
 
         return [email, password]
@@ -52,20 +52,20 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             if (!session) {
                 ResponseHandler.error(
                     res,
-                    'Invalid login or password',
-                    MESSAGES.ERROR_CODES.UNAUTHORIZED,
+                    MESSAGES.ERROR.INVALID_LOGIN,
+                    MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
                 return
             }
 
             // resposta
-            ResponseHandler.success(res, session, 'Login realizado com sucesso');
+            ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Erro ao verificar Login',
-                MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+                MESSAGES.ERROR.ERROR_LOGIN,
+                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -93,7 +93,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             ResponseHandler.error(
                 res,
                 'Erro ao realizar o Logout',
-                MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+                MESSAGES.ERROR.INTERNAL_ERROR,
                 400,
                 error as Error
             )
@@ -137,7 +137,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 ResponseHandler.error(
                     res,
                     'Usuário não encontrado',
-                    MESSAGES.ERROR_CODES.NOT_FOUND,
+                    MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
                 return
@@ -148,7 +148,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 ResponseHandler.error(
                     res,
                     'Senha atual inválida',
-                    MESSAGES.ERROR_CODES.UNAUTHORIZED,
+                    MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
                 return
@@ -161,7 +161,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             ResponseHandler.error(
                 res,
                 'Erro ao verificar Login',
-                MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )

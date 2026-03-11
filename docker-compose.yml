@@ -33,7 +33,7 @@ services:
     networks:
       - internal_db
     env_file:
-      - .env.production 
+      - .env.production
 
 
 volumes:

@@ -52,11 +52,11 @@ export class ResponseHandler {
 	): Response<ApiResponse> {
 		const response: ApiResponse = {
 			success: false,
-			message: MESSAGES.ERROR_CODES.OPERATION_ERROR,
+			message: MESSAGES.ERROR.OPERATION_ERROR,
 			error: {
 				code: errorCode,
 				message,
-				details: details instanceof Error ? (env.ENABLE_RETURN_ERRORS ? details.stack : details.message) : details ?? MESSAGES.ERROR_CODES.UNKNOWN
+				details: details instanceof Error ? (env.ENABLE_RETURN_ERRORS ? details.stack : details.message) : details ?? MESSAGES.ERROR.UNKNOWN
 			},
 			meta: {
 				timestamp: new Date().toISOString(),
@@ -125,7 +125,7 @@ export class ResponseHandler {
 	 */
 	static unauthorized(
 		res: Response,
-		message: string = MESSAGES.ERROR_CODES.UNAUTHORIZED,
+		message: string = MESSAGES.ERROR.UNAUTHORIZED,
 		headers?: Record<string, string>
 	): Response<ApiResponse> {
 		return this.error(res, message, 'UNAUTHORIZED', 401, headers);
@@ -144,7 +144,7 @@ export class ResponseHandler {
 	): Response<ApiResponse> {
 		return this.error(
 			res,
-			`${resource} ${MESSAGES.ERROR_CODES.NOT_FOUND}`,
+			`${resource} ${MESSAGES.ERROR.NOT_FOUND}`,
 			'NOT_FOUND',
 			404,
 			headers
@@ -159,7 +159,7 @@ export class ResponseHandler {
 	 */
 	static internal(
 		res: Response,
-		message: string = MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+		message: string = MESSAGES.ERROR.INTERNAL_ERROR,
 		headers?: Record<string, string>
 	): Response<ApiResponse> {
 		return this.error(res, message, 'INTERNAL_ERROR', 500, headers);

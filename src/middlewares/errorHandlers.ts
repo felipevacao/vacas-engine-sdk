@@ -15,7 +15,7 @@ export const notFound = (
 	ResponseHandler.error(
 		res,
 		message,
-		MESSAGES.ERROR_CODES.NOT_FOUND,
+		MESSAGES.ERROR.NOT_FOUND,
 		404
 	)
 
@@ -53,7 +53,7 @@ export const errorHandler = (
 	ResponseHandler.error(
 		res,
 		err.message || 'Erro interno do servidor.',
-		MESSAGES.ERROR_CODES.INTERNAL_ERROR,
+		MESSAGES.ERROR.INTERNAL_ERROR,
 		500
 	);
 

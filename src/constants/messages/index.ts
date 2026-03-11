@@ -16,7 +16,7 @@ export const MESSAGES = {
 		ERROR: 'Erro ao carregar rotas:'
 	},
 	DATABASE: DATABASE_MESSAGES,
-	ERROR_CODES: ERROR_CODES
+	ERROR: ERROR_CODES
 } as const;
 
 export type Messages = typeof MESSAGES;

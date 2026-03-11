@@ -24,7 +24,7 @@ router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 router.get('/check', checkExistingToken, (req, res) => {
 	res.status(401).json({
 		success: false,
-		error: MESSAGES.ERROR_CODES.MISSING_TOKEN,
+		error: MESSAGES.ERROR.MISSING_TOKEN,
 		code: 'LOGIN_ERROR'
 	})
 })

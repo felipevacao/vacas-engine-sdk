@@ -25,7 +25,7 @@ export const tokenMiddleware = async (
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
 		res.status(401).json({
 			success: false,
-			error: MESSAGES.ERROR_CODES.MISSING_TOKEN,
+			error: MESSAGES.ERROR.MISSING_TOKEN,
 			code: 'MISSING_TOKEN'
 		})
 		return
@@ -34,7 +34,7 @@ export const tokenMiddleware = async (
 	if (!token) {
 		res.status(401).json({
 			success: false,
-			error: MESSAGES.ERROR_CODES.MISSING_TOKEN,
+			error: MESSAGES.ERROR.MISSING_TOKEN,
 			code: 'MISSING_TOKEN'
 		})
 	}
@@ -54,7 +54,7 @@ export const tokenMiddleware = async (
 		if (!session || !user) {
 			res.status(401).json({
 				success: false,
-				error: MESSAGES.ERROR_CODES.INVALID_SESSION,
+				error: MESSAGES.ERROR.INVALID_SESSION,
 				code: 'INVALID_SESSIONS'
 			})
 		}
@@ -122,7 +122,7 @@ function handleTokenError(
 	if (error.name === 'InvalidSessionError') {
 		return ResponseHandler.error(
 			res,
-			MESSAGES.ERROR_CODES.INVALID_CREDENTIALS,
+			MESSAGES.ERROR.INVALID_CREDENTIALS,
 			'INVALID_CREDENTIALS',
 			401
 		)
@@ -130,7 +130,7 @@ function handleTokenError(
 
 	return ResponseHandler.error(
 		res,
-		MESSAGES.ERROR_CODES.TOKEN_VALIDATION_ERROR,
+		MESSAGES.ERROR.TOKEN_VALIDATION_ERROR,
 		'INTERNAL_ERROR',
 		500,
 		error as Error

@@ -6,6 +6,9 @@ export const CODES = {
   INVALID_SESSION: 'Sessão inválida',
   INVALID_CREDENTIALS: 'Credenciais inválidas',
   TOKEN_VALIDATION_ERROR: 'Erro durante a validação do token',
+  INVALID_LOGIN: 'Login ou senha inválidos',
+  ERROR_LOGIN: 'Erro ao verificar Login ou senha',
+
 
   // Autorização  
   UNAUTHORIZED: 'Acesso não autorizado',

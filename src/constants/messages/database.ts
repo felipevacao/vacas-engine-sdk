@@ -11,6 +11,9 @@ export const DATABASE_MESSAGES = {
 		UPDATED: 'Entidade atualizada com sucesso!',
 		DELETED: 'Entidade deletada com sucesso!',
 		NOT_FOUND: 'Entidade não encontrada!',
+	},
+	LOGIN: {
+		SUCCESS: 'Login realizado com sucesso'
 	}
 
 } as const;
