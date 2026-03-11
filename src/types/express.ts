@@ -11,5 +11,6 @@ declare module 'express-session' {
 declare module 'express-serve-static-core' {
   interface Request {
     session: session.Session & Partial<session.SessionData>;
+    clientIP?: string; // Adiciona o campo clientIP ao objeto Request
   }
 }

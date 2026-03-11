@@ -50,7 +50,7 @@ export const tokenMiddleware = async (
 		 * Se a validação for bem-sucedida, adicionar as informações da sessão ao objeto de requisição e chamar o próximo middleware ou rota.
 		 */
 		const sessionController = new SessionController()
-		const [user, session] = await sessionController.validateUser(token as string, '127.0.0.1')
+		const [user, session] = await sessionController.validateUser(token as string, req.ip || '127.0.0.1')
 		if (!session || !user) {
 			res.status(401).json({
 				success: false,
@@ -94,7 +94,7 @@ export const checkExistingToken = async (
 		if (token) {
 			try {
 				const sessionController = new SessionController()
-				const [user, session] = await sessionController.validateUser(token as string, '127.0.0.1')
+				const [user, session] = await sessionController.validateUser(token as string, req.ip || '127.0.0.1')
 				if (session && user) {
 					ResponseHandler.success(res, {
 						mensagem: 'Sessão ativa encontrada',

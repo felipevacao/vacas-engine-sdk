@@ -5,11 +5,28 @@ import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
 import { MESSAGES } from '@constants/messages/index';
+import rateLimit from 'express-rate-limit';
 
 /**
  * Configuração do servidor Express
  */
 const app = express()
+
+
+// Definindo o rate limit global
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutos
+	max: 100, // Limite de 100 requisições por IP
+	message: {
+		error: 'Muitas requisições. Tente novamente mais tarde.',
+		status: 429
+	},
+	standardHeaders: true, // Retorna headers com info do rate limit
+	legacyHeaders: false,
+});
+
+// Aplicar a todas as rotas
+app.use(limiter);
 
 /**
  * Configuração do CORS

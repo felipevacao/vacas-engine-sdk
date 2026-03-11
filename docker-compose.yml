@@ -20,9 +20,9 @@ services:
     ports:
       - "3002:3002"
     environment:
-      DB_HOST: postdb 
+      DB_HOST: postdb  # Atualizado para refletir o novo nome do container
       DB_USER: felipe
-      DB_PASS: ${DB_PASS}
+      DB_PASS: ${DB_PASS} 
       DB_NAME: apitreis
       ORIGIN: http://localhost:3003
       PEPPER_VERSIONS: ${PEPPER_VERSIONS}
@@ -33,7 +33,7 @@ services:
     networks:
       - internal_db
     env_file:
-      - .env.production
+      - .env.production 
 
 
 volumes:

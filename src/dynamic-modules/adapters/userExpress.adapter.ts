@@ -14,14 +14,11 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     }
 
     /**
-     * Validates the input for login fields.
-     * @param input - Object containing email and password
-     * @returns Array containing email and password
-     * @throws Error if the input is invalid or if the fields are missing
+    * Valida os campos de login.
      */
     private validateLoginFields(
         input: unknown
-    ): [string, string] {
+    ): [email: string, password: string] {
 
         if (!input || typeof input !== 'object') {
             throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
@@ -35,20 +32,18 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     }
 
     /**
-     * Handles user login.
-     * @param req - Express request object containing the login credentials
-     * @param res - Express response object to send the result
+    *  Requisição para Login de usuário.
      */
     async login(
         req: Request,
         res: Response
     ): Promise<void> {
         try {
-            // validates input
+            // valida o input
             const [login, password] = this.validateLoginFields(req.body)
 
-            // validates login
-            const session = await this.service.login(login, password, '127.0.0.1')
+            // valida o login
+            const session = await this.service.login(login, password, req.ip || '127.0.0.1')
             if (!session) {
                 ResponseHandler.error(
                     res,

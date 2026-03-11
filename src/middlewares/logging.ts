@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { getClientIP } from '@utils/ip';
 
 /**
  * Middleware para logar as requisições recebidas.
@@ -8,6 +9,10 @@ import { Request, Response, NextFunction } from 'express';
  * @param next Função do próximo middleware.
  */
 export const logging = (req: Request, res: Response, next: NextFunction) => {
-	console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+
+	// Adiciona IP ao objeto req para uso posterior
+	req.clientIP = getClientIP(req);
+	console.log(`[${new Date().toISOString()}] IP: ${req.clientIP} - ${req.method} ${req.url}`);
+
 	next()
 }
