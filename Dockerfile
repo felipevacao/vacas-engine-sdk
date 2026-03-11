@@ -31,7 +31,8 @@ ENV SALT_ROUNDS=12
 
 # Variáveis sensíveis - sem valores no Dockerfile
 ENV DB_PASS=""
-ENV PASS_PEPPER=""
+ENV PEPPER_VERSIONS=""
+ENV PEPPER_CURRENT=""
 
 EXPOSE $PORT
 
