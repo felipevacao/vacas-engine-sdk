@@ -1,0 +1,44 @@
+services:
+  postdb: 
+    image: postgres:latest
+    container_name: postdb
+    environment:
+      POSTGRES_USER: felipe
+      POSTGRES_PASSWORD: dbTreis0303
+      POSTGRES_DB: apitreis
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - internal_db
+
+  treisapi: 
+    build: ./
+    container_name: treisapi
+    ports:
+      - "3002:3002"
+    environment:
+      DB_HOST: postdb  # Atualizado para refletir o novo nome do container
+      DB_USER: felipe
+      DB_PASS: ${DB_PASS}  # Pega do ambiente ou .env
+      DB_NAME: apitreis
+      ORIGIN: http://localhost:3003
+      PEPPER_VERSIONS: ${PEPPER_VERSIONS}
+      PEPPER_CURRENT: ${PEPPER_CURRENT}
+      ENABLE_CONSOLE_LOG: true
+    depends_on:
+      - postdb
+    networks:
+      - internal_db
+    env_file:
+      - .env.production  # Carrega variáveis sensíveis do arquivo .env
+
+
+volumes:
+  postgres_data:
+
+networks:
+  internal_db:
+    driver: bridge
