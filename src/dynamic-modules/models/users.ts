@@ -15,7 +15,7 @@ const UsersModel: Model<UsersEntity> = {
   forceDelete: baseService.forceDelete('users'),
   selectAbleFields: ['name', 'email', 'login', 'role', 'status'],
   defaultFields: ['id'],
-  excludedFields: ['password'],
+  excludedFields: ['password', 'pepper'],
   metadata: async () => {
     const result = await baseService.metadata('users')();
     if (!result) throw new Error('Metadata not found');

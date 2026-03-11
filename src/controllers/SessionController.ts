@@ -101,12 +101,13 @@ export class SessionController {
                 const options = {
                         fields: ['login' as (keyof Model<UsersEntity>)],
                         filters: [{
-                          field: "role",
-                          operator: "=",
-                          value: "guest",
+                            field: "role",
+                            operator: "=",
+                            value: "guest",
                         }]
-                      } as QueryFields<UsersEntity>
-                this.user.updateEntity(user.id as number, { password: hashUtils.generateHash(cryptoUtils.generateToken()) } as UpdateData<UsersEntity>, options)
+                } as QueryFields<UsersEntity>
+                const [ randomPassword, pepper ] = hashUtils.generateHash(cryptoUtils.generateToken())
+                this.user.updateEntity(user.id as number, { password: randomPassword, pepper: pepper } as UpdateData<UsersEntity>, options)
                 break
         }
         const expiresAtDate = cryptoUtils.getExpiresAt(expiresAt)

@@ -39,7 +39,7 @@ export class UsersController extends BaseController<UsersEntity> {
       }
 
       if(body.password) {
-        body.password = hashUtils.generateHash(body.password)
+        [ body.password, body.pepper ] = hashUtils.generateHash(body.password)
       }
 
       return body as CreateData<UsersEntity>;
@@ -54,7 +54,7 @@ export class UsersController extends BaseController<UsersEntity> {
   ): Promise<UpdateData<UsersEntity> | null> {
       const body = input.body as Partial<UpdateData<UsersEntity>>;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, role, status, ...rest } = body;
+      const { password, role, status, pepper, ...rest } = body;
       return rest as UpdateData<UsersEntity>;
   }
 

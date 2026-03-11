@@ -143,7 +143,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 return
             }
 
-            const isPasswordValid = await this.service.validatePassword(user, currentPassword)
+            const [ isPasswordValid ] = await this.service.validatePassword(user, currentPassword)
             if (!isPasswordValid) {
                 ResponseHandler.error(
                     res,

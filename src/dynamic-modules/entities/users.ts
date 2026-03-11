@@ -8,4 +8,5 @@ export interface UsersEntity extends BaseEntity {
     password: string;
     role: 'admin' | 'manager' | 'regular' | 'guest';
     status: 'active' | 'inactive' | 'banned';
+    pepper: string;
 }

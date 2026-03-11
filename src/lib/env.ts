@@ -21,7 +21,8 @@ const env = cleanEnv(
         ENABLE_RETURN_ERRORS: bool({ default: false }),
         SALT_ROUNDS: port({ default: 10 }),
         ORIGIN: str({ default: 'http://localhost' }),
-        PASS_PEPPER: str({ default: '' }),
+        PEPPER_VERSIONS: str({ default: '{"1": ""}' }),
+        PEPPER_CURRENT: str({ default: '1' }),
     }
 )
 
