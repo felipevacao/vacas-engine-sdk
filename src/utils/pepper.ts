@@ -4,14 +4,16 @@ export class PepperConfig {
 
 	pepperVersions: Record<string, string>
 	currentVersion: string
+	pepperSeparator: string
 
 	constructor() {
 		this.pepperVersions = JSON.parse(env.PEPPER_VERSIONS)
 		this.currentVersion = env.PEPPER_CURRENT
+		this.pepperSeparator = '\x00'
 	}
 
 	getCurrentPepper(): string {
-		return this.pepperVersions[this.currentVersion] || ''
+		return this.pepperSeparator + this.pepperVersions[this.currentVersion] || ''
 	}
 
 	getPepperByVersion(version: string): string {

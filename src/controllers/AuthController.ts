@@ -3,6 +3,7 @@ import { UsersEntity } from "@dynamic-modules/entities/users";
 import { Model, OutputData, QueryFields, UpdateData } from "types/entity";
 import { SessionController } from "./SessionController";
 import { hashUtils } from "@utils/hash";
+import { HashResult } from "types/hash";
 
 export class AuthController extends UsersController {
 
@@ -18,9 +19,9 @@ export class AuthController extends UsersController {
 	 */
 	public async generateHash(
 		password: string
-	): Promise<[ passwordHash: string, pepper: string ]> {
+	): Promise<HashResult> {
 
-		return hashUtils.generateHash(password);
+		return await hashUtils.generateHash(password);
 
 	}
 
@@ -106,7 +107,7 @@ export class AuthController extends UsersController {
 		newPassword: string
 	): Promise<void> {
 
-		const [ passwordHash, pepper ] = await this.generateHash(newPassword);
+		const { passwordHash, pepper } = await this.generateHash(newPassword);
 		if(user.id){
 			const options = {
 				fields: ['login' as (keyof Model<UsersEntity>)],

@@ -153,7 +153,8 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             }
 
             await this.service.updatePassword(user, newPassword)
-            ResponseHandler.success(res, { message: 'Senha alterada com sucesso' });
+            await this.service.logout(req.session.sessionId as string)
+            ResponseHandler.success(res, { message: 'Senha alterada com sucesso! Logout efetuado! Favor realizar Login novamente!' });
 
         } catch (error) {
             ResponseHandler.error(

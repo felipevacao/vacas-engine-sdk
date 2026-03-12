@@ -39,7 +39,9 @@ export class UsersController extends BaseController<UsersEntity> {
       }
 
       if(body.password) {
-        [ body.password, body.pepper ] = hashUtils.generateHash(body.password)
+        const { passwordHash, pepper } = await hashUtils.generateHash(body.password)
+        body.password = passwordHash
+        body.pepper = pepper
       }
 
       return body as CreateData<UsersEntity>;

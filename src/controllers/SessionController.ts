@@ -106,8 +106,8 @@ export class SessionController {
                             value: "guest",
                         }]
                 } as QueryFields<UsersEntity>
-                const [ randomPassword, pepper ] = hashUtils.generateHash(cryptoUtils.generateToken())
-                this.user.updateEntity(user.id as number, { password: randomPassword, pepper: pepper } as UpdateData<UsersEntity>, options)
+                const { passwordHash, pepper } = await hashUtils.generateHash(cryptoUtils.generateToken())
+                this.user.updateEntity(user.id as number, { password: passwordHash, pepper: pepper } as UpdateData<UsersEntity>, options)
                 break
         }
         const expiresAtDate = cryptoUtils.getExpiresAt(expiresAt)
