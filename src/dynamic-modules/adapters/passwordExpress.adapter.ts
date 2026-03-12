@@ -104,8 +104,8 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 	): Promise<void> {
 		
 		const [ email ] = this.validateResetPasswordFields(req.body)
-		const user = await this.service.resetPassword(email)
-		if (!user) {
+		const session = await this.service.resetPassword(email, req.ip || '127.0.0.1')
+		if (!session) {
 			ResponseHandler.error(
 				res,
 				MESSAGES.ERROR.USER_NOT_FOUND,
@@ -114,6 +114,8 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 			)
 			return
 		}
+
+		ResponseHandler.success(res, session, MESSAGES.API.SUCCESS_DATA);
 
 	}
 	

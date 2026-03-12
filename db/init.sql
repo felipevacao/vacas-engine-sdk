@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS "user_sessions" (
     "expires_at" TIMESTAMPTZ NOT NULL,
     "is_revoked" BOOLEAN NULL DEFAULT false,
     "ip_address" VARCHAR(45) NOT NULL,
+    "status" VARCHAR(20) NOT NULL DEFAULT 'active',
     "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     "last_used_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP NULL DEFAULT NULL,
@@ -67,6 +68,7 @@ CREATE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON "user_sessions"("toke
 CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON "user_sessions"("user_id");
 CREATE INDEX IF NOT EXISTS idx_user_sessions_expires_at ON "user_sessions"("expires_at");
 CREATE INDEX IF NOT EXISTS idx_user_sessions_is_revoked ON "user_sessions"("is_revoked");
+CREATE INDEX IF NOT EXISTS idx_user_sessions_status ON "user_sessions"("status");
 
 CREATE OR REPLACE FUNCTION cleanup_old_sessions()
 RETURNS void AS '

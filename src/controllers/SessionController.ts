@@ -117,6 +117,28 @@ export class SessionController {
             tokenHash: hash,
             expiresAt: expiresAtDate,
             ipAddress: ipAddress,
+            status: 'active'
+        } as CreateData<UserSessionsEntity>, {})
+
+        return { token: token, expiresAt: expiresAtDate }
+
+    }
+
+    public async createResetSession(
+        user: UsersEntity, 
+        ipAddress: string
+    ): Promise<{ token: string, expiresAt: Date }> {
+        
+        const { token, hash } = this.createToken()
+
+        const expiresAtDate = cryptoUtils.getExpiresAt(10)
+        
+        await this.userSessions.createEntity({
+            userId: user.id as number,
+            tokenHash: hash,
+            expiresAt: expiresAtDate,
+            ipAddress: ipAddress,
+            status: 'reset_required'
         } as CreateData<UserSessionsEntity>, {})
 
         return { token: token, expiresAt: expiresAtDate }
@@ -174,14 +196,16 @@ export class SessionController {
      * @param ipAddress The IP address of the user.
      * @returns The user and session entities if valid, throws an error otherwise.
      */
-    public async validateUser(
+    public async validateUserSession(
         token: string, 
-        ipAddress: string
+        ipAddress: string,
+        status: 'active' | 'reset_required' = 'active'
     ): Promise<[UsersEntity, UserSessionsEntity]> {
         const options = {
             where: { 
                 ip_address: ipAddress,
-                is_revoked: false
+                is_revoked: false,
+                status: status
             },
             filters: [{
                 field: 'expires_at',

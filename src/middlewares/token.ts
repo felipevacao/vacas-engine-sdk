@@ -16,21 +16,7 @@ export const tokenMiddleware = async (
 	next: NextFunction
 ): Promise<void> => {
 
-	const authHeader = req.headers.authorization
-
-	/**
-	 * VERIFICAÇÃO DO TOKEN - INICIO
-	 * Verificar se o token está presente no header Authorization e se segue o formato
-	 */
-	if (!authHeader || !authHeader.startsWith('Bearer ')) {
-		res.status(401).json({
-			success: false,
-			error: MESSAGES.ERROR.MISSING_TOKEN,
-			code: 'MISSING_TOKEN'
-		})
-		return
-	}
-	const token = authHeader?.split(' ')[1]
+	const token = verificaHeaderToken(req)
 	if (!token) {
 		res.status(401).json({
 			success: false,
@@ -38,9 +24,6 @@ export const tokenMiddleware = async (
 			code: 'MISSING_TOKEN'
 		})
 	}
-	/**
-	 * VERIFICAÇÃO DO TOKEN - FIM
-	 */
 
 	try {
 		/**
@@ -50,13 +33,17 @@ export const tokenMiddleware = async (
 		 * Se a validação for bem-sucedida, adicionar as informações da sessão ao objeto de requisição e chamar o próximo middleware ou rota.
 		 */
 		const sessionController = new SessionController()
-		const [user, session] = await sessionController.validateUser(token as string, req.ip || '127.0.0.1')
+		const [user, session] = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1')
 		if (!session || !user) {
 			res.status(401).json({
 				success: false,
 				error: MESSAGES.ERROR.INVALID_SESSION,
 				code: 'INVALID_SESSIONS'
 			})
+		}
+
+		if (session.status !== 'active') {
+			
 		}
 
 		/**
@@ -81,7 +68,7 @@ export const tokenMiddleware = async (
  * Se um token válido for encontrado, retorna uma resposta JSON indicando que uma sessão ativa foi encontrada, junto com a data de expiração do token.
  * Se nenhum token válido for encontrado, chama o próximo middleware ou rota.
  */
-export const checkExistingToken = async (
+export const checkExistingResetToken = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -94,7 +81,7 @@ export const checkExistingToken = async (
 		if (token) {
 			try {
 				const sessionController = new SessionController()
-				const [user, session] = await sessionController.validateUser(token as string, req.ip || '127.0.0.1')
+				const [ user, session ] = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1', 'reset_required')
 				if (session && user) {
 					ResponseHandler.success(res, {
 						mensagem: 'Sessão ativa encontrada',
@@ -110,7 +97,55 @@ export const checkExistingToken = async (
 
 	next()
 
-} 
+}
+
+/**
+ * 
+ * Middleware para validar o token de autenticação em rotas protegidas.
+ * Verifica se o token está presente no header Authorization, valida o token e, se válido, adiciona as informações da sessão ao objeto de requisição.
+ * Em caso de erro, retorna uma resposta JSON com a mensagem de erro apropriada.
+ */
+export const resetTokenMiddleware = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+
+	const token = verificaHeaderToken(req)
+	if (!token) {
+		res.status(401).json({
+			success: false,
+			error: MESSAGES.ERROR.MISSING_TOKEN,
+			code: 'MISSING_TOKEN'
+		})
+	}
+
+	try {
+		const sessionController = new SessionController()
+		const [user, session] = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1', 'reset_required')
+		if (!session || !user) {
+			res.status(401).json({
+				success: false,
+				error: MESSAGES.ERROR.INVALID_SESSION,
+				code: 'INVALID_SESSIONS'
+			})
+		}
+
+		// alterar o usuario para reset_required
+
+		req.session = {
+			sessionId: session.id,
+			userId: user.id as number,
+		} as Session & Partial<SessionData>
+
+		next()
+
+	} catch (error) {
+		handleTokenError(error as Error, res)
+
+	}
+
+}
 
 /**
  * Função para lidar com erros durante a validação do token.
@@ -135,4 +170,30 @@ function handleTokenError(
 		500,
 		error as Error
 	)
+}
+
+/**
+ * função para extrair e retornar o token do header
+ */
+function verificaHeaderToken(
+	req: Request	
+): boolean | string {
+
+	const authHeader = req.headers.authorization
+	/**
+	 * VERIFICAÇÃO DO TOKEN - INICIO
+	 * Verificar se o token está presente no header Authorization e se segue o formato
+	 */
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return false
+	}
+	const token = authHeader?.split(' ')[1]
+	if (!token) {
+		return false
+	}
+
+	return token
+	/**
+	 * VERIFICAÇÃO DO TOKEN - FIM
+	 */
 }
