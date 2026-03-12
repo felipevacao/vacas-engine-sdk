@@ -54,6 +54,9 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 return
             }
 
+            if (session && typeof session === 'object' && 'token' in session) {
+                res.setHeader('Authorization', `Bearer ${session.token}`);
+            }
             // resposta
             ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
         } catch (error) {
