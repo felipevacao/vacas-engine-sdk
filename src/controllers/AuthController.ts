@@ -61,17 +61,20 @@ export class AuthController extends UsersController {
 	): Promise<OutputData<UsersEntity> | null> {
 
 		const user = await this.getEntityByEmail(email);
-		if (user) {
-			const [match, pepper] = await this.comparePassword(password, user?.password, parseInt(user.pepper));
-
-			if (match) {
-				if (user.pepper !== pepper.toString() || hashUtils.checkUpdatePepper(parseInt(user.pepper))) {
-					this.updatePassword(user, password);
-				}
-				return user
-			}
+		if (!user) {
+			return null
 		}
-		return null;
+
+		const [match, pepper] = await this.comparePassword(password, user?.password, parseInt(user.pepper));
+
+		if (!match) {
+			return null
+		}
+		
+		if (user.pepper !== pepper.toString() || hashUtils.checkUpdatePepper(parseInt(user.pepper))) {
+			this.updatePassword(user, password);
+		}
+		return user
 	}
 	
 	/** 
@@ -135,7 +138,6 @@ export class AuthController extends UsersController {
 		password: string, 
 		ipAdress: string
 	): Promise<{ token: string, expiresAt: Date } | boolean> {
-
 		const user = await this.verifyUserPassword(login, password);
 		if (!user) {
 			return false;

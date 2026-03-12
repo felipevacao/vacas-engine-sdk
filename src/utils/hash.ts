@@ -1,39 +1,42 @@
 import env from "@lib/env"
 import bcrypt from "bcrypt"
+// import crypto from 'crypto'
+import { promisify } from "util"
+import { PepperConfig } from "./pepper"
+import { HashResult } from "types/hash"
 import crypto from 'crypto'
-import { promisify } from "util";
-import { PepperConfig } from "./pepper";
-import { HashResult } from "types/hash";
 
-const compareAsync = promisify(bcrypt.compare);
-const pepperConfig = new PepperConfig();
+const compareAsync = promisify(bcrypt.compare)
+const pepperConfig = new PepperConfig()
 
 
 export const hashUtils = {
 
-	preparePassword(password: string): string {
+	preparePassword(password: string, pepperVersion: string): string {
 
-		const hmac = crypto.createHmac('sha256', pepperConfig.getCurrentPepper());
-        hmac.update(password);
-        hmac.update(pepperConfig.pepperSeparator);
-		hmac.update(pepperConfig.getCurrentVersion().toString());
+		const hmac = crypto.createHmac('sha256', pepperConfig.getPepperByVersion(pepperVersion))
+        hmac.update(password)
+        hmac.update(pepperConfig.pepperSeparator)
+		hmac.update(pepperVersion)
 		
 		return hmac.digest('hex')
-
 	},
 
 	/**
 	 * Gera um hash de senha usando bcrypt.
 	 */
-	async generateHash(password: string): Promise<HashResult> {
-		const pepperVersion = pepperConfig.getCurrentVersion();
-		const pepperedPassword = this.preparePassword(password)
-		const salt = await bcrypt.genSalt(env.SALT_ROUNDS || 10);
-		const passwordHash = await bcrypt.hash(pepperedPassword, salt);
+	async generateHash(
+		password: string,
+		pepperVersion: string = pepperConfig.getCurrentVersion().toString()
+	): Promise<HashResult> {
+
+		const pepperedPassword = this.preparePassword(password, pepperVersion)
+		const salt = await bcrypt.genSalt(env.SALT_ROUNDS || 10)
+		const passwordHash = await bcrypt.hash(pepperedPassword, salt)
 		return {
 			passwordHash,
-			pepper: pepperVersion.toString()
-		};
+			pepper: pepperVersion
+		}
 	},
 
 	/**
@@ -44,17 +47,15 @@ export const hashUtils = {
 	async compareAsync(
 		password: string,
 		passwordHash: string,
-		pepper?: number
+		pepper?: number // Recebe o pepper gravado no registro do usuário
 	): Promise<[boolean, pepper: number]> {
-		
-		let pepperVersion = pepper || pepperConfig.getCurrentVersion();
-		const currentPepper = pepperConfig.getPepperByVersion(pepperVersion.toString());
-		const pepperedPassword = password + currentPepper;
-		let match = await compareAsync(pepperedPassword, passwordHash);
-		if (!match) {
-			[ match, pepperVersion ] = await this.compareAsync(password, passwordHash, pepperVersion - 1);
+		if (pepper == 0) {
+			return [ false, pepperConfig.getCurrentVersion() ]
 		}
-		return [ match, pepperVersion ];
+		const pepperVersion = pepper || pepperConfig.getCurrentVersion()
+		const pepperedPassword = this.preparePassword(password, pepperVersion.toString())
+		const match = await compareAsync(pepperedPassword, passwordHash)
+		return [ match, pepperVersion ]
 
 	},
 
@@ -62,8 +63,8 @@ export const hashUtils = {
 	 * Verifica se há atualização no Pepper
 	 */
 	checkUpdatePepper(pepper: number): boolean {
-		const pepperVersion = pepperConfig.getCurrentVersion();
-		return pepperVersion !== pepper;
+		const pepperVersion = pepperConfig.getCurrentVersion()
+		return pepperVersion !== pepper
 	}
 
 }

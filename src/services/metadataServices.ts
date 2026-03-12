@@ -18,7 +18,7 @@ export class MetadataService {
     
     // 2. Carregar configurações do manifest
     const manifest = this.loadTableManifest(tableName);
-    console.log('manifest', manifest);
+
     // 3. Combinar as informações
     const fields = this.combineFieldsMetadata(dbFields, manifest.fields || {}, enums || {});
     

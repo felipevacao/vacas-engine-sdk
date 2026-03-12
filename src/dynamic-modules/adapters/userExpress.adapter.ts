@@ -41,7 +41,6 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         try {
             // valida o input
             const [login, password] = this.validateLoginFields(req.body)
-
             // valida o login
             const session = await this.service.login(login, password, req.ip || '127.0.0.1')
             if (!session) {
@@ -151,10 +150,9 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 )
                 return
             }
-
             await this.service.updatePassword(user, newPassword)
-            await this.service.logout(req.session.sessionId as string)
             ResponseHandler.success(res, { message: 'Senha alterada com sucesso! Logout efetuado! Favor realizar Login novamente!' });
+            await this.service.logout(req.session.sessionId as string)
 
         } catch (error) {
             ResponseHandler.error(
