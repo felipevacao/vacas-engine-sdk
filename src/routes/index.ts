@@ -19,6 +19,16 @@ if (env.NODE_ENV === 'development') {
     router.use(logging)
 }
 
+router.use((req, res, next) => {
+    // Prevenir que o token vaze em referrers
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    
+    // Controlar cache de requisições autenticadas
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    
+    next();
+});
+
 /**
  * Função para carregar rotas dinamicamente a partir do diretório `src/dynamic-modules/routes`
  * Ela lê os arquivos de rota, importa os módulos e registra as rotas no roteador principal.
