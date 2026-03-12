@@ -13,7 +13,8 @@ export const DATABASE_MESSAGES = {
 		DELETED: 'Entidade deletada com sucesso!',
 		DELETE_ERROR: 'Erro ao deletar entidade!',
 		NOT_FOUND: 'Entidade não encontrada!',
-		METADATA_NOT_FOUND: 'Metadata não encontrada!'
+		METADATA_NOT_FOUND: 'Metadata não encontrada!',
+		INVALID_ID: 'Formato inválido no ID'
 	},
 	LOGIN: {
 		SUCCESS: 'Login realizado com sucesso'
