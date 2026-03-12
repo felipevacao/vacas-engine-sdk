@@ -154,4 +154,17 @@ export class AuthController extends UsersController {
 			
 	}
 
+	public async resetPassword(
+		email: string
+	): Promise<{ token: string, expiresAt: Date } | boolean> {
+
+		const user = await this.getEntityByEmail(email)
+		if (!user) {
+			return false
+		}
+
+
+		return false
+	}
+
 }

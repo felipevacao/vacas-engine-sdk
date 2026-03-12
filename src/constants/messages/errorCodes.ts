@@ -12,6 +12,7 @@ export const CODES = {
 
   // Autorização  
   UNAUTHORIZED: 'Acesso não autorizado',
+  USER_NOT_FOUND: 'Usuário não encontrado',
 
   // Validação
   INVALID_FORMAT: 'Formato inválido',

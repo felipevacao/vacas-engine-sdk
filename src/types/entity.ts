@@ -65,6 +65,10 @@ export type LoginRequest = {
   password: string;
 };
 
+export type PasswordResetRequest = {
+  email: string;
+};
+
 export type PasswordChangeRequest = {
   currentPassword: string;
   newPassword: string;
