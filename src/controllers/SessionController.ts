@@ -57,12 +57,12 @@ export class SessionController {
                 user_id: user.id,
                 ip_address: ipAddress,
                 is_revoked: false
-             },
-             filters: [{
+            },
+            filters: [{
                 field: 'expires_at',
                 operator: '>',
                 value: new Date()
-             }]
+            }]
         } as QueryFields<UserSessionsEntity>
 
         const userSessions = await this.userSessions.findByEntity(options)
@@ -182,12 +182,12 @@ export class SessionController {
             where: { 
                 ip_address: ipAddress,
                 is_revoked: false
-             },
-             filters: [{
+            },
+            filters: [{
                 field: 'expires_at',
                 operator: '>',
                 value: new Date()
-             }]
+            }]
         } as QueryFields<UserSessionsEntity>
         // Find active sessions for the given IP address
         const activeSessions = await this.userSessions.findByEntity(options)

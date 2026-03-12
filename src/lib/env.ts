@@ -24,6 +24,10 @@ const env = cleanEnv(
         PEPPER_VERSIONS: str({ default: '{"1": ""}' }),
         PEPPER_CURRENT: str({ default: '1' }),
         ENABLE_CONSOLE_LOG: bool({ default: false }),
+
+        TOKEN_BYTES: str({ default: '32'}),
+        TOKEN_ALGOR: str({ default: 'sha256'}),
+        TOKEN_PEPPER: str({ default: ''})
     }
 )
 
