@@ -1,10 +1,9 @@
 import env from "@lib/env"
 import bcrypt from "bcrypt"
-// import crypto from 'crypto'
+import crypto from 'crypto'
 import { promisify } from "util"
 import { PepperConfig } from "./pepper"
 import { HashResult } from "types/hash"
-import crypto from 'crypto'
 
 const compareAsync = promisify(bcrypt.compare)
 const pepperConfig = new PepperConfig()
@@ -12,6 +11,9 @@ const pepperConfig = new PepperConfig()
 
 export const hashUtils = {
 
+	/**
+	 * Prepara a senha para a geração de Hash
+	 */
 	preparePassword(password: string, pepperVersion: string): string {
 
 		const hmac = crypto.createHmac('sha256', pepperConfig.getPepperByVersion(pepperVersion))
