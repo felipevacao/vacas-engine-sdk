@@ -4,7 +4,7 @@ import express from 'express'
 import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
-import { MESSAGES } from '@constants/messages/index';
+import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
 
 /**
@@ -60,7 +60,7 @@ const port = env.API_PORT
 app.listen(
 	port,
 	() => {
-		console.log(MESSAGES.API.START)
-		console.log(`${MESSAGES.API.INIT_PORT} ${port}`)
+		console.log(getMessage(MESSAGES.API.START))
+		console.log(`${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
 	}
 )

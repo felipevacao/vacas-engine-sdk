@@ -41,12 +41,14 @@ export type QueryFields<T extends BaseEntity> = {
     pageSize?: number,
     // filter is used for specific conditions like 'greater than', 'less than', etc.
     // Example: filter: { field: 'age', sign: '>', value: '18' }
-    filters?: {
-      field: string
-      operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
-      value: string | number | boolean | Date
-    }[];
+    filters?: QueryFilter[];
     paginated?: boolean;
+}
+
+export type QueryFilter = {
+  field: string
+  operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
+  value: string | number | boolean | Date
 }
 
 export * from "./model";
@@ -63,6 +65,11 @@ export interface IAdapter<T, U> {
 export type LoginRequest = {
   email: string;
   password: string;
+};
+
+export type PasswordResetRequest = {
+  email?: string;
+  newPassword?: string;
 };
 
 export type PasswordChangeRequest = {
@@ -116,4 +123,28 @@ export interface PaginatedResult<T extends BaseEntity> {
         nextPageUrl?: string | null;
         prevPageUrl?: string | null;
     };
+}
+
+export type UserStatus = 'active' | 'inactive' | 'banned' | 'reset_required'
+
+export type UserRole = 'admin' | 'manager' | 'regular' | 'guest'
+
+export enum SessionType {
+	ACTIVE = 'active',
+	RESET = 'reset_required'
+}
+
+export enum UserStatusType {
+  ACTIVE = 'active',
+  RESET = 'reset_required',
+  BANNED = 'banned',
+  INACTIVE = 'inactive'
+}
+
+export type errorDetails = string[]
+
+export type ErrorContext = {
+  entity?: string,
+  id?: number,
+  details?: errorDetails
 }

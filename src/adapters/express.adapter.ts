@@ -81,7 +81,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.CREATED_ERROR,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error
             )
@@ -122,7 +121,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.READ_ERROR,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error
             )
@@ -150,7 +148,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (!result) {
                 ResponseHandler.error(
                     res,
-                    '',
                     MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
@@ -173,7 +170,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.READ_ERROR,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -199,7 +195,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             if (result.data.length === 0) {
                 ResponseHandler.error(
                     res,
-                    '',
                     MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
@@ -222,7 +217,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.READ_ERROR,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -248,7 +242,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.INVALID_ID,
-                    MESSAGES.ERROR.INVALID_FORMAT,
                     400
                 )
                 return
@@ -271,7 +264,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.UPDATE_ERROR,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -296,7 +288,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.INVALID_ID,
-                    MESSAGES.ERROR.INVALID_FORMAT,
                     400
                 )
                 return
@@ -307,7 +298,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
-                    MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
                 return
@@ -318,7 +308,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.NOT_FOUND,
-                    MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
                 return
@@ -335,7 +324,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.DELETED,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -360,7 +348,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.INVALID_ID,
-                    MESSAGES.ERROR.INVALID_FORMAT,
                     400
                 )
                 return
@@ -371,7 +358,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
-                    MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
                 return
@@ -382,7 +368,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.NOT_FOUND,
-                    MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
                 return
@@ -399,7 +384,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -415,7 +399,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND,
-                MESSAGES.ERROR.NOT_FOUND,
                 404
             );
             return;

@@ -1,5 +1,9 @@
 import crypto from 'crypto'
 import env from '@lib/env'
+import { Request, Response } from 'express'
+import { apiError } from './error'
+import { MESSAGES } from '@constants/messages'
+import { ResponseHandler } from '@utils/responseHandler'
 
 interface TokenConfig {
     tokenBytes?: number      // Padrão: 32
@@ -21,22 +25,45 @@ class TokenManager {
 
 }
 
+const manager = new TokenManager()
+
 export const cryptoUtils = {
+
+    
     /**
      * Gera um token aleatório usando o módulo crypto do Node.js.
      */
     generateToken(): string {
-        const manager = new TokenManager()
         return crypto.randomBytes(manager.tokenBytes).toString('hex')
     },
     /**
     * Gera um hash de um token usando o algoritmo SHA-256. O hash é retornado como uma string hexadecimal.
      */
     hashToken(token: string): string {
-        const manager = new TokenManager()
         const pepperedHash = token + manager.pepper
         return crypto.createHash(manager.hashAlgorithm).update(pepperedHash).digest('hex')
     },
+
+    /**
+     * Valida o formato e tamanho do Token
+     */
+    validateToken(
+        token: string
+    ): boolean {
+
+        if (!token || token === '') {
+            return false
+        }
+        
+        const hexRegex = new RegExp(`^[a-f0-9]{${manager.hashAlgorithm === 'sha256' ? 64 : 128}}$`, 'i')
+        if (!hexRegex.test(token)) {
+            return false
+        }
+
+        return true
+
+    },
+
     /**
      * Verifica se um token corresponde a um hash usando uma comparação segura contra ataques de timing.
      */
@@ -49,11 +76,7 @@ export const cryptoUtils = {
             return false
         }
 
-        const manager = new TokenManager()
-
-        // Valida formato do hash armazenado (64 caracteres hex para SHA-256)
-        const hexRegex = new RegExp(`^[a-f0-9]{${manager.hashAlgorithm === 'sha256' ? 64 : 128}}$`, 'i')
-        if (!hexRegex.test(hash)) {
+        if (!this.validateToken(hash)) {
             return false
         }
 
@@ -86,5 +109,49 @@ export const cryptoUtils = {
         const now = new Date()
         const expiresAt = new Date(now.getTime() + (minutes * 60 * 1000))
         return expiresAt
+    },
+
+    /**
+     * função para extrair e retornar o token do header
+     * Verificar se o token está presente no header Authorization e se segue o formato
+     */
+    verificaHeaderToken(
+        req: Request	
+    ): string {
+
+        const authHeader = req.headers.authorization
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
+        }
+        const token = (authHeader?.split(' ')[1]).trim()
+        if (!this.validateToken(token)) {
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
+        }
+
+        return token
+    },
+
+    verificaParamToken(
+        req: Request
+    ): string {
+
+        const token = req.params?.token
+        if (!this.validateToken(token)) {
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
+        }
+        return token
+        
+    },
+
+
+    /**
+     * Função para lidar com erros durante a validação do token.
+     */
+    handleTokenError(
+        error: apiError,
+        res: Response
+    ) {
+        ResponseHandler.error(res, error.errorText, error.code, error)
     }
 }

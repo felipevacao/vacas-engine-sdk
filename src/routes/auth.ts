@@ -1,13 +1,15 @@
 import express from 'express';
-import { tokenMiddleware, checkExistingToken } from '@middlewares/token';
+import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares/token';
 import { AuthController } from '@controllers/AuthController';
 import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
-import { MESSAGES } from '@constants/messages/index';
+import { PasswordExpressAdapter } from '@dynamic-modules/adapters/passwordExpress.adapter';
+// import { MESSAGES } from '@constants/messages/index';
 
 const router = express.Router();
 
 const authController = new AuthController();
 const userExpressAdapter = new UserExpressAdapter(authController);
+const passwordExpressAdapter = new PasswordExpressAdapter(authController);
 
 /**
  * Rota de login
@@ -18,16 +20,13 @@ const userExpressAdapter = new UserExpressAdapter(authController);
 router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
 /**
- * Esta rota é usada para verificar se um token de autenticação já existe e é válido.
- * Essa rota pode ser útil para testar a funcionalidade de verificação de token antes de acessar rotas protegidas.
+ * Rota para logout
+ * Esta rota é protegida pelo tokenMiddleware, que valida o token de autenticação antes de permitir o acesso.
+ * Invalida o token de acesso do usuário.
  */
-router.get('/check', checkExistingToken, (req, res) => {
-	res.status(401).json({
-		success: false,
-		error: MESSAGES.ERROR.MISSING_TOKEN,
-		code: 'LOGIN_ERROR'
-	})
-})
+router.get('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));
+
+// TROCAR SENHA OU RESETAR
 
 /**
  * Rota para obter metadados de senha
@@ -46,17 +45,42 @@ router.get('/password/metadata', tokenMiddleware, (req, res) => {
 })
 
 /**
- * Rota para atualizar a senha
- * Esta rota é protegida pelo tokenMiddleware, que valida o token de autenticação antes de permitir o acesso.
- * Recebe os dados da nova senha e a atualiza no sistema.
+ * Rota para atualizar a senha durante a sessão do usuário
+ * @Bearer tokenSession
+ * @body type PasswordChangeRequest
  */
-router.patch('/password', tokenMiddleware, userExpressAdapter.updatePassword.bind(userExpressAdapter));
+router.patch('/password', tokenMiddleware, passwordExpressAdapter.updatePassword.bind(passwordExpressAdapter));
+
 
 /**
- * Rota para logout
- * Esta rota é protegida pelo tokenMiddleware, que valida o token de autenticação antes de permitir o acesso.
- * Invalida o token de acesso do usuário.
+ * FLUXO DE RESET DE SENHA (3 PASSOS OBRIGATÓRIOS):
+ * 1. /forgot: gera token (status ACTIVE)
+ * 2. /check/token: activateResetSession() valida token e muda status para RESET
+ * 3. /reset: validateSessionUser() com status RESET efetua a troca
+ * 
+ * O usuário só consegue resetar se percorrer os 3 passos em sequência.
+ * O status RESET bloqueia login e só permite acesso ao endpoint de reset.
  */
-router.get('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));
+
+/**
+ * gera um token de reset de senha... 'esqueci ou resetar senha'
+ * @body type PasswordResetRequest
+ * @returns tokenReset
+ */
+router.post('/password/forgot', passwordExpressAdapter.forgotPassword.bind(passwordExpressAdapter))
+
+/**
+ * validação do token de reset de senha
+ * @params tokenReset
+  */
+router.get('/check/token=:token', checkExistingResetToken)
+
+/**
+ * reseta a senha
+ * @body type PasswordResetRequest
+ * @Bearer tokenReset
+ */
+router.patch('/password/reset', resetTokenMiddleware, passwordExpressAdapter.resetPassword.bind(passwordExpressAdapter))
+
 
 export default router;

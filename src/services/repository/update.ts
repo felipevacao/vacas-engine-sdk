@@ -24,7 +24,7 @@ export const update = <T extends BaseEntity>(table: string) => {
     }
     const [result] = await query;
     if (!result) {
-      throw new Error(`Record with ID ${id} not found in table ${table}`);
+      throw new Error(`Record with ID ${id} not found in table ${table} - ${query}`);
     }
     return result;
     

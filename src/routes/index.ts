@@ -10,6 +10,9 @@ import authRoutes from './auth';
 import env from '@lib/env';
 import { MESSAGES } from '@constants/messages/index';
 
+// Route → Adapter → Service (workflow) → Service (entidade) → Controller → Model → Entity → Banco
+
+
 /**
  * Configuração do roteador principal do Express
  */

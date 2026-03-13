@@ -136,13 +136,13 @@ export class AuthController extends UsersController {
 	public async login(
 		login: string, 
 		password: string, 
-		ipAdress: string
+		ipAddress: string
 	): Promise<{ token: string, expiresAt: Date } | boolean> {
 		const user = await this.verifyUserPassword(login, password);
 		if (!user) {
 			return false;
 		}
-		const session = await this.session.createSession(user, ipAdress);
+		const session = await this.session.createSession(user, ipAddress);
 		return session;
 	}
 
@@ -152,6 +152,19 @@ export class AuthController extends UsersController {
 
 		await this.session.deleteSession(sessionId);
 			
+	}
+
+	public async resetPasswordSession(
+		email: string,
+		ipAddress: string
+	): Promise<{ token: string, expiresAt: Date } | boolean> {
+
+		const user = await this.getEntityByEmail(email)
+		if (!user) {
+			return false
+		}
+		const session = await this.session.createResetSession(user, ipAddress);
+		return session;
 	}
 
 }

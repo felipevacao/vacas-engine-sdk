@@ -9,4 +9,5 @@ export interface UserSessionsEntity extends BaseEntity {
     isRevoked: boolean;
     tokenHash: string;
     ipAddress: string;
+    status: 'active' | 'reset_required';
   }
