@@ -169,7 +169,7 @@ export class BaseController<T extends BaseEntity> {
     public async updateEntity(
         id: number | string, 
         data: UpdateData<T>, 
-        options: QueryFields<T>
+        options: QueryFields<T> = {}
     ): Promise<OutputData<T>> {
 
         return await this.model.update(id, data, options)

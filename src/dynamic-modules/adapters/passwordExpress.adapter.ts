@@ -131,21 +131,25 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 		if (!user ||
 			!newPassword ||
 			user.email !== email ||
-			user.status !== 'reset_required' ||
-			!req.session.userStatus ||
-			req.session.userStatus !== 'active'
+			user.status !== 'reset_required'
 		) {
 			ResponseHandler.error(
 				res,
 				MESSAGES.ERROR.USER_NOT_FOUND,
-				MESSAGES.ERROR.NOT_FOUND,
+				'NOT_FOUND',
 				404
 			)
 			return
 		}
-		await this.service.updateEntity(user.id as number, { status: req.session.userStatus } as UpdateData<UsersEntity>, {})
-		await this.service.updatePassword(user, newPassword)
-		await this.service.logout(req.session.sessionId as string)
+		await this.service.updateEntity(
+			user.id as number,
+			{ status: 'active' } as UpdateData<UsersEntity>,
+			{}
+		).then( async () => {
+			await this.service.updatePassword(user, newPassword)
+		}).finally( async () => {
+			await this.service.logout(req.session.sessionId as string)
+		})
 		ResponseHandler.success(res, { message: 'Senha alterada com sucesso! Favor realizar Login novamente!' });
 
 	}

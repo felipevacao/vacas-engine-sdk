@@ -51,6 +51,10 @@ export const cryptoUtils = {
         token: string
     ): boolean {
 
+        if (!token || token === '') {
+            return false
+        }
+        
         const hexRegex = new RegExp(`^[a-f0-9]{${manager.hashAlgorithm === 'sha256' ? 64 : 128}}$`, 'i')
         if (!hexRegex.test(token)) {
             return false
@@ -121,16 +125,25 @@ export const cryptoUtils = {
             throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
         }
         const token = (authHeader?.split(' ')[1]).trim()
-        if (!token || token === '') {
-            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
-        }
-        
         if (!this.validateToken(token)) {
             throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
         }
 
         return token
     },
+
+    verificaParamToken(
+        req: Request
+    ): string {
+
+        const token = req.params?.token
+        if (!this.validateToken(token)) {
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
+        }
+        return token
+        
+    },
+
 
     /**
      * Função para lidar com erros durante a validação do token.
