@@ -1,10 +1,11 @@
 import session from 'express-session';
+import { UserStatus } from './entity';
 
 declare module 'express-session' {
   interface SessionData {
     sessionId?: string;
     userId?: number;
-    // Adicione outros campos conforme necessário
+    userStatus?: UserStatus
   }
 }
 
@@ -14,3 +15,4 @@ declare module 'express-serve-static-core' {
     clientIP?: string; // Adiciona o campo clientIP ao objeto Request
   }
 }
+

@@ -1,12 +1,12 @@
 // Gerado automáticamente
-import { BaseEntity } from 'types/entity';
+import { BaseEntity, UserStatus, UserRole } from 'types/entity'
 
 export interface UsersEntity extends BaseEntity {
-    name: string;
-    email: string;
-    login: string;
-    password: string;
-    role: 'admin' | 'manager' | 'regular' | 'guest';
-    status: 'active' | 'inactive' | 'banned' | 'reset_required';
-    pepper: string;
+    name: string
+    email: string
+    login: string
+    password: string
+    role: UserRole
+    status: UserStatus
+    pepper: string
 }

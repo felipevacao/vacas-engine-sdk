@@ -154,7 +154,7 @@ export class AuthController extends UsersController {
 			
 	}
 
-	public async resetPassword(
+	public async resetPasswordSession(
 		email: string,
 		ipAddress: string
 	): Promise<{ token: string, expiresAt: Date } | boolean> {

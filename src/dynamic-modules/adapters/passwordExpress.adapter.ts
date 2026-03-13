@@ -3,7 +3,10 @@ import { AuthController } from "@controllers/AuthController"
 import { Request, Response } from 'express';
 import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
-import { PasswordChangeRequest, PasswordResetRequest } from "types/entity"
+import { PasswordChangeRequest, PasswordResetRequest, UpdateData } from "types/entity"
+import { apiError } from "@utils/error";
+import { getClientIP } from "@utils/ip";
+import { UsersEntity } from "@dynamic-modules/entities/users";
 
 export class PasswordExpressAdapter extends UserExpressAdapter {
 	constructor(
@@ -85,27 +88,53 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 		*/
 	private validateResetPasswordFields(
 		input: unknown
-	): [email: string] {
+	): { email: string, newPassword?: string } {
 
 		if (!input || typeof input !== 'object') {
-			throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
+			throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
 		}
-		const { email } = input as PasswordResetRequest
+		const { email, newPassword } = input as PasswordResetRequest
 		if (!email ) {
-			throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
+			throw new apiError(email)
 		}
 
-		return [email]
+		return { email, newPassword }
 	}
 	
+	async forgotPassword(
+		req: Request,
+		res: Response
+	): Promise<void> {
+		const { email } = this.validateResetPasswordFields(req.body)
+		const session = await this.service.resetPasswordSession(email, getClientIP(req))
+		if (!session) {
+			ResponseHandler.error(
+				res,
+				MESSAGES.ERROR.USER_NOT_FOUND,
+				'NOT_FOUND',
+				404
+			)
+			return
+		}
+
+		ResponseHandler.success(res, session, MESSAGES.API.SUCCESS_DATA);
+
+	}
+
 	async resetPassword(
 		req: Request,
 		res: Response
 	): Promise<void> {
 		
-		const [ email ] = this.validateResetPasswordFields(req.body)
-		const session = await this.service.resetPassword(email, req.ip || '127.0.0.1')
-		if (!session) {
+		const { email, newPassword } = this.validateResetPasswordFields(req.body)
+		const user = await this.service.findByIdEntity(req.session.userId as number)
+		if (!user ||
+			!newPassword ||
+			user.email !== email ||
+			user.status !== 'reset_required' ||
+			!req.session.userStatus ||
+			req.session.userStatus !== 'active'
+		) {
 			ResponseHandler.error(
 				res,
 				MESSAGES.ERROR.USER_NOT_FOUND,
@@ -114,8 +143,10 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 			)
 			return
 		}
-
-		ResponseHandler.success(res, session, MESSAGES.API.SUCCESS_DATA);
+		await this.service.updateEntity(user.id as number, { status: req.session.userStatus } as UpdateData<UsersEntity>, {})
+		await this.service.updatePassword(user, newPassword)
+		await this.service.logout(req.session.sessionId as string)
+		ResponseHandler.success(res, { message: 'Senha alterada com sucesso! Favor realizar Login novamente!' });
 
 	}
 	

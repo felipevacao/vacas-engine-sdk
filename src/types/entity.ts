@@ -66,7 +66,8 @@ export type LoginRequest = {
 };
 
 export type PasswordResetRequest = {
-  email: string;
+  email?: string;
+  newPassword?: string;
 };
 
 export type PasswordChangeRequest = {
@@ -121,3 +122,7 @@ export interface PaginatedResult<T extends BaseEntity> {
         prevPageUrl?: string | null;
     };
 }
+
+export type UserStatus = 'active' | 'inactive' | 'banned' | 'reset_required'
+
+export type UserRole = 'admin' | 'manager' | 'regular' | 'guest'

@@ -17,7 +17,9 @@ export const DATABASE_MESSAGES = {
 		INVALID_ID: 'Formato inválido no ID'
 	},
 	LOGIN: {
-		SUCCESS: 'Login realizado com sucesso'
+		SUCCESS: 'Login realizado com sucesso',
+		ACTIVE_SESSION: 'Sessão ativa!',
+		INVALID_SESSION: 'Sessão inválida!'
 	}
 
 } as const;

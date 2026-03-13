@@ -1,10 +1,12 @@
 import { UserSessionsController } from "@dynamic-modules/controllers/userSessions"
 import { cryptoUtils } from "@utils/crypto"
-import { CreateData, Model, QueryFields, UpdateData } from "types/entity"
+import { CreateData, Model, QueryFields, UpdateData, UserStatus } from "types/entity"
 import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions"
 import { UsersController } from "@dynamic-modules/controllers/users"
 import { UsersEntity } from "@dynamic-modules/entities/users"
 import { hashUtils } from "@utils/hash"
+import { apiError } from "@utils/error"
+import { MESSAGES } from "@constants/messages"
 
 export class SessionController {
     private userSessions: UserSessionsController
@@ -199,8 +201,8 @@ export class SessionController {
     public async validateUserSession(
         token: string, 
         ipAddress: string,
-        status: 'active' | 'reset_required' = 'active'
-    ): Promise<[UsersEntity, UserSessionsEntity]> {
+        status: UserStatus = 'active'
+    ): Promise<UserSessionsEntity> {
         const options = {
             where: { 
                 ip_address: ipAddress,
@@ -213,39 +215,22 @@ export class SessionController {
                 value: new Date()
             }]
         } as QueryFields<UserSessionsEntity>
-        // Find active sessions for the given IP address
+        // Encontra a sessão pelo ip e status
         const activeSessions = await this.userSessions.findByEntity(options)
-        if(activeSessions.length === 0) {
-            const error = new Error('Sessão inválida!')
-            error.name = 'TokenExpiredError'
-            throw error
-        }
-
-        // Validate the token for each active session
-        for (const session of activeSessions) {
-            const isValid = this.validateToken(
-                                token, 
-                                session.tokenHash
-                            )
-            
-            if (isValid) {
-                session.lastUsedAt = new Date()
-                await this.userSessions.updateEntity(session.id, session, {})
-                // Find the user associated with the session
-                const user = await this.user.findByIdEntity(session.userId, {
-                    fields: this.user.getAvailableFields(),
-                    filters: [{
-                        field: 'status',
-                        operator: '=',
-                        value: 'active'
-                    }]
-                })
-                if(!user) {
-                    throw new Error('Usuário não encontrado!')
+        if (activeSessions.length !== 0) {
+            // Valida o token de cada sessão
+            for (const session of activeSessions) {           
+                if (
+                    this.validateToken(
+                    token,
+                    session.tokenHash
+                    )
+                ) {
+                    session.lastUsedAt = new Date()
+                    return await this.userSessions.updateEntity(session.id, session, {})
                 }
-                return [user as UsersEntity, session]
             }
         }
-        throw new Error('Sessão inválida!')
+        throw new apiError(MESSAGES.DATABASE.LOGIN.INVALID_SESSION, 'INVALID_SESSIONS', 401)
     }
 }

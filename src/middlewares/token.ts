@@ -1,55 +1,35 @@
 import { MESSAGES } from '@constants/messages/index'
 import { SessionController } from '@controllers/SessionController'
+import { UsersController } from '@dynamic-modules/controllers/users'
+import { apiError } from '@utils/error'
+import { getClientIP } from '@utils/ip'
 import { ResponseHandler } from '@utils/responseHandler'
 import { Request, Response, NextFunction } from 'express'
 import { Session, SessionData } from 'express-session'
+import { cryptoUtils } from '@utils/crypto'
 
-/**
- * 
- * Middleware para validar o token de autenticação em rotas protegidas.
- * Verifica se o token está presente no header Authorization, valida o token e, se válido, adiciona as informações da sessão ao objeto de requisição.
- * Em caso de erro, retorna uma resposta JSON com a mensagem de erro apropriada.
- */
+const sessionController = new SessionController()
+const usersController = new UsersController()
+
 export const tokenMiddleware = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 
-	const token = verificaHeaderToken(req)
-	if (!token) {
-		res.status(401).json({
-			success: false,
-			error: MESSAGES.ERROR.MISSING_TOKEN,
-			code: 'MISSING_TOKEN'
-		})
-	}
-
 	try {
-		/**
-		 * VALIDAÇÃO DO TOKEN
-		 * Validar o token usando o SessionController e obter as informações do usuário e da sessão.
-		 * Se a sessão ou o usuário não forem encontrados, retornar um erro de sessão inválida.
-		 * Se a validação for bem-sucedida, adicionar as informações da sessão ao objeto de requisição e chamar o próximo middleware ou rota.
-		 */
-		const sessionController = new SessionController()
-		const [user, session] = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1')
-		if (!session || !user) {
-			res.status(401).json({
-				success: false,
-				error: MESSAGES.ERROR.INVALID_SESSION,
-				code: 'INVALID_SESSIONS'
-			})
-		}
+		const token = cryptoUtils.verificaHeaderToken(req)
 
-		if (session.status !== 'active') {
-			
+		const session = await sessionController.validateUserSession(token, getClientIP(req))
+		if (!session) {
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 'INVALID_SESSIONS', 401)
 		}
-
-		/**
-		 * Informações da sessão adicionadas ao objeto de requisição para uso em rotas protegidas.
-		 * O tipo SessionData é usado para garantir que as propriedades sessionId e userId estejam presentes no objeto de sessão.
-		 */
+		
+		const user = await usersController.findByIdEntity(session.userId)
+		if (!user) {
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 'INVALID_SESSIONS', 401)
+		}
+		
 		req.session = {
 			sessionId: session.id,
 			userId: user.id as number,
@@ -58,15 +38,13 @@ export const tokenMiddleware = async (
 		next()
 
 	} catch (error) {
-		handleTokenError(error as Error, res)
-
+		cryptoUtils.handleTokenError(error as apiError, res)
 	}
 
 }
+
 /**
- * Middleware para verificar se já existe um token válido na requisição.
- * Se um token válido for encontrado, retorna uma resposta JSON indicando que uma sessão ativa foi encontrada, junto com a data de expiração do token.
- * Se nenhum token válido for encontrado, chama o próximo middleware ou rota.
+ * Verifica se o token para reset de senha está ativo
  */
 export const checkExistingResetToken = async (
 	req: Request,
@@ -74,26 +52,24 @@ export const checkExistingResetToken = async (
 	next: NextFunction
 ): Promise<void> => {
 
-	const authHeader = req.headers.authorization
-
-	if (authHeader && authHeader.startsWith('Bearer ')) {
-		const token = authHeader?.split(' ')[1]
-		if (token) {
-			try {
-				const sessionController = new SessionController()
-				const [ user, session ] = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1', 'reset_required')
-				if (session && user) {
-					ResponseHandler.success(res, {
-						mensagem: 'Sessão ativa encontrada',
+		try {
+			const token = cryptoUtils.verificaHeaderToken(req)
+			
+			const session= await sessionController.validateUserSession(token as string, getClientIP(req), 'reset_required')
+			if (session) {
+				const user = await usersController.findByIdEntity(session.userId)
+				if (user) {
+					const response = {
+						mensagem: MESSAGES.DATABASE.LOGIN.ACTIVE_SESSION,
 						expiresAt: session.expiresAt,
-					}, 'Token válido')
-					return
+					}
+					ResponseHandler.success(res, response, 'Token válido')
 				}
-			} catch (error) {
-				handleTokenError(error as Error, res)
 			}
+
+		} catch (error) {
+			cryptoUtils.handleTokenError(error as apiError, res)
 		}
-	}
 
 	next()
 
@@ -101,9 +77,7 @@ export const checkExistingResetToken = async (
 
 /**
  * 
- * Middleware para validar o token de autenticação em rotas protegidas.
- * Verifica se o token está presente no header Authorization, valida o token e, se válido, adiciona as informações da sessão ao objeto de requisição.
- * Em caso de erro, retorna uma resposta JSON com a mensagem de erro apropriada.
+ * Middleware para validar o token de reset de senha
  */
 export const resetTokenMiddleware = async (
 	req: Request,
@@ -111,89 +85,32 @@ export const resetTokenMiddleware = async (
 	next: NextFunction
 ): Promise<void> => {
 
-	const token = verificaHeaderToken(req)
-	if (!token) {
-		res.status(401).json({
-			success: false,
-			error: MESSAGES.ERROR.MISSING_TOKEN,
-			code: 'MISSING_TOKEN'
-		})
-	}
-
 	try {
-		const sessionController = new SessionController()
-		const [user, session] = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1', 'reset_required')
-		if (!session || !user) {
-			res.status(401).json({
-				success: false,
-				error: MESSAGES.ERROR.INVALID_SESSION,
-				code: 'INVALID_SESSIONS'
-			})
-		}
+		const token = cryptoUtils.verificaHeaderToken(req)
+		
+		const session = await sessionController.validateUserSession(token as string, req.ip || '127.0.0.1', 'reset_required')
 
-		// alterar o usuario para reset_required
+		const user = await usersController.findByIdEntity(session.userId)
+		if (!user) {
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 'INVALID_SESSIONS', 401)
+		}
 
 		req.session = {
 			sessionId: session.id,
 			userId: user.id as number,
+			userStatus: user.status
 		} as Session & Partial<SessionData>
+
+		await usersController.updateEntity(user.id as number, { ...user, status: 'reset_required' }, {})
 
 		next()
 
 	} catch (error) {
-		handleTokenError(error as Error, res)
+		cryptoUtils.handleTokenError(error as apiError, res)
 
 	}
 
 }
 
-/**
- * Função para lidar com erros durante a validação do token.
- */
-function handleTokenError(
-	error: Error,
-	res: Response
-) {
-	if (error.name === 'InvalidSessionError') {
-		return ResponseHandler.error(
-			res,
-			MESSAGES.ERROR.INVALID_CREDENTIALS,
-			'INVALID_CREDENTIALS',
-			401
-		)
-	}
 
-	return ResponseHandler.error(
-		res,
-		MESSAGES.ERROR.TOKEN_VALIDATION_ERROR,
-		'INTERNAL_ERROR',
-		500,
-		error as Error
-	)
-}
 
-/**
- * função para extrair e retornar o token do header
- */
-function verificaHeaderToken(
-	req: Request	
-): boolean | string {
-
-	const authHeader = req.headers.authorization
-	/**
-	 * VERIFICAÇÃO DO TOKEN - INICIO
-	 * Verificar se o token está presente no header Authorization e se segue o formato
-	 */
-	if (!authHeader || !authHeader.startsWith('Bearer ')) {
-		return false
-	}
-	const token = authHeader?.split(' ')[1]
-	if (!token) {
-		return false
-	}
-
-	return token
-	/**
-	 * VERIFICAÇÃO DO TOKEN - FIM
-	 */
-}

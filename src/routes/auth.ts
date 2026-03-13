@@ -1,9 +1,9 @@
 import express from 'express';
-import { tokenMiddleware, checkExistingResetToken } from '@middlewares/token';
+import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares/token';
 import { AuthController } from '@controllers/AuthController';
 import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
 import { PasswordExpressAdapter } from '@dynamic-modules/adapters/passwordExpress.adapter';
-import { MESSAGES } from '@constants/messages/index';
+// import { MESSAGES } from '@constants/messages/index';
 
 const router = express.Router();
 
@@ -55,15 +55,11 @@ router.patch('/password', tokenMiddleware, passwordExpressAdapter.updatePassword
  * Esta rota é usada para verificar se um token de autenticação já existe e é válido.
  * Essa rota pode ser útil para testar a funcionalidade de verificação de token antes de acessar rotas protegidas.
  */
-router.get('/check_reset_token', checkExistingResetToken, (req, res) => {
-	res.status(401).json({
-		success: false,
-		error: MESSAGES.ERROR.MISSING_TOKEN,
-		code: 'LOGIN_ERROR'
-	})
-})
+router.get('/check_reset_token', checkExistingResetToken, () => {})
 
-router.post('/password-reset', passwordExpressAdapter.resetPassword.bind(passwordExpressAdapter))
+router.patch('/password/forget', passwordExpressAdapter.forgotPassword.bind(passwordExpressAdapter))
+
+router.patch('/password/reset', resetTokenMiddleware, passwordExpressAdapter.resetPassword.bind(passwordExpressAdapter))
 
 
 export default router;

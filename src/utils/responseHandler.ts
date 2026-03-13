@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { ApiResponse } from 'types/response';
 import env from "@lib/env"
 import { MESSAGES } from '@constants/messages';
+import { apiError } from './error';
 
 export class ResponseHandler {
 	/**
@@ -50,19 +51,22 @@ export class ResponseHandler {
 		details?: unknown | Error,
 		headers?: Record<string, string>
 	): Response<ApiResponse> {
+
 		const response: ApiResponse = {
 			success: false,
 			message: MESSAGES.ERROR.OPERATION_ERROR,
 			error: {
 				code: errorCode,
-				message,
-				details: details instanceof Error ? (env.ENABLE_RETURN_ERRORS ? details.stack : details.message) : details ?? MESSAGES.ERROR.UNKNOWN
+				message
 			},
 			meta: {
 				timestamp: new Date().toISOString(),
 				requestId: res.locals.requestId
 			}
-		};
+		}
+		if (env.ENABLE_RETURN_ERRORS && response.error) {
+			response.error.details = details instanceof apiError ? details.stack : details ?? MESSAGES.ERROR.UNKNOWN;
+		}
 		if (headers) {
 			for (const [key, value] of Object.entries(headers)) {
 				res.header(key, value);
@@ -126,9 +130,10 @@ export class ResponseHandler {
 	static unauthorized(
 		res: Response,
 		message: string = MESSAGES.ERROR.UNAUTHORIZED,
+		errorCode: string = 'UNAUTHORIZED',
 		headers?: Record<string, string>
 	): Response<ApiResponse> {
-		return this.error(res, message, 'UNAUTHORIZED', 401, headers);
+		return this.error(res, message, errorCode, 401, headers);
 	}
 
 	/**
