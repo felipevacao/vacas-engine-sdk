@@ -122,11 +122,11 @@ export const cryptoUtils = {
         const authHeader = req.headers.authorization
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
         }
         const token = (authHeader?.split(' ')[1]).trim()
         if (!this.validateToken(token)) {
-            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
         }
 
         return token
@@ -138,7 +138,7 @@ export const cryptoUtils = {
 
         const token = req.params?.token
         if (!this.validateToken(token)) {
-            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 'MISSING_TOKEN', 401)
+            throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
         }
         return token
         
@@ -152,6 +152,6 @@ export const cryptoUtils = {
         error: apiError,
         res: Response
     ) {
-        ResponseHandler.error(res, error.message, error.name, error.code, error)
+        ResponseHandler.error(res, error.errorText, error.code, error)
     }
 }

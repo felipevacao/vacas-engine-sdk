@@ -1,24 +1,24 @@
 // Gerado automáticamente
 import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
-import * as baseService from '@services/baseServices';
+import * as repository from '@services/repository';
 import { Model } from 'types/entity';
 
 const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   table: '{{realTableName}}',
-  create: baseService.create<{{tablenameCapital}}Entity>('{{realTableName}}'),
-  findAll: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findAll,
-  findAllPaginated: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findAllPaginated,
-  findById: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findById,
-  findBy: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findBy,
-  findByPaginated: baseService.read<{{tablenameCapital}}Entity>('{{realTableName}}').findByPaginated,
-  update: baseService.update<{{tablenameCapital}}Entity>('{{realTableName}}'),
-  delete: baseService.deleteById('{{realTableName}}'),
-  forceDelete: baseService.forceDelete('{{realTableName}}'),
+  create: repository.create<{{tablenameCapital}}Entity>('{{realTableName}}'),
+  findAll: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').findAll,
+  findAllPaginated: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').findAllPaginated,
+  findById: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').findById,
+  findBy: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').findBy,
+  findByPaginated: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').findByPaginated,
+  update: repository.update<{{tablenameCapital}}Entity>('{{realTableName}}'),
+  delete: repository.deleteById('{{realTableName}}'),
+  forceDelete: repository.forceDelete('{{realTableName}}'),
   selectAbleFields: [{{fields}}],
   defaultFields: ['id'],
   excludedFields: [],
   metadata: async () => {
-      const result = await baseService.metadata('{{realTableName}}')();
+      const result = await repository.metadata('{{realTableName}}')();
       if (!result) throw new Error('Metadata not found');
       return result;
     },

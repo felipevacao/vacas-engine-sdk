@@ -22,13 +22,13 @@ export class SessionService {
 		
 		const session = await this.sessionController.validateUserSession(token, ip, sessionType)
 		if (!session) {
-			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 'INVALID_SESSIONS', 401)
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 401)
 		}
 		
 		const user = await this.usersController.findByIdEntity(session.userId, { filters: [ this.usersController.getFilterUserStatus(userType) ] })
 		if (!user) {
 			await this.sessionController.deleteSession(session.id)
-			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 'INVALID_SESSIONS', 401)
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 401)
 		}
 
 		return {

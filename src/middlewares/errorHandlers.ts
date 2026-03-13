@@ -1,4 +1,4 @@
-import { MESSAGES } from '@constants/messages/index';
+import { MESSAGES, sMessage } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 import { Request, Response } from 'express';
 
@@ -9,13 +9,12 @@ import { Request, Response } from 'express';
  */
 export const notFound = (
 	res: Response,
-	message: string = 'Rota não encontrada.'
+	message: sMessage = MESSAGES.ROUTES.ERROR
 ) => {
 
 	ResponseHandler.error(
 		res,
 		message,
-		MESSAGES.ERROR.NOT_FOUND,
 		404
 	)
 
@@ -31,7 +30,7 @@ export const routeNotFound = (
 	res: Response
 ) => {
 
-	notFound(res, 'Rota não encontrada.');
+	notFound(res);
 
 };
 
@@ -52,8 +51,7 @@ export const errorHandler = (
 	res.status(500).json({ error: 'Algo deu errado.' })
 	ResponseHandler.error(
 		res,
-		err.message || 'Erro interno do servidor.',
-		MESSAGES.ERROR.INTERNAL_ERROR,
+		{ name: MESSAGES.ERROR.INTERNAL_ERROR.name, message: err.message || MESSAGES.ERROR.INTERNAL_ERROR.message },
 		500
 	);
 

@@ -1,9 +1,17 @@
+import { ErrorContext } from "types/entity"
+import { sMessage } from "@constants/messages/index"
+
 export class apiError extends Error {
+	name: string
 	code: number
+	details: ErrorContext
+	errorText: sMessage
 	
-	constructor(message?: string, name: string = '', code: number = 500) {
-		super(message)
-		this.name = name
+	constructor(error: sMessage, code: number = 500, details: ErrorContext = {}) {
+		super(error.message)
+		this.name = error.name
 		this.code = code
+		this.details = details
+		this.errorText = error
 	}
 }

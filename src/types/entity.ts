@@ -140,3 +140,11 @@ export enum UserStatusType {
   BANNED = 'banned',
   INACTIVE = 'inactive'
 }
+
+export type errorDetails = string[]
+
+export type ErrorContext = {
+  entity?: string,
+  id?: number,
+  details?: errorDetails
+}

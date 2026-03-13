@@ -5,6 +5,7 @@ import { UsersEntity } from "@dynamic-modules/entities/users"
 import { LoginRequest } from "types/entity"
 import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
+import { apiError } from '@utils/error';
 
 
 export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
@@ -21,11 +22,11 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     ): [email: string, password: string] {
 
         if (!input || typeof input !== 'object') {
-            throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
         }
         const { email, password } = input as LoginRequest
         if (!email || !password) {
-            throw new Error(MESSAGES.ERROR.INVALID_FORMAT)
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
         }
 
         return [email, password]
@@ -47,7 +48,6 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 ResponseHandler.error(
                     res,
                     MESSAGES.ERROR.INVALID_LOGIN,
-                    MESSAGES.ERROR.UNAUTHORIZED,
                     401
                 )
                 return
@@ -62,7 +62,6 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             ResponseHandler.error(
                 res,
                 MESSAGES.ERROR.ERROR_LOGIN,
-                MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
             )
@@ -89,8 +88,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Erro ao realizar o Logout',
-                MESSAGES.ERROR.INTERNAL_ERROR,
+                MESSAGES.ERROR.OPERATION_ERROR,
                 400,
                 error as Error
             )

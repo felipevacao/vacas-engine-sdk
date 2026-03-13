@@ -1,34 +1,80 @@
-export const DATABASE_MESSAGES = {
+export const DATABASE = {
 	// Conexão
 	CONNECTION: {
-		SUCCESS: 'Conexão com o banco de dados estabelecida com sucesso!',
-		ERROR: 'Erro ao conectar ao banco de dados!',
+		SUCCESS: { 
+			name: 'SUCCESS', 
+			message: 'Conexão com o banco de dados estabelecida com sucesso!' 
+		},
+		ERROR: { 
+			name: 'ERROR', 
+			message: 'Erro ao conectar ao banco de dados!' 
+		},
 	},
 	ENTITY: {
-		CREATED: 'Entidade criada com sucesso!',
-		CREATED_ERROR: 'Erro ao criar entidade!',
-		READ_ERROR: 'Erro ao buscar entidade!',
-		UPDATED: 'Entidade atualizada com sucesso!',
-		UPDATE_ERROR: 'Erro ao atualizar entidade!',
-		DELETED: 'Entidade deletada com sucesso!',
-		DELETE_ERROR: 'Erro ao deletar entidade!',
-		NOT_FOUND: 'Entidade não encontrada!',
-		METADATA_NOT_FOUND: 'Metadata não encontrada!',
-		INVALID_ID: 'Formato inválido no ID'
+		CREATED: { 
+			name: 'CREATED', 
+			message: 'Entidade criada com sucesso!' 
+		},
+		CREATED_ERROR: { 
+			name: 'CREATED_ERROR', 
+			message: 'Erro ao criar entidade!' 
+		},
+		READ_ERROR: { 
+			name: 'READ_ERROR', 
+			message: 'Erro ao buscar entidade!' 
+		},
+		UPDATED: { 
+			name: 'UPDATED', 
+			message: 'Entidade atualizada com sucesso!' 
+		},
+		UPDATE_ERROR: { 
+			name: 'UPDATE_ERROR', 
+			message: 'Erro ao atualizar entidade!' 
+		},
+		DELETED: { 
+			name: 'DELETED', 
+			message: 'Entidade deletada com sucesso!' 
+		},
+		DELETE_ERROR: { 
+			name: 'DELETE_ERROR', 
+			message: 'Erro ao deletar entidade!' 
+		},
+		NOT_FOUND: { 
+			name: 'NOT_FOUND', 
+			message: 'Entidade não encontrada!' 
+		},
+		METADATA_NOT_FOUND: { 
+			name: 'METADATA_NOT_FOUND', 
+			message: 'Metadata não encontrada!' 
+		},
+		INVALID_ID: { 
+			name: 'INVALID_ID', 
+			message: 'Formato inválido no ID' 
+		},
 	},
 	LOGIN: {
-		SUCCESS: 'Login realizado com sucesso',
-		ACTIVE_SESSION: 'Sessão ativa!',
-		INVALID_SESSION: 'Sessão inválida!'
+		SUCCESS: { 
+			name: 'SUCCESS', 
+			message: 'Login realizado com sucesso' 
+		},
+		ACTIVE_SESSION: { 
+			name: 'ACTIVE_SESSION', 
+			message: 'Sessão ativa!' 
+		},
+		INVALID_SESSION: { 
+			name: 'INVALID_SESSION', 
+			message: 'Sessão inválida!' 
+		},
 	}
 
-} as const;
+}
 
 // Type para as mensagens (útil para autocomplete no TypeScript)
-export type DatabaseMessages = typeof DATABASE_MESSAGES;
+export type DatabaseMessages = typeof DATABASE;
 
 // Export individual categories for more granular imports
 export const {
 	CONNECTION,
-	ENTITY
-} = DATABASE_MESSAGES;
+	ENTITY,
+	LOGIN
+} = DATABASE;

@@ -37,7 +37,7 @@ export const checkExistingResetToken = async (
 			email: stringUtils.maskEmail(session.email as string),
 			expiresAt: session.expiresAt,
 		}
-		ResponseHandler.success(res, response, 'Token válido')
+		ResponseHandler.success(res, response)
 	} catch (error) {
 		cryptoUtils.handleTokenError(error as apiError, res)
 	}
@@ -59,6 +59,7 @@ export const resetTokenMiddleware = async (
 	}
 
 }
+
 
 
 

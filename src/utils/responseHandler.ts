@@ -2,7 +2,7 @@
 import { Response } from 'express';
 import { ApiResponse } from 'types/response';
 import env from "@lib/env"
-import { MESSAGES } from '@constants/messages';
+import { MESSAGES, sMessage, getMessage } from '@constants/messages';
 import { apiError } from './error';
 
 export class ResponseHandler {
@@ -13,13 +13,13 @@ export class ResponseHandler {
 	static success<T>(
 		res: Response,
 		data?: T,
-		message: string = MESSAGES.API.SUCCESS,
+		text: sMessage = MESSAGES.API.SUCCESS,
 		statusCode: number = 200,
 		headers?: Record<string, string>
 	): Response<ApiResponse<T>> {
 		const response: ApiResponse<T> = {
 			success: true,
-			message,
+			message: text.message,
 			data,
 			meta: {
 				timestamp: new Date().toISOString(),
@@ -45,8 +45,7 @@ export class ResponseHandler {
 	 */
 	static error(
 		res: Response,
-		message: string,
-		errorCode: string,
+		text: sMessage,
 		statusCode: number = 400,
 		details?: unknown | Error,
 		headers?: Record<string, string>
@@ -54,10 +53,10 @@ export class ResponseHandler {
 
 		const response: ApiResponse = {
 			success: false,
-			message: MESSAGES.ERROR.OPERATION_ERROR,
+			message: MESSAGES.ERROR.OPERATION_ERROR.message,
 			error: {
-				code: errorCode,
-				message
+				code: text.name,
+				message: text.message
 			},
 			meta: {
 				timestamp: new Date().toISOString(),
@@ -92,14 +91,14 @@ export class ResponseHandler {
 			hasNext: boolean;
 			hasPrev: boolean;
 		},
-		message: string = MESSAGES.API.SUCCESS_DATA,
+		text: sMessage = MESSAGES.API.SUCCESS_DATA,
 		headers?: Record<string, string>
 	): Response<ApiResponse<T[]>> {
 		const totalPages = Math.ceil(pagination.total / pagination.limit);
 
 		const response: ApiResponse<T[]> = {
 			success: true,
-			message,
+			message: text.message,
 			data,
 			meta: {
 				timestamp: new Date().toISOString(),
@@ -129,11 +128,10 @@ export class ResponseHandler {
 	 */
 	static unauthorized(
 		res: Response,
-		message: string = MESSAGES.ERROR.UNAUTHORIZED,
-		errorCode: string = 'UNAUTHORIZED',
+		text: sMessage = MESSAGES.ERROR.UNAUTHORIZED,
 		headers?: Record<string, string>
 	): Response<ApiResponse> {
-		return this.error(res, message, errorCode, 401, headers);
+		return this.error(res, text, 401, headers);
 	}
 
 	/**
@@ -149,8 +147,7 @@ export class ResponseHandler {
 	): Response<ApiResponse> {
 		return this.error(
 			res,
-			`${resource} ${MESSAGES.ERROR.NOT_FOUND}`,
-			'NOT_FOUND',
+			{ name: 'NOT_FOUND', message: `${resource} ${getMessage(MESSAGES.ERROR.NOT_FOUND)}` },
 			404,
 			headers
 		);
@@ -164,9 +161,9 @@ export class ResponseHandler {
 	 */
 	static internal(
 		res: Response,
-		message: string = MESSAGES.ERROR.INTERNAL_ERROR,
+		text: sMessage = MESSAGES.ERROR.INTERNAL_ERROR,
 		headers?: Record<string, string>
 	): Response<ApiResponse> {
-		return this.error(res, message, 'INTERNAL_ERROR', 500, headers);
+		return this.error(res, text, 500, headers);
 	}
 }

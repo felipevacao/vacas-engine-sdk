@@ -1,22 +1,55 @@
-import { DATABASE_MESSAGES } from './database';
-import { ERROR_CODES } from './errorCodes';
+import { DATABASE } from './database';
+import { ERROR } from './errorCodes';
 import env from '@lib/env';
 
-export const MESSAGES = {
+export type sMessage = {
+    name: string
+    message: string
+}
+
+export function getMessage(text: sMessage) {
+	return text.message
+}
+
+const rawMessages = {
 	API: {
-		START: `${env.API_NAME} iniciada com sucesso!`,
-		ERROR: `${env.API_NAME} - Erro ao iniciar a API!`,
-		HOME: `${env.API_NAME} está funcionando!`,
-		INIT_PORT: 'Servidor rodando na porta',
-		SUCCESS: 'Operação realizada com sucesso',
-		SUCCESS_DATA: 'Dados obtidos com sucesso',
+		START: { 
+			name: 'START', 
+			message: `${env.API_NAME} iniciada com sucesso!` 
+		},
+		ERROR: { 
+			name: 'ERROR', 
+			message: `${env.API_NAME} - Erro ao iniciar a API!` 
+		},
+		HOME: { 
+			name: 'HOME', 
+			message: `${env.API_NAME} está funcionando!` 
+		},
+		INIT_PORT: { 
+			name: 'INIT_PORT', 
+			message: 'Servidor rodando na porta' 
+		},
+		SUCCESS: { 
+			name: 'SUCCESS', 
+			message: 'Operação realizada com sucesso' 
+		},
+		SUCCESS_DATA: { 
+			name: 'SUCCESS_DATA', 
+			message: 'Dados obtidos com sucesso' 
+		},
 	},
 	ROUTES: {
-		LIST: 'Rotas registradas:',
-		ERROR: 'Erro ao carregar rotas:'
+		LIST: { 
+			name: 'LIST', 
+			message: 'Rotas registradas:' 
+		},
+		ERROR: { 
+			name: 'ERROR', 
+			message: 'Erro ao carregar rotas:' 
+		},
 	},
-	DATABASE: DATABASE_MESSAGES,
-	ERROR: ERROR_CODES
-} as const;
+	DATABASE,
+	ERROR
+}
 
-export type Messages = typeof MESSAGES;
+export const MESSAGES = rawMessages

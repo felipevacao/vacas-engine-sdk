@@ -231,6 +231,6 @@ export class SessionController {
                 }
             }
         }
-        throw new apiError(MESSAGES.DATABASE.LOGIN.INVALID_SESSION, 'INVALID_SESSIONS', 401)
+        throw new apiError(MESSAGES.DATABASE.LOGIN.INVALID_SESSION, 401)
     }
 }

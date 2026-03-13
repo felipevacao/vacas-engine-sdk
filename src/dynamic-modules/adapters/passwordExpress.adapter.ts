@@ -51,7 +51,6 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
                 ResponseHandler.error(
                     res,
                     MESSAGES.ERROR.USER_NOT_FOUND,
-                    MESSAGES.ERROR.NOT_FOUND,
                     404
                 )
                 return
@@ -61,8 +60,7 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
             if (!isPasswordValid) {
                 ResponseHandler.error(
                     res,
-                    'Senha atual inválida',
-                    MESSAGES.ERROR.UNAUTHORIZED,
+                    MESSAGES.ERROR.INVALID_CREDENTIALS,
                     401
                 )
                 return
@@ -74,7 +72,6 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
         } catch (error) {
             ResponseHandler.error(
                 res,
-                'Erro ao verificar Login',
                 MESSAGES.ERROR.INTERNAL_ERROR,
                 500,
                 error as Error
@@ -95,7 +92,7 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 		}
 		const { email, newPassword } = input as PasswordResetRequest
 		if (!email ) {
-			throw new apiError(email)
+			throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
 		}
 
 		return { email, newPassword }
@@ -111,7 +108,6 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 			ResponseHandler.error(
 				res,
 				MESSAGES.ERROR.USER_NOT_FOUND,
-				'NOT_FOUND',
 				404
 			)
 			return
@@ -136,7 +132,6 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 			ResponseHandler.error(
 				res,
 				MESSAGES.ERROR.USER_NOT_FOUND,
-				'NOT_FOUND',
 				404
 			)
 			return
