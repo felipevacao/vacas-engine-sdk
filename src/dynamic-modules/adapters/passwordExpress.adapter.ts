@@ -14,7 +14,7 @@ export class PasswordExpressAdapter extends UserExpressAdapter {
 		super(service)
 	}
 
-/** * Validates the input for updating the password fields.
+	/** * Validates the input for updating the password fields.
      * @param input - Object containing currentPassword and newPassword
      * @returns Array containing currentPassword and newPassword
      * @throws Error if the input is invalid or if the fields are missing
