@@ -1,21 +1,24 @@
 import { MESSAGES } from "@constants/messages";
 import { BaseController } from "@controllers/baseController";
+import { BaseServices } from "@services/baseServices";
 import { apiError } from "@utils/error";
 import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData } from "types/entity";
 
 export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapter<V, U> {
-    constructor(protected service: BaseController<T>) {
+    constructor(
+        protected service: BaseServices<T, BaseController<T>>
+    ) {
         this.service = service;
     }
 
-    abstract create         (input: V, output: U): Promise<void>;
-    abstract findAll        (input: V, output: U): Promise<void>;
-    abstract findById       (input: V, output: U): Promise<void>;
-    abstract findBy         (input: V, output: U): Promise<void>;
-    abstract update         (input: V, output: U): Promise<void>;
-    abstract delete         (input: V, output: U): Promise<void>;
-    abstract forceDelete    (input: V, output: U): Promise<void>;
-    abstract metadata       (input: V, output: U): Promise<void>;
+    abstract create(input: V, output: U): Promise<void>;
+    abstract findAll(input: V, output: U): Promise<void>;
+    abstract findById(input: V, output: U): Promise<void>;
+    abstract findBy(input: V, output: U): Promise<void>;
+    abstract update(input: V, output: U): Promise<void>;
+    abstract delete(input: V, output: U): Promise<void>;
+    abstract forceDelete(input: V, output: U): Promise<void>;
+    abstract metadata(input: V, output: U): Promise<void>;
 
     /**
      * Valida o input para criação de uma nova entidade.
@@ -36,13 +39,14 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
      * @returns Os dados validados para atualização da entidade.
      */
     protected async validateUpdate(
+        id: number,
         input: InputRequest<V>
     ): Promise<UpdateData<T>> {
 
-        return await this.service.generateBodyUpdate(input) ?? input.body as UpdateData<T>;
-        
+        return await this.service.withId(id).generateBodyUpdate(input) ?? input.body as UpdateData<T>;
+
     }
-    
+
     /**
      * Gera os campos de consulta a partir do input, incluindo filtros, ordenação e paginação.
      */
@@ -61,7 +65,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
 
         return {
             originalUrl: input.originalUrl as string ?? '',
-            links: input.query.links ? ( input.query.links == 'true' ? true : false ) : this.service.hateoas,
+            links: input.query.links == 'true' ? true : false,
             fields,
             where,
             filters,
@@ -87,13 +91,13 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         // Regex para capturar field, operator e value
         const regex = /^([a-zA-Z_][a-zA-Z0-9_]*)\s*(==|!=|>=|<=|>|<|~)\s*(.+)$/;
         const match = filterString.match(regex);
-        
+
         if (!match) {
             throw new apiError(MESSAGES.ERROR.INVALID_FILTER_FORMAT, 500);
         }
-        
+
         const [, field, operator, value] = match;
-        
+
         // Mapear operadores para Knex
         const operatorMap: Record<string, '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'> = {
             '==': '=',
@@ -106,7 +110,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
             'IN': 'IN',
             'BETWEEN': 'BETWEEN'
         };
-        
+
         return {
             field,
             operator: operatorMap[operator],

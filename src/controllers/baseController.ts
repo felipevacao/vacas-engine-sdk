@@ -1,82 +1,37 @@
-import env from "@lib/env"
-import { MetadataService } from "@services/metadataServices"
-import { BaseEntity, CreateData, Model, UpdateData, QueryFields, OutputData, InputRequest, Metadata, PaginatedResult, EnhancedTableMetadata } from 'types/entity'
+import {
+    BaseEntity,
+    CreateData,
+    Model,
+    UpdateData,
+    QueryFields,
+    OutputData,
+    PaginatedResult
+} from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
 
-    hateoas: boolean
-    _bodyCreateExtended: boolean
-    _bodyUpdateExtended: boolean
-    _showErrors: boolean
-    
-    constructor(private model: Model<T>) {
-        this.hateoas = env.ENABLE_HATEOAS ?? false
-        this._bodyCreateExtended = false
-        this._bodyUpdateExtended = false
-        this._showErrors = env.ENABLE_RETURN_ERRORS
-    }
+    constructor(
+        protected model: Model<T>
+    ) { }
 
-    /**
-     * Retorna o nome da tabela associada ao modelo. Este método é utilizado para obter a tabela do banco de dados relacionada ao modelo, 
-     * permitindo que as operações de banco de dados sejam realizadas corretamente.
-     */
     public getModelTable(): string {
         return this.model.table
     }
 
-    /**
-     * Generates the body for creating a new entity.
-     * @param input The input request containing the entity data.
-     * @returns The create data for the entity or null if not extended.
-     */
-    public async generateBodyCreate(
-        input: InputRequest<unknown>
-    ): Promise<CreateData<T> | null > {
-
-        const body = input.body as CreateData<T>
-        return this._bodyCreateExtended == false ? null : body
+    public getDefaultFields() {
+        return this.model.defaultFields
     }
 
-    /**
-     * Generates the body for updating an existing entity.
-     * @param input The input request containing the entity data.
-     * @returns The update data for the entity or null if not extended.
-     */
-    public async generateBodyUpdate(
-        input: InputRequest<unknown>
-    ): Promise<UpdateData<T> | null> {
-        const body = input.body as UpdateData<T>
-        return this._bodyUpdateExtended == false ? null : body
+    public getSelectetAbleFields() {
+        return this.model.selectAbleFields
     }
 
-    /**
-     * Gets the available fields for the model.
-     * @param extraFields Additional fields to include.
-     * @returns An array of available fields.
-     */
-    public getAvailableFields(
-        extraFields: (keyof Model<T>)[] = []
-    ): (keyof Model<T>)[] {
-
-        return ([
-            ...this.model.defaultFields,
-            ...this.model.selectAbleFields,
-            ...extraFields
-        ] as (keyof Model<T>)[])
-            .filter(
-                (field) => !this.model.excludedFields.includes(field as keyof T)
-            )
-
+    public getExcludedFields() {
+        return this.model.excludedFields
     }
 
-    /**
-     * Creates a new entity in the model.
-     * @param data The data to create the entity with.
-     * @param options The query fields for the creation.
-     * @returns The created entity.
-     */
     public async createEntity(
-        data: CreateData<T>, 
+        data: CreateData<T>,
         options: QueryFields<T>
     ): Promise<OutputData<T>> {
 
@@ -84,11 +39,6 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
-    /**
-     * Finds all entities in the model.
-     * @param options The query fields for finding entities.
-     * @returns An array of found entities.
-     */
     public async findAllEntity(
         options: QueryFields<T>
     ): Promise<OutputData<T>[]> {
@@ -97,60 +47,31 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
-    /**
-     * Finds all entities in the model.
-     * @param options The query fields for finding entities.
-     * @returns An array of found entities.
-     */
     public async findAllEntityPaginated(
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> {
 
-        return await this.model.findAllPaginated(options) 
+        return await this.model.findAllPaginated(options)
 
     }
 
-    /**
-     * Finds an entity by its ID.
-     * @param id The ID of the entity to find.
-     * @param options The query fields for finding the entity.
-     * @returns The found entity or null if not found.
-     */
     public async findByIdEntity(
-        id: number, 
+        id: number,
         options: QueryFields<T> = {}
-    ): Promise<OutputData<T> | null> {
+    ): Promise<OutputData<T> | undefined> {
 
-        const result = await this.model.findById(id, options)
-        if(!result) {
-            return null
-        }
-        return result
+        return await this.model.findById(id, options)
 
     }
 
-    /**
-     * Finds entities by specific fields.
-     * @param options The query fields for finding entities.
-     * @returns An array of found entities or an empty array if none found.
-     */
     public async findByEntity(
         options: QueryFields<T>
-    ): Promise<OutputData<T>[] | []> {
+    ): Promise<OutputData<T>[] | undefined> {
 
-        const result = await this.model.findBy(options)
-        if(!result) {
-            return []
-        }
-        return result
+        return await this.model.findBy(options)
 
     }
 
-    /**
-     * Finds entities by specific fields.
-     * @param options The query fields for finding entities.
-     * @returns An array of found entities or an empty array if none found.
-     */
     public async findByEntityPaginated(
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> {
@@ -159,16 +80,9 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
-    /**
-     * Updates an existing entity in the model.
-     * @param id The ID of the entity to update.
-     * @param data The data to update the entity with.
-     * @param options The query fields for the update.
-     * @returns The updated entity.
-     */
     public async updateEntity(
-        id: number | string, 
-        data: UpdateData<T>, 
+        id: number | string,
+        data: UpdateData<T>,
         options: QueryFields<T> = {}
     ): Promise<OutputData<T>> {
 
@@ -176,11 +90,6 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
-    /**
-     * Deletes an entity by its ID, marrked as deleted.
-     * @param id The ID of the entity to delete.
-     * @returns A boolean indicating whether the deletion was successful.
-     */
     public async deleteEntity(
         id: number
     ): Promise<boolean> {
@@ -188,12 +97,7 @@ export class BaseController<T extends BaseEntity> {
         return await this.model.delete(id)
 
     }
-    
-    /**
-     * Force deletes an entity by its ID. Deletes the entity without marking it as deleted.
-     * @param id The ID of the entity to force delete.
-     * @returns A boolean indicating whether the force deletion was successful.
-     */
+
     public async forceDeleteEntity(
         id: number
     ): Promise<boolean> {
@@ -202,12 +106,4 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
-    public async getMetadata(): Promise<EnhancedTableMetadata | Metadata | null>{
-
-        const metadataService = new MetadataService();
-
-        const metadata = await metadataService.getTableMetadata(this.getModelTable());
-        
-        return metadata
-    }
 }

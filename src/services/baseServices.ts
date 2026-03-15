@@ -1,23 +1,50 @@
+import env from "@lib/env"
 import { MESSAGES } from "@constants/messages";
 import { BaseController } from "@controllers/baseController";
+import { MetadataService } from "@services/metadataServices"
 import { apiError } from "@utils/error";
-import { BaseEntity, OutputData, ErrorContext } from 'types/entity'
 import { ErrorService } from "./erro";
+import {
+	BaseEntity,
+	OutputData,
+	ErrorContext,
+	CreateData,
+	Model,
+	UpdateData,
+	InputRequest,
+	EnhancedTableMetadata
+} from 'types/entity'
 
-export class BaseServices {
-	
-	private entity: OutputData<BaseEntity> | null = null
-	private id: number = 0
+export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
+
+	protected errorService: ErrorService
+	protected entity: OutputData<BaseEntity> | null = null
+	protected id: number = 0
+	_bodyCreateExtended: boolean
+	_bodyUpdateExtended: boolean
+	_showErrors: boolean
+	_metadataService: MetadataService
+
 
 	constructor(
-		private entityController: BaseController<BaseEntity>,
-		private errorService: ErrorService
-	) { 
-		this.context({entity: this.entityController.getModelTable()})
+		protected entityController: C,
+	) {
+		this.errorService = new ErrorService()
+		this.context({ entity: this.getController().getModelTable() })
+		this._bodyCreateExtended = false
+		this._bodyUpdateExtended = false
+		this._showErrors = env.ENABLE_RETURN_ERRORS
+		this._metadataService = new MetadataService(this.getController().getModelTable())
 	}
 
-	protected validateId(id: number): asserts id is number {
-		if (!id || typeof id !== 'number' || id <= 0 || !Number.isInteger(id) || id == 0) {
+	validateId(id: number): asserts id is number {
+		if (
+			!id
+			|| typeof id !== 'number'
+			|| id <= 0
+			|| !Number.isInteger(id)
+			|| id == 0
+		) {
 			throw new apiError(
 				MESSAGES.DATABASE.ENTITY.INVALID_ID,
 				400,
@@ -51,11 +78,146 @@ export class BaseServices {
 		return this.errorService.getErrorContext()
 	}
 
+	getController() {
+		return this.entityController
+	}
+
 	async getEntity() {
-		this.entity = await this.entityController.findByIdEntity(this.id)
-		if (!this.entity) {
-			throw new apiError(MESSAGES.DATABASE.ENTITY.NOT_FOUND, 404, this.getContext())
-		}
+		this.entity = await this.findByIdEntity(this.id)
 		return this.entity
 	}
-}
+
+	/**
+	 * Generates the body for creating a new entity.
+	 * @param input The input request containing the entity data.
+	 * @returns The create data for the entity or null if not extended.
+	 */
+	async generateBodyCreate(
+		input: InputRequest<unknown>
+	): Promise<CreateData<T> | null> {
+
+		const body = input.body as CreateData<T>
+		return this._bodyCreateExtended == false ? null : body
+	}
+
+	/**
+	 * Generates the body for updating an existing entity.
+	 * @param input The input request containing the entity data.
+	 * @returns The update data for the entity or null if not extended.
+	 */
+	async generateBodyUpdate(
+		input: InputRequest<unknown>
+	): Promise<UpdateData<T> | null> {
+		const body = input.body as UpdateData<T>
+		return this._bodyUpdateExtended == false ? null : body
+	}
+
+	/**
+	 * Busca os campos no model
+	 * @param extraFields campos adicionais
+	 * @returns array com campos permitidos.
+	 */
+	getAvailableFields( // COLOCAR NO SERVICE
+		extraFields: (keyof Model<BaseEntity>)[] = []
+	): (keyof Model<T>)[] {
+
+		return ([
+			...this.getController().getDefaultFields(),
+			...this.getController().getSelectetAbleFields(),
+			...extraFields
+		] as (keyof Model<T>)[])
+			.filter(
+				(field) => !this.getController().getExcludedFields().includes(field as keyof BaseEntity)
+			)
+
+	}
+
+	async findByIdEntity(
+		...args: Parameters<BaseController<T>['findByIdEntity']>
+	): Promise<OutputData<BaseEntity>> {
+		const result = await this.getController().findByIdEntity(args[0], args[1])
+		if (!result) {
+			throw new apiError(
+				MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+				404,
+				this.getContext()
+			)
+		}
+		return result
+	}
+
+	async findEntityBy(
+		...args: Parameters<BaseController<T>['findByEntity']>
+	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findByEntity']>>> {
+
+		const result = await this.getController().findByEntity(args[0])
+		if (!result) {
+			return []
+		}
+		return result
+
+	}
+
+	async getMetadata(): Promise<EnhancedTableMetadata> {
+		return await this._metadataService.getTableMetadata()
+	}
+
+	async createEntity(
+		...args: Parameters<BaseController<T>['createEntity']>
+	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['createEntity']>>> {
+
+		return await this.getController().createEntity(args[0], args[1])
+
+	}
+
+	getModelTable(): ReturnType<BaseController<BaseEntity>['getModelTable']> {
+		return this.getController().getModelTable()
+	}
+
+	async findAllEntityPaginated(
+		...args: Parameters<BaseController<T>['findAllEntityPaginated']>
+	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findAllEntityPaginated']>>> {
+
+		return await this.getController().findAllEntityPaginated(args[0])
+
+	}
+
+	async findByEntityPaginated(
+		...args: Parameters<BaseController<T>['findByEntityPaginated']>
+	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findByEntityPaginated']>>> {
+
+		const result = await this.getController().findByEntityPaginated(args[0])
+		if (result.data.length === 0) {
+			throw new apiError(
+				MESSAGES.ERROR.NOT_FOUND,
+				404,
+				this.getContext()
+			)
+		}
+		return result
+	}
+
+	async updateEntity(
+		...args: Parameters<BaseController<T>['updateEntity']>
+	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['updateEntity']>>> {
+
+		return await this.getController().updateEntity(args[0], args[1], args[2])
+
+	}
+
+	async deleteEntity(
+		...args: Parameters<BaseController<T>['deleteEntity']>
+	): Promise<boolean> {
+
+		const result = await this.withId(args[0]).getController().deleteEntity(args[0])
+		if (!result) {
+			throw new apiError(
+				MESSAGES.ERROR.NOT_FOUND,
+				404,
+				this.getContext()
+			)
+		}
+		return result
+	}
+
+}	
