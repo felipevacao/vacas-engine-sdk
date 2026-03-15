@@ -162,7 +162,6 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	async findByEntityPaginated(
 		...args: Parameters<BaseController<T>['findByEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findByEntityPaginated']>>> {
-
 		const result = await this.getController().findByEntityPaginated(args[0])
 		if (result.data.length === 0) {
 			throw new apiError(
@@ -177,15 +176,12 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	async updateEntity(
 		...args: Parameters<BaseController<T>['updateEntity']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['updateEntity']>>> {
-
 		return await this.getController().updateEntity(args[0], args[1], args[2])
-
 	}
 
 	async deleteEntity(
 		...args: Parameters<BaseController<T>['deleteEntity']>
 	): Promise<boolean> {
-
 		const result = await this.withId(args[0]).getController().deleteEntity(args[0])
 		if (!result) {
 			throw new apiError(
@@ -200,7 +196,6 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	async forceDeleteEntity(
 		...args: Parameters<BaseController<T>['deleteEntity']>
 	): Promise<boolean> {
-
 		const result = await this.withId(args[0]).getController().forceDeleteEntity(args[0])
 		if (!result) {
 			throw new apiError(
