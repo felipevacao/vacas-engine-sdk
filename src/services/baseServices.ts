@@ -220,4 +220,19 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return result
 	}
 
+	async forceDeleteEntity(
+		...args: Parameters<BaseController<T>['deleteEntity']>
+	): Promise<boolean> {
+
+		const result = await this.withId(args[0]).getController().forceDeleteEntity(args[0])
+		if (!result) {
+			throw new apiError(
+				MESSAGES.ERROR.NOT_FOUND,
+				404,
+				this.getContext()
+			)
+		}
+		return result
+	}
+
 }	

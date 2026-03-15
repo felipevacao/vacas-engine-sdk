@@ -337,10 +337,18 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             }
             // Deleta entidade
             const success = await this.service.forceDeleteEntity(numericId)
+            if (!success) {
+                ResponseHandler.error(
+                    res,
+                    MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+                    404
+                )
+                return
+            }
             // Resposta de sucesso
             ResponseHandler.success(
                 res,
-                { deleted: success },
+                {},
                 MESSAGES.DATABASE.ENTITY.DELETED,
                 204
             )
