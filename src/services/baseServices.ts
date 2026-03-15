@@ -20,11 +20,10 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	protected errorService: ErrorService
 	protected entity: OutputData<BaseEntity> | null = null
 	protected id: number = 0
-	_bodyCreateExtended: boolean
-	_bodyUpdateExtended: boolean
-	_showErrors: boolean
-	_metadataService: MetadataService
-
+	protected _bodyCreateExtended: boolean
+	protected _bodyUpdateExtended: boolean
+	protected _showErrors: boolean
+	protected _metadataService: MetadataService
 
 	constructor(
 		protected entityController: C,
@@ -53,33 +52,28 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		}
 	}
 
-	/**
-	 * Adiciona contextos para serem repassados no Erro
-	 * @param metadata 
-	 */
-	context(metadata: Partial<ErrorContext>): this {
-		this.errorService.setErrorMetadata(metadata)
-		return this
-	}
-
-	/**
-	 * Reserva o Id da entidade
-	 * @param id 
-	 * @returns 
-	 */
-	withId(id: number): this {
+	withId(
+		id: number
+	): this {
 		this.validateId(id)
 		this.context({ id })
 		this.id = id
 		return this
 	}
 
-	getContext() {
-		return this.errorService.getErrorContext()
-	}
-
 	getController() {
 		return this.entityController
+	}
+
+	private context(
+		metadata: Partial<ErrorContext>
+	): this {
+		this.errorService.setErrorMetadata(metadata)
+		return this
+	}
+
+	private getContext() {
+		return this.errorService.getErrorContext()
 	}
 
 	async getEntity() {
@@ -87,11 +81,6 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this.entity
 	}
 
-	/**
-	 * Generates the body for creating a new entity.
-	 * @param input The input request containing the entity data.
-	 * @returns The create data for the entity or null if not extended.
-	 */
 	async generateBodyCreate(
 		input: InputRequest<unknown>
 	): Promise<CreateData<T> | null> {
@@ -100,11 +89,6 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this._bodyCreateExtended == false ? null : body
 	}
 
-	/**
-	 * Generates the body for updating an existing entity.
-	 * @param input The input request containing the entity data.
-	 * @returns The update data for the entity or null if not extended.
-	 */
 	async generateBodyUpdate(
 		input: InputRequest<unknown>
 	): Promise<UpdateData<T> | null> {
@@ -112,12 +96,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this._bodyUpdateExtended == false ? null : body
 	}
 
-	/**
-	 * Busca os campos no model
-	 * @param extraFields campos adicionais
-	 * @returns array com campos permitidos.
-	 */
-	getAvailableFields( // COLOCAR NO SERVICE
+	getAvailableFields(
 		extraFields: (keyof Model<BaseEntity>)[] = []
 	): (keyof Model<T>)[] {
 
@@ -177,9 +156,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	async findAllEntityPaginated(
 		...args: Parameters<BaseController<T>['findAllEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findAllEntityPaginated']>>> {
-
 		return await this.getController().findAllEntityPaginated(args[0])
-
 	}
 
 	async findByEntityPaginated(
