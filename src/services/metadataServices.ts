@@ -174,8 +174,7 @@ export class MetadataService {
       const manifestContent = readFileSync(manifestPath, 'utf-8');
 
       return JSON.parse(manifestContent)[tableName];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch {
       // Se não existir manifest, retorna configuração padrão
       return {};
     }

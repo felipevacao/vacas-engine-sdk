@@ -4,6 +4,8 @@ import { Model, OutputData, QueryFields, UpdateData } from "types/entity";
 import { SessionController } from "./SessionController";
 import { hashUtils } from "@utils/hash";
 import { HashResult } from "types/hash";
+import { apiError } from "@utils/error";
+import { MESSAGES } from "@constants/messages";
 
 export class AuthController extends UsersController {
 
@@ -122,12 +124,8 @@ export class AuthController extends UsersController {
 			} as QueryFields<UsersEntity>
 			try {
 				await this.updateEntity(user.id, { password: passwordHash, pepper: pepper } as UpdateData<UsersEntity>, options);
-			} catch (error) {
-				let errorMessage = 'Error updating password';
-				if(error instanceof Error) {
-					errorMessage = error.message
-				}
-				throw new Error(errorMessage);
+			} catch {
+				throw new apiError(MESSAGES.ERROR.OPERATION_ERROR);
 			}
 		}
 

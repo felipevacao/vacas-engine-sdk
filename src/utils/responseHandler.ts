@@ -64,7 +64,7 @@ export class ResponseHandler {
 			}
 		}
 		if (env.ENABLE_RETURN_ERRORS && response.error) {
-			response.error.details = details instanceof apiError ? details.stack : details ?? MESSAGES.ERROR.UNKNOWN;
+			response.error.details = details instanceof apiError ? details.stack : details ?? MESSAGES.ERROR.UNKNOWN.message;
 		}
 		if (headers) {
 			for (const [key, value] of Object.entries(headers)) {
