@@ -6,7 +6,7 @@ import { BaseController } from '@controllers/baseController'
 import { HateoasTransformer } from '@transformers/hateoas.transformer'
 import { ResponseHandler } from '@utils/responseHandler'
 import { MESSAGES } from '@constants/messages'
-import { UsersController } from '@dynamic-modules/controllers/users'
+import { UsersRolesService } from '@dynamic-modules/services/users.roles'
 import { BaseServices } from '@services/baseServices'
 
 export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
@@ -274,8 +274,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 return
             }
             // Valida usuário guest
-            const user = await (new UsersController()).findByIdEntity(req.session.userId as number)
-            if (!user || user.role === 'guest') {
+            const user = await new UsersRolesService(req.session.userId as number).getEntity()
+            if (user.isGuest()) {
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
@@ -326,8 +326,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 return
             }
             // Valida usuário admin
-            const user = await (new UsersController()).findByIdEntity(req.session.userId as number)
-            if (!user || user.role !== 'admin') {
+            const user = await new UsersRolesService(req.session.userId as number).getEntity()
+            if (user.isAdmin()) {
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.DELETE_ERROR,

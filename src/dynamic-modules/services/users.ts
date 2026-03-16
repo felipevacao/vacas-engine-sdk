@@ -7,9 +7,13 @@ import { UsersEntity } from "@dynamic-modules/entities/users";
 export class UsersService extends BaseServices<UsersEntity, UsersController> {
 
 	constructor(
-		protected entityController: UsersController
+		protected id: number = 0,
+		protected entityController: UsersController = new UsersController
 	) {
 		super(entityController)
+		if (this.id !== 0) {
+			this.validateId(this.id)
+		}
 	}
 
 	override async generateBodyCreate(

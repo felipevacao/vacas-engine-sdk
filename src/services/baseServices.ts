@@ -18,7 +18,7 @@ import {
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
 	protected errorService: ErrorService
-	protected entity: OutputData<BaseEntity> | null = null
+	protected entity: OutputData<T> | null = null
 	protected id: number = 0
 	protected _bodyCreateExtended: boolean
 	protected _bodyUpdateExtended: boolean
@@ -26,7 +26,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	protected _metadataService: MetadataService
 
 	constructor(
-		protected entityController: C,
+		protected entityController: C
 	) {
 		this.errorService = new ErrorService()
 		this.context({ entity: this.getController().getModelTable() })
@@ -65,6 +65,11 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this.entityController
 	}
 
+	async getEntity(): Promise<this> {
+		this.entity = await this.findByIdEntity(this.id) as OutputData<T>
+		return this
+	}
+
 	private context(
 		metadata: Partial<ErrorContext>
 	): this {
@@ -76,10 +81,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this.errorService.getErrorContext()
 	}
 
-	async getEntity() {
-		this.entity = await this.findByIdEntity(this.id)
-		return this.entity
-	}
+
 
 	async generateBodyCreate(
 		input: InputRequest<unknown>
