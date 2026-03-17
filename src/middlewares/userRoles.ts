@@ -1,8 +1,8 @@
-// import { UsersService } from '@dynamic-modules/services/users'
+// import { UserService } from '@dynamic-modules/services/users'
 import { Request, Response, NextFunction } from 'express'
 
 
-// const usersService = new UsersService()
+// const UserService = new UserService()
 
 export const verifyAdmin = async (
 	req: Request,

@@ -35,7 +35,7 @@ export class SessionController {
      * @returns True if the token is valid, false otherwise.
      */
     private validateToken(
-        token: string, 
+        token: string,
         hash: string
     ): boolean {
 
@@ -50,12 +50,12 @@ export class SessionController {
      * @returns True if the user has an active session, false otherwise.
      */
     private async verifySession(
-        user: UsersEntity, 
+        user: UsersEntity,
         ipAddress: string
     ): Promise<UserSessionsEntity | boolean> {
 
         const options = {
-            where: { 
+            where: {
                 user_id: user.id,
                 ip_address: ipAddress,
                 is_revoked: false
@@ -80,7 +80,7 @@ export class SessionController {
      * @returns An object containing the token.
      */
     public async createSession(
-        user: UsersEntity, 
+        user: UsersEntity,
         ipAddress: string
     ): Promise<{ token: string, expiresAt: Date }> {
         /**
@@ -101,12 +101,12 @@ export class SessionController {
             case 'guest':
                 expiresAt = 5
                 const options = {
-                        fields: ['login' as (keyof Model<UsersEntity>)],
-                        filters: [{
-                            field: "role",
-                            operator: "=",
-                            value: "guest",
-                        }]
+                    fields: ['login' as (keyof Model<UsersEntity>)],
+                    filters: [{
+                        field: "role",
+                        operator: "=",
+                        value: "guest",
+                    }]
                 } as QueryFields<UsersEntity>
                 const { passwordHash, pepper } = await hashUtils.generateHash(cryptoUtils.generateToken())
                 this.user.updateEntity(user.id as number, { password: passwordHash, pepper: pepper } as UpdateData<UsersEntity>, options)
@@ -127,14 +127,14 @@ export class SessionController {
     }
 
     public async createResetSession(
-        user: UsersEntity, 
+        user: UsersEntity,
         ipAddress: string
     ): Promise<{ token: string, expiresAt: Date }> {
-        
+
         const { token, hash } = this.createToken()
 
         const expiresAtDate = cryptoUtils.getExpiresAt(10)
-        
+
         await this.userSessions.createEntity({
             userId: user.id as number,
             tokenHash: hash,
@@ -154,7 +154,7 @@ export class SessionController {
     public async deleteSession(
         sessionId: string | number
     ): Promise<void> {
-        
+
         /**
          * Marca a sessão como revogada e atualiza a data de último uso. Em seguida, verifica se existem outras sessões ativas para o mesmo usuário e as revoga também, 
          * garantindo que o usuário seja desconectado de todas as sessões ativas.
@@ -191,7 +191,7 @@ export class SessionController {
         }
 
     }
-    
+
     /**
      * Validates a user session.
      * @param token The token to validate.
@@ -199,12 +199,12 @@ export class SessionController {
      * @returns The user and session entities if valid, throws an error otherwise.
      */
     public async validateUserSession(
-        token: string, 
+        token: string,
         ipAddress: string,
         status: UserStatus = 'active'
     ): Promise<UserSessionsEntity> {
         const options = {
-            where: { 
+            where: {
                 ip_address: ipAddress,
                 is_revoked: false,
                 status: status
@@ -219,11 +219,11 @@ export class SessionController {
         const activeSessions = await this.userSessions.findByEntity(options)
         if (activeSessions.length !== 0) {
             // Valida o token de cada sessão
-            for (const session of activeSessions) {           
+            for (const session of activeSessions) {
                 if (
                     this.validateToken(
-                    token,
-                    session.tokenHash
+                        token,
+                        session.tokenHash
                     )
                 ) {
                     session.lastUsedAt = new Date()

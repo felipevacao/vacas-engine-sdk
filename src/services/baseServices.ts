@@ -18,8 +18,8 @@ import {
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
 	protected errorService: ErrorService
-	protected entity: OutputData<T> | null = null
-	protected id: number = 0
+	public entity: OutputData<T> | null = null
+	public id: number | string = 0 || ''
 	protected _bodyCreateExtended: boolean
 	protected _bodyUpdateExtended: boolean
 	protected _showErrors: boolean
@@ -36,13 +36,11 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		this._metadataService = new MetadataService(this.getController().getModelTable())
 	}
 
-	validateId(id: number): asserts id is number {
+	validateId(id: number | string): asserts id is number | string {
 		if (
-			!id
-			|| typeof id !== 'number'
-			|| id <= 0
-			|| !Number.isInteger(id)
-			|| id == 0
+			typeof id === 'number' && (!id || id <= 0 || !Number.isInteger(id) || id == 0)
+			||
+			typeof id === 'string' && (!id || id !== '')
 		) {
 			throw new apiError(
 				MESSAGES.DATABASE.ENTITY.INVALID_ID,
@@ -70,14 +68,21 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this
 	}
 
-	private context(
+	protected context(
 		metadata: Partial<ErrorContext>
 	): this {
 		this.errorService.setErrorMetadata(metadata)
 		return this
 	}
 
-	private getContext() {
+	protected contextDetail(
+		metadata: string
+	): this {
+		this.errorService.setErrorMetadataDetails(metadata)
+		return this
+	}
+
+	protected getContext() {
 		return this.errorService.getErrorContext()
 	}
 

@@ -32,7 +32,7 @@ export class BaseController<T extends BaseEntity> {
 
     public async createEntity(
         data: CreateData<T>,
-        options: QueryFields<T>
+        options: QueryFields<T> = {}
     ): Promise<OutputData<T>> {
 
         return await this.model.create(data, options)
@@ -56,7 +56,7 @@ export class BaseController<T extends BaseEntity> {
     }
 
     public async findByIdEntity(
-        id: number,
+        id: number | string,
         options: QueryFields<T> = {}
     ): Promise<OutputData<T> | undefined> {
 

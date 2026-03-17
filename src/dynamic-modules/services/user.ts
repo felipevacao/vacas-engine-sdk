@@ -3,11 +3,13 @@ import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserSta
 import { hashUtils } from '@utils/hash';
 import { BaseServices } from "@services/baseServices";
 import { UsersEntity } from "@dynamic-modules/entities/users";
+import { apiError } from "@utils/error";
+import { MESSAGES } from "@constants/messages";
 
-export class UsersService extends BaseServices<UsersEntity, UsersController> {
+export class UserService extends BaseServices<UsersEntity, UsersController> {
 
 	constructor(
-		protected id: number = 0,
+		public id: number = 0,
 		protected entityController: UsersController = new UsersController
 	) {
 		super(entityController)
@@ -31,14 +33,14 @@ export class UsersService extends BaseServices<UsersEntity, UsersController> {
 
 		const verifyMail = await this.entityController.findByEntity(options)
 		if (verifyMail && verifyMail.length > 0) {
-			throw new Error('E-mail already exists')
+			throw new apiError(MESSAGES.ERROR.INVALID_EMAIL, 401)
 		}
 
 		options.where = { "login": body.login }
 
 		const verifyLogin = await this.entityController.findByEntity(options)
 		if (verifyLogin && verifyLogin.length > 0) {
-			throw new Error('Login already exists')
+			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN_TEXT)
 		}
 
 		if (body.password) {
