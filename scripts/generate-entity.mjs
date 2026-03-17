@@ -88,6 +88,18 @@ function generateControllerFile(tableName) {
   console.log(`Arquivo de controlador criado: ${filePath}`);
 }
 
+// Função para gerar o arquivo de service
+function generateServiceFile(tableName) {
+  const tableNameCamel = toCamelCase(tableName);
+  const tablenameCapital = tableNameCamel.charAt(0).toUpperCase() + tableNameCamel.slice(1)
+  const entityTemplate = readFileSync(join(__dirname, 'services.txt'), 'utf-8');
+  const controllerContent = (entityTemplate.replaceAll('{{tablenameCapital}}', tablenameCapital)).replaceAll('{{tableNameCamel}}', tableNameCamel);
+
+  const filePath = join(__dirname, '../src/dynamic-modules/services', `${tableNameCamel}.ts`);
+  writeFileSync(filePath, controllerContent);
+  console.log(`Arquivo de services criado: ${filePath}`);
+}
+
 
 // Função para gerar o arquivo de rotas
 function generateRoutesFile(tableName) {
@@ -147,6 +159,9 @@ async function main() {
       }
       if(await confirm({  message: 'Criar as Rotas?'}) == true){
         generateRoutesFile(tableName);
+      }
+      if(await confirm({  message: 'Criar as Services?'}) == true){
+        generateServiceFile(tableName);
       }
     }
   } catch (error) {

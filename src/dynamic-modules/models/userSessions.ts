@@ -1,6 +1,8 @@
 // Gerado automáticamente
+import { MESSAGES } from '@constants/messages';
 import { UserSessionsEntity } from '@dynamic-modules/entities/userSessions';
 import * as repository from '@services/repository';
+import { apiError } from '@utils/error';
 import { Model } from 'types/entity';
 
 const UserSessionsModel: Model<UserSessionsEntity> = {
@@ -18,10 +20,10 @@ const UserSessionsModel: Model<UserSessionsEntity> = {
   defaultFields: ['id'],
   excludedFields: [],
   metadata: async () => {
-      const result = await repository.metadata('user_sessions')();
-      if (!result) throw new Error('Metadata not found');
-      return result;
-    },
+    const result = await repository.metadata('user_sessions')();
+    if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);
+    return result;
+  },
 };
 
 export default UserSessionsModel;

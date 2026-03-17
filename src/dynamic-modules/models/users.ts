@@ -1,5 +1,7 @@
+import { MESSAGES } from '@constants/messages';
 import { UsersEntity } from '@dynamic-modules/entities/users';
 import * as repository from '@services/repository';
+import { apiError } from '@utils/error';
 import { Model } from 'types/entity';
 
 const UsersModel: Model<UsersEntity> = {
@@ -18,7 +20,7 @@ const UsersModel: Model<UsersEntity> = {
   excludedFields: ['password', 'pepper'],
   metadata: async () => {
     const result = await repository.metadata('users')();
-    if (!result) throw new Error('Metadata not found');
+    if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);
     return result;
   },
 };
