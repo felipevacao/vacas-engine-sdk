@@ -12,10 +12,9 @@ import {
 	UserStatusType
 } from "types/entity";
 import { AuthService } from "@services/auth";
-import { BaseWorkflow } from "./base";
 import { TokenSessionType } from "types/token";
 
-export class AuthUserSessionWorkflow extends BaseWorkflow {
+export class AuthUserSessionWorkflow {
 
 	private resetSessionExpireMinutes: number = 10
 
@@ -24,7 +23,7 @@ export class AuthUserSessionWorkflow extends BaseWorkflow {
 		private userSessionService: UserSessionService = new UserSessionService(),
 		private authService: AuthService = new AuthService()
 	) {
-		super()
+
 	}
 
 	async setUser(
