@@ -40,7 +40,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		if (
 			typeof id === 'number' && (!id || id <= 0 || !Number.isInteger(id) || id == 0)
 			||
-			typeof id === 'string' && (!id || id !== '')
+			typeof id === 'string' && (!id || id === '')
 		) {
 			throw new apiError(
 				MESSAGES.DATABASE.ENTITY.INVALID_ID,
@@ -53,8 +53,8 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	withId(
 		id: number | string
 	): this {
-		this.validateId(id)
 		this.context({ id })
+		this.validateId(id)
 		this.id = id
 		return this
 	}

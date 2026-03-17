@@ -79,6 +79,7 @@ export class UserSessionService
 	async revokeSession(
 		sessionId: string
 	): Promise<OutputData<UserSessionsEntity>> {
+		this.contextDetail(`revoke ${sessionId}`)
 		this.validateId(sessionId)
 		const updatedSession = await this.entityController.updateEntity(
 			sessionId,

@@ -38,7 +38,7 @@ export class AuthUserSessionWorkflow {
 		ipAddress: string,
 		status: UserStatus = 'active'
 	): Promise<OutputData<UserSessionsEntity>> {
-		const sessionList = this.returnPreviousUserSession(ipAddress, status)
+		const sessionList = await this.returnPreviousUserSession(ipAddress, status,)
 		if (Array.isArray(sessionList)) {
 			for (const session of sessionList) {
 				if (this.userSessionService.validateToken(token, session.tokenHash)) {
@@ -84,7 +84,7 @@ export class AuthUserSessionWorkflow {
 	private async returnPreviousUserSession(
 		ipAddress: string | null = null,
 		status: UserStatus | null = null,
-		user_id: string | number | undefined = this.userService.getEntity().id
+		user_id: string | number | undefined = undefined
 	): Promise<UserSessionsEntity[] | boolean> {
 
 		const options = {
@@ -100,7 +100,6 @@ export class AuthUserSessionWorkflow {
 				value: new Date()
 			}]
 		} as QueryFields<UserSessionsEntity>
-
 		return await this.userSessionService.getUserSessionByOptions(options)
 	}
 
@@ -122,7 +121,7 @@ export class AuthUserSessionWorkflow {
 	}
 
 	private async revokeAllUserSessions() {
-		const userSessions = await this.returnPreviousUserSession()
+		const userSessions = await this.returnPreviousUserSession(null, null, this.userService.getEntity().id)
 		if (userSessions) {
 			if (Array.isArray(userSessions)) {
 				const promises = userSessions.map(userSession =>
@@ -140,7 +139,7 @@ export class AuthUserSessionWorkflow {
 		userType: UserStatusType = UserStatusType.ACTIVE
 	): Promise<session.Session & Partial<session.SessionData>> {
 
-		const session = await this.validateUserSession(token, ip, sessionType)
+		const session = await this.validateUserSession(token, ip, sessionType,)
 		if (!session) {
 			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 403)
 		}
@@ -186,7 +185,7 @@ export class AuthUserSessionWorkflow {
 		}
 
 		if (this.authService.verifyUserPepperVersion(pepper)) {
-			await this.userService.updatePassword(password, this.authService.getCurrentPepperVersion())
+			await this.updatePassword(password)
 		}
 
 		return match
@@ -235,7 +234,7 @@ export class AuthUserSessionWorkflow {
 				if (!match) {
 					throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, 403)
 				}
-				await this.userService.updatePassword(newPassword, this.authService.getCurrentPepperVersion())
+				await this.updatePassword(newPassword)
 			}
 		} catch (error) {
 			throw error
@@ -274,12 +273,34 @@ export class AuthUserSessionWorkflow {
 				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
 			}
 
-			await this.userService.updatePassword(newPassword, this.authService.getCurrentPepperVersion())
+			if (this.userService.getEntity().email !== email) {
+				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
+			}
+
+			await this.updatePassword(newPassword)
 			await this.userService.updateStatus(UserStatusType.ACTIVE)
 			await this.revokeAllUserSessions()
 
 		} catch (error) {
+			console.log(error)
 			throw error
+		}
+	}
+
+	async updatePassword(
+		newPassword: string
+	) {
+		try {
+			const entity = this.userService.getEntity()
+			this.userService.contextDetail(`userId: ${entity?.id}`)
+			if (entity.id) {
+				const { passwordHash, pepper } = await this.authService.generateHash(newPassword)
+				entity.password = passwordHash
+				entity.pepper = pepper.toString()
+				await this.userService.updateEntity(entity.id, entity)
+			}
+		} catch {
+			throw new apiError(MESSAGES.DATABASE.ENTITY.UPDATE_ERROR)
 		}
 	}
 

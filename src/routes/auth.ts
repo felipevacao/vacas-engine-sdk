@@ -10,19 +10,8 @@ const userService = new UserService()
 const authWorkflow = new AuthUserSessionWorkflow(userService)
 const userExpressAdapter = new UserExpressAdapter(userService, authWorkflow);
 
-/**
- * Rota de login
- * Recebe as credenciais do usuário, autentica e retorna um token de acesso.
- * O método bind é usado para garantir que o contexto (this) dentro do método login
- * seja o da instância do UserExpressAdapter, permitindo o acesso correto aos seus métodos e propriedades.
- */
 router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
-/**
- * Rota para logout
- * Esta rota é protegida pelo tokenMiddleware, que valida o token de autenticação antes de permitir o acesso.
- * Invalida o token de acesso do usuário.
- */
 router.get('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));
 
 // TROCAR SENHA OU RESETAR

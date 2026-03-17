@@ -47,7 +47,8 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
             // valida o input
             const [login, password] = this.validateLoginFields(req.body)
             // efetua login e gera sessão
-            const session = this.auth.login(login, password, getClientIP(req))
+            const session = await this.auth.login(login, password, getClientIP(req))
+
             // resposta
             ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
         } catch (error) {
@@ -125,7 +126,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 newPassword
             )
 
-            await this.auth.logout(req.session.id)
+            await this.auth.logout(req.session.sessionId as string)
 
             ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
 
@@ -189,7 +190,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
             }
             await this.auth.resetPassword(
-                req.session.id,
+                req.session.sessionId as string,
                 req.session.userId as number,
                 email,
                 newPassword

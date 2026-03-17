@@ -102,23 +102,6 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 		return this
 	}
 
-	async updatePassword(
-		newPassword: string,
-		pepper: number
-	) {
-		try {
-			const entity = this.getEntity()
-			this.contextDetail(`userId: ${entity?.id}`)
-			if (entity.id) {
-				entity.password = newPassword
-				entity.pepper = pepper.toString()
-				await this.entityController.updateEntity(entity.id, entity)
-			}
-		} catch {
-			throw new apiError(MESSAGES.DATABASE.ENTITY.UPDATE_ERROR)
-		}
-	}
-
 	async updateStatus(
 		status: UserStatus
 	) {
