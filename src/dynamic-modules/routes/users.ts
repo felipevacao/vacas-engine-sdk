@@ -1,11 +1,14 @@
 import express from 'express';
-import { UsersController } from '@dynamic-modules/controllers/users';
-import { ExpressAdapter } from '@adapters/express.adapter';
 import { tokenMiddleware } from '@middlewares/token';
+import { UserService } from '@dynamic-modules/services/user';
+import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
+import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
 
 const router = express.Router();
-const usersController = new UsersController();
-const expressAdapter = new ExpressAdapter(usersController);
+
+const userService = new UserService()
+const authWorkflow = new AuthUserSessionWorkflow(userService)
+const expressAdapter = new UserExpressAdapter(userService, authWorkflow);
 
 // C
 router.post('/', expressAdapter.create.bind(expressAdapter));

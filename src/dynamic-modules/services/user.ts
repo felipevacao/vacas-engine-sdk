@@ -119,4 +119,19 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 		}
 	}
 
+	async updateStatus(
+		status: UserStatus
+	) {
+		try {
+			const entity = this.getEntity()
+			this.contextDetail(`userId: ${entity?.id}`)
+			if (entity.id) {
+				entity.status = status
+				await this.entityController.updateEntity(entity.id, entity)
+			}
+		} catch {
+			throw new apiError(MESSAGES.DATABASE.ENTITY.UPDATE_ERROR)
+		}
+	}
+
 }

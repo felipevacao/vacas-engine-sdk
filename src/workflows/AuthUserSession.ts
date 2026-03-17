@@ -4,12 +4,10 @@ import { UserService } from "@dynamic-modules/services/user";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
 import session from "express-session";
-import { UsersEntity } from "@dynamic-modules/entities/users";
 import {
 	OutputData,
 	QueryFields,
 	SessionType,
-	UpdateData,
 	UserStatus,
 	UserStatusType
 } from "types/entity";
@@ -49,7 +47,7 @@ export class AuthUserSessionWorkflow extends BaseWorkflow {
 				}
 			}
 		}
-		throw new apiError(MESSAGES.DATABASE.LOGIN.INVALID_SESSION, 401)
+		throw new apiError(MESSAGES.DATABASE.LOGIN.INVALID_SESSION, 403)
 	}
 
 	private async createSession(
@@ -145,13 +143,13 @@ export class AuthUserSessionWorkflow extends BaseWorkflow {
 
 		const session = await this.validateUserSession(token, ip, sessionType)
 		if (!session) {
-			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 401)
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 403)
 		}
 
 		const user = await this.userService.findByIdEntity(session.userId, { filters: [this.userService.getFilterUserStatus(userType)] })
 		if (!user) {
 			await this.userSessionService.revokeSession(session.id)
-			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 401)
+			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 403)
 		}
 
 		return {
@@ -171,7 +169,8 @@ export class AuthUserSessionWorkflow extends BaseWorkflow {
 
 		const session = await this.validateSessionUser(token, ip, SessionType.RESET, UserStatusType.ACTIVE)
 
-		await this.userService.updateEntity(session.userId as number, { status: UserStatusType.RESET } as UpdateData<UsersEntity>)
+		await this.userService.withId(session.userId as number).setEntity()
+		await this.userService.updateStatus(UserStatusType.RESET)
 
 		return session
 	}
@@ -183,13 +182,12 @@ export class AuthUserSessionWorkflow extends BaseWorkflow {
 		await this.userService.getUserByEmail(email)
 		const user = this.userService.getEntity()
 		const [match, pepper] = await this.authService.comparePassword(password, user.password, parseInt(user.pepper))
-
 		if (!match) {
-			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, 401)
+			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, 403)
 		}
 
 		if (this.authService.verifyUserPepperVersion(pepper)) {
-			this.userService.updatePassword(password, this.authService.getCurrentPepperVersion())
+			await this.userService.updatePassword(password, this.authService.getCurrentPepperVersion())
 		}
 
 		return match
@@ -225,15 +223,65 @@ export class AuthUserSessionWorkflow extends BaseWorkflow {
 	}
 
 	async updateUserPassword(
-		sessionId: string,
 		userId: number,
 		currentPassword: string,
 		newPassword: string
 	) {
-		await this.userSessionService.withId(sessionId).setEntity()
-		await this.userService.withId(userId).setEntity()
+		try {
+			await this.userService.withId(userId).setEntity()
 
+			const user = this.userService.getEntity()
+			if (user.status === 'active') {
+				const [match] = await this.authService.comparePassword(currentPassword, user.password, parseInt(user.pepper))
+				if (!match) {
+					throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, 403)
+				}
+				await this.userService.updatePassword(newPassword, this.authService.getCurrentPepperVersion())
+			}
+		} catch (error) {
+			throw error
+		}
 
+	}
+
+	async resetPasswordSession(
+		email: string,
+		ipAddress: string
+	): Promise<TokenSessionType> {
+		try {
+			await this.userService.getUserByEmail(email)
+			const session = this.createResetSession(ipAddress)
+			return session
+		} catch (error) {
+			throw error
+		}
+	}
+
+	async resetPassword(
+		sessionId: string,
+		userId: number,
+		email: string,
+		newPassword: string
+	) {
+		try {
+			await this.userSessionService.withId(sessionId).setEntity()
+			await this.userService.withId(userId).setEntity()
+
+			if (this.userSessionService.getEntity().status !== UserStatusType.RESET) {
+				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
+			}
+
+			if (this.userService.getEntity().status !== UserStatusType.RESET) {
+				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
+			}
+
+			await this.userService.updatePassword(newPassword, this.authService.getCurrentPepperVersion())
+			await this.userService.updateStatus(UserStatusType.ACTIVE)
+			await this.revokeAllUserSessions()
+
+		} catch (error) {
+			throw error
+		}
 	}
 
 }

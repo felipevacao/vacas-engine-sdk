@@ -37,6 +37,10 @@ const rawMessages = {
 			name: 'SUCCESS_DATA',
 			message: 'Dados obtidos com sucesso'
 		},
+		PASSWORD_CHANGED: {
+			name: 'PASSWORD_CHANGED',
+			message: 'Senha alterada com sucesso! Favor realizar Login novamente!'
+		}
 	},
 	ROUTES: {
 		LIST: {

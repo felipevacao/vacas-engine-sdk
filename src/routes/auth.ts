@@ -1,15 +1,14 @@
 import express from 'express';
 import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares/token';
-import { AuthController } from '@controllers/AuthController';
 import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
-import { PasswordExpressAdapter } from '@dynamic-modules/adapters/passwordExpress.adapter';
-// import { MESSAGES } from '@constants/messages/index';
+import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
+import { UserService } from '@dynamic-modules/services/user';
 
 const router = express.Router();
 
-const authController = new AuthController();
-const userExpressAdapter = new UserExpressAdapter(authController);
-const passwordExpressAdapter = new PasswordExpressAdapter(authController);
+const userService = new UserService()
+const authWorkflow = new AuthUserSessionWorkflow(userService)
+const userExpressAdapter = new UserExpressAdapter(userService, authWorkflow);
 
 /**
  * Rota de login
@@ -49,7 +48,7 @@ router.get('/password/metadata', tokenMiddleware, (req, res) => {
  * @Bearer tokenSession
  * @body type PasswordChangeRequest
  */
-router.patch('/password', tokenMiddleware, passwordExpressAdapter.updatePassword.bind(passwordExpressAdapter));
+router.patch('/password', tokenMiddleware, userExpressAdapter.updatePassword.bind(userExpressAdapter));
 
 
 /**
@@ -67,7 +66,7 @@ router.patch('/password', tokenMiddleware, passwordExpressAdapter.updatePassword
  * @body type PasswordResetRequest
  * @returns tokenReset
  */
-router.post('/password/forgot', passwordExpressAdapter.forgotPassword.bind(passwordExpressAdapter))
+router.post('/password/forgot', userExpressAdapter.forgotPassword.bind(userExpressAdapter))
 
 /**
  * validação do token de reset de senha
@@ -80,7 +79,7 @@ router.get('/check/token=:token', checkExistingResetToken)
  * @body type PasswordResetRequest
  * @Bearer tokenReset
  */
-router.patch('/password/reset', resetTokenMiddleware, passwordExpressAdapter.resetPassword.bind(passwordExpressAdapter))
+router.patch('/password/reset', resetTokenMiddleware, userExpressAdapter.resetPassword.bind(userExpressAdapter))
 
 
 export default router;
