@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import env from '@lib/env'
+import env from 'libs/env'
 import { Request, Response } from 'express'
 import { apiError } from './error'
 import { MESSAGES } from '@constants/messages'
@@ -17,7 +17,7 @@ class TokenManager {
     public readonly hashAlgorithm: string
     public readonly pepper: string
 
-    constructor (config: TokenConfig = {}) {
+    constructor(config: TokenConfig = {}) {
         this.tokenBytes = config.tokenBytes || parseInt(env.TOKEN_BYTES)
         this.hashAlgorithm = config.hashAlgorithm || env.TOKEN_ALGOR
         this.pepper = config.pepper || env.TOKEN_PEPPER
@@ -29,7 +29,7 @@ const manager = new TokenManager()
 
 export const cryptoUtils = {
 
-    
+
     /**
      * Gera um token aleatório usando o módulo crypto do Node.js.
      */
@@ -54,7 +54,7 @@ export const cryptoUtils = {
         if (!token || token === '') {
             return false
         }
-        
+
         const hexRegex = new RegExp(`^[a-f0-9]{${manager.hashAlgorithm === 'sha256' ? 64 : 128}}$`, 'i')
         if (!hexRegex.test(token)) {
             return false
@@ -84,7 +84,7 @@ export const cryptoUtils = {
 
             // Converte o hash armazenado para Buffer
             const storedBuffer = Buffer.from(hash, 'hex')
-            
+
             // Gera o hash do token atual
             const tokenBuffer = Buffer.from(this.hashToken(token), 'hex')
 
@@ -116,7 +116,7 @@ export const cryptoUtils = {
      * Verificar se o token está presente no header Authorization e se segue o formato
      */
     verificaHeaderToken(
-        req: Request	
+        req: Request
     ): string {
 
         const authHeader = req.headers.authorization
@@ -141,7 +141,7 @@ export const cryptoUtils = {
             throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
         }
         return token
-        
+
     },
 
 

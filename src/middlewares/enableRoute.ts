@@ -1,4 +1,4 @@
-import env from "@lib/env"
+import env from "libs/env"
 import { Request, Response, NextFunction } from 'express'
 import { notFound } from "./errorHandlers"
 

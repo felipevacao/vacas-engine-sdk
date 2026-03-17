@@ -1,6 +1,6 @@
 // api/src/utils/db.ts
 import { Pool, PoolConfig } from 'pg'
-import env from "@lib/env"
+import env from "libs/env"
 import knex from 'knex'
 import config from './knexfile'
 

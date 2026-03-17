@@ -1,4 +1,4 @@
-import env from '@lib/env'
+import env from 'libs/env'
 import { Request, Response } from 'express'
 import { BaseAdapter } from './base.adapter'
 import { BaseEntity } from 'types/entity'

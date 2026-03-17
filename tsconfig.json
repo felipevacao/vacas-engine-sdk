@@ -15,12 +15,12 @@
       "@utils/*": ["utils/*"],
       "@entities/*": ["types/entities/*"],
       "@transformers/*": ["transformers/*"],
-      "@lib/*": ["lib/*"],
+      "@libs/*": ["libs/*"],
       "@services/*": ["services/*"],
       "@middlewares/*": ["middlewares/*"],
       "@dynamic-modules/*": ["dynamic-modules/*"],
       "@constants/*": ["constants/*"],
-      "@repository/*": ["repository/*"]
+      "@repositories/*": ["repositories/*"]
     }
   },
   /* Especifica onde o TypeScript deve procurar por definições de tipo */

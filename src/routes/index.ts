@@ -7,7 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
 import authRoutes from './auth';
-import env from '@lib/env';
+import env from 'libs/env';
 import { MESSAGES } from '@constants/messages/index';
 
 // Route → Adapter → Service (workflow) → Service (entidade) → Controller → Model → Entity → Banco
@@ -25,10 +25,10 @@ if (env.NODE_ENV === 'development') {
 router.use((req, res, next) => {
     // Prevenir que o token vaze em referrers
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    
+
     // Controlar cache de requisições autenticadas
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-    
+
     next();
 });
 

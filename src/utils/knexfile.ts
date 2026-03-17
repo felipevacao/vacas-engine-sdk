@@ -1,6 +1,6 @@
 import type { Knex } from 'knex'
 import { knexSnakeCaseMappers } from 'objection'
-import env from "@lib/env"
+import env from "libs/env"
 
 /**
  * Configuração do Knex para conexão com o banco de dados PostgreSQL.
