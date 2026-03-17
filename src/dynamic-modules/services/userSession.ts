@@ -12,6 +12,7 @@ import {
 	UpdateData,
 	OutputData
 } from "types/entity";
+import { BaseController } from "@controllers/baseController";
 
 export class UserSessionService
 	extends BaseServices<UserSessionsEntity, UserSessionsController> {
@@ -22,6 +23,13 @@ export class UserSessionService
 		protected entityController: UserSessionsController = new UserSessionsController()
 	) {
 		super(entityController)
+	}
+
+	override async updateEntity(
+		...args: Parameters<BaseController<UserSessionsEntity>['updateEntity']>
+	): Promise<Awaited<ReturnType<BaseController<UserSessionsEntity>['updateEntity']>>> {
+		args[1].lastUsedAt = new Date()
+		return await this.getController().updateEntity(args[0], args[1], args[2])
 	}
 
 	async createUserSession(
@@ -82,6 +90,11 @@ export class UserSessionService
 		return updatedSession
 	}
 
+	async revoke(): Promise<this> {
+		await this.revokeSession(this.getEntity().id)
+		return this
+	}
+
 	createToken(): TokenType {
 
 		const token = cryptoUtils.generateToken()
@@ -100,6 +113,8 @@ export class UserSessionService
 		return cryptoUtils.verifyToken(token, hash)
 	}
 
-
+	setExpiresAtDate(minutes: number): Date {
+		return cryptoUtils.getExpiresAt(minutes)
+	}
 
 }

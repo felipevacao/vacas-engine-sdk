@@ -18,7 +18,7 @@ import {
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
 	protected errorService: ErrorService
-	public entity: OutputData<T> | null = null
+	protected _entity!: OutputData<T>
 	public id: number | string = 0 || ''
 	protected _bodyCreateExtended: boolean
 	protected _bodyUpdateExtended: boolean
@@ -51,7 +51,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	}
 
 	withId(
-		id: number
+		id: number | string
 	): this {
 		this.validateId(id)
 		this.context({ id })
@@ -63,9 +63,16 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this.entityController
 	}
 
-	async getEntity(): Promise<this> {
-		this.entity = await this.findByIdEntity(this.id) as OutputData<T>
+	async setEntity(): Promise<this> {
+		this._entity = await this.findByIdEntity(this.id) as OutputData<T>
 		return this
+	}
+
+	getEntity() {
+		if (!this._entity) {
+			throw new apiError(MESSAGES.DATABASE.ENTITY.NOT_FOUND)
+		}
+		return this._entity
 	}
 
 	protected context(
@@ -75,7 +82,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this
 	}
 
-	protected contextDetail(
+	contextDetail(
 		metadata: string
 	): this {
 		this.errorService.setErrorMetadataDetails(metadata)
@@ -86,7 +93,9 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this.errorService.getErrorContext()
 	}
 
+	async setUpdate() {
 
+	}
 
 	async generateBodyCreate(
 		input: InputRequest<unknown>
@@ -120,7 +129,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
 	async findByIdEntity(
 		...args: Parameters<BaseController<T>['findByIdEntity']>
-	): Promise<OutputData<BaseEntity>> {
+	): Promise<OutputData<T>> {
 		const result = await this.getController().findByIdEntity(args[0], args[1])
 		if (!result) {
 			throw new apiError(
@@ -134,7 +143,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
 	async findEntityBy(
 		...args: Parameters<BaseController<T>['findByEntity']>
-	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findByEntity']>>> {
+	): Promise<Awaited<ReturnType<BaseController<T>['findByEntity']>>> {
 
 		const result = await this.getController().findByEntity(args[0])
 		if (!result) {

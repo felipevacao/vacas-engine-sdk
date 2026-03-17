@@ -274,7 +274,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 return
             }
             // Valida usuário guest
-            const user = await new UsersRolesService(req.session.userId as number).getEntity()
+            const user = await new UsersRolesService(req.session.userId as number).setEntity()
             if (user.isGuest()) {
                 ResponseHandler.error(
                     res,
@@ -326,7 +326,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 return
             }
             // Valida usuário admin
-            const user = await new UsersRolesService(req.session.userId as number).getEntity()
+            const user = await new UsersRolesService(req.session.userId as number).setEntity()
             if (user.isAdmin()) {
                 ResponseHandler.error(
                     res,

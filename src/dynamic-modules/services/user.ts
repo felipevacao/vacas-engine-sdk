@@ -69,4 +69,54 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 		}
 	}
 
+	getExpiresAtMinutes(): number {
+		switch (this.getEntity().role) {
+			case 'admin': return 120
+			case 'guest': return 5
+			default: return 60
+		}
+	}
+
+	async getUserByEmail(
+		email: string
+	): Promise<this> {
+
+		this.contextDetail(`email: ${email}`)
+		const options = {
+			where: { "email": email },
+			filters: [{
+				field: "status",
+				operator: "=",
+				value: "active",
+			}]
+		} as QueryFields<UsersEntity>
+
+		const userData = await this.entityController.findByEntity(options);
+		if (!userData) {
+			this.contextDetail(`not_found: ${email}`)
+		}
+		if (Array.isArray(userData)) {
+			this._entity = userData[0]
+		}
+
+		return this
+	}
+
+	async updatePassword(
+		newPassword: string,
+		pepper: number
+	) {
+		try {
+			const entity = this.getEntity()
+			this.contextDetail(`userId: ${entity?.id}`)
+			if (entity.id) {
+				entity.password = newPassword
+				entity.pepper = pepper.toString()
+				await this.entityController.updateEntity(entity.id, entity)
+			}
+		} catch {
+			throw new apiError(MESSAGES.DATABASE.ENTITY.UPDATE_ERROR)
+		}
+	}
+
 }

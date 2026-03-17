@@ -67,6 +67,10 @@ export const hashUtils = {
 	checkUpdatePepper(pepper: number): boolean {
 		const pepperVersion = pepperConfig.getCurrentVersion()
 		return pepperVersion !== pepper
+	},
+
+	getCurrentPeppeVersion() {
+		return pepperConfig.getCurrentVersion()
 	}
 
 }

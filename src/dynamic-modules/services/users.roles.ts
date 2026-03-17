@@ -4,7 +4,7 @@ import { UserRole } from 'types/entity'
 export class UsersRolesService extends UserService {
 
 	validateRole(role: UserRole): boolean {
-		if (this.entity && this.entity.role === role) {
+		if (this.getEntity().role === role) {
 			return true
 		}
 		return false
