@@ -1,12 +1,12 @@
 // Gerado automáticamente
 import express from 'express';
-import { {{tablenameCapital}}Controller } from '@dynamic-modules/controllers/{{tableNameCamel}}';
+import { {{tablenameCapital}}Service } from '@dynamic-modules/services/{{tableNameCamel}}';
 import { ExpressAdapter } from '@adapters/express.adapter';
 import { tokenMiddleware } from '@middlewares/token';
 
 const router = express.Router();
-const {{tableNameCamel}}Controller = new {{tablenameCapital}}Controller();
-const expressAdapter = new ExpressAdapter({{tableNameCamel}}Controller);
+const {{tableNameCamel}}Service = new {{tablenameCapital}}Service();
+const expressAdapter = new ExpressAdapter({{tableNameCamel}}Service);
 
 // C
 router.post('/', expressAdapter.create.bind(expressAdapter));

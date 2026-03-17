@@ -1,4 +1,4 @@
-import env from "@lib/env"
+import env from "libs/env"
 import bcrypt from "bcrypt"
 import crypto from 'crypto'
 import { promisify } from "util"
@@ -17,10 +17,10 @@ export const hashUtils = {
 	preparePassword(password: string, pepperVersion: string): string {
 
 		const hmac = crypto.createHmac('sha256', pepperConfig.getPepperByVersion(pepperVersion))
-        hmac.update(password)
-        hmac.update(pepperConfig.pepperSeparator)
+		hmac.update(password)
+		hmac.update(pepperConfig.pepperSeparator)
 		hmac.update(pepperVersion)
-		
+
 		return hmac.digest('hex')
 	},
 
@@ -52,12 +52,12 @@ export const hashUtils = {
 		pepper?: number // Recebe o pepper gravado no registro do usuário
 	): Promise<[boolean, pepper: number]> {
 		if (pepper == 0) {
-			return [ false, pepperConfig.getCurrentVersion() ]
+			return [false, pepperConfig.getCurrentVersion()]
 		}
 		const pepperVersion = pepper || pepperConfig.getCurrentVersion()
 		const pepperedPassword = this.preparePassword(password, pepperVersion.toString())
 		const match = await compareAsync(pepperedPassword, passwordHash)
-		return [ match, pepperVersion ]
+		return [match, pepperVersion]
 
 	},
 
@@ -67,6 +67,10 @@ export const hashUtils = {
 	checkUpdatePepper(pepper: number): boolean {
 		const pepperVersion = pepperConfig.getCurrentVersion()
 		return pepperVersion !== pepper
+	},
+
+	getCurrentPeppeVersion() {
+		return pepperConfig.getCurrentVersion()
 	}
 
 }

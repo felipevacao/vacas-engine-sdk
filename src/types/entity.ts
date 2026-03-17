@@ -1,48 +1,48 @@
 import { Model } from "./model";
 // Layout Base de Entidade
 export interface BaseEntity {
-    id?: number | string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date | null;
+  id?: number | string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date | null;
 }
 // layout de retorno HATEOAS
 export type HateoasLink = {
-    rel: string;
-    href: string;
-    method: string;
+  rel: string;
+  href: string;
+  method: string;
 };
 
 export type HateoasEntity<T extends BaseEntity> = T & {
-    _links: HateoasLink[];
+  _links: HateoasLink[];
 };
-  
+
 
 // Layout de Entrada
-export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' |  'deletedAt'>;
+export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 
 // Layout de Update
-export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' >;
+export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 
 // Layout de Saída
 export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt' | 'deletedAt'>;
 
 // Layout de Query
-export type QueryFields<T extends BaseEntity> = { 
-    originalUrl?: string;
-    links?: boolean,
-    fields?: (keyof Model<T>)[],
-    where?: Partial<T>,
-    limit?: number,
-    offset?: number,
-    orderBy?: string,
-    order?: string,
-    page?: number,
-    pageSize?: number,
-    // filter is used for specific conditions like 'greater than', 'less than', etc.
-    // Example: filter: { field: 'age', sign: '>', value: '18' }
-    filters?: QueryFilter[];
-    paginated?: boolean;
+export type QueryFields<T extends BaseEntity> = {
+  originalUrl?: string;
+  links?: boolean,
+  fields?: (keyof Model<T>)[],
+  where?: Partial<T>,
+  limit?: number,
+  offset?: number,
+  orderBy?: string,
+  order?: string,
+  page?: number,
+  pageSize?: number,
+  // filter is used for specific conditions like 'greater than', 'less than', etc.
+  // Example: filter: { field: 'age', sign: '>', value: '18' }
+  filters?: QueryFilter[];
+  paginated?: boolean;
 }
 
 export type QueryFilter = {
@@ -112,17 +112,17 @@ export interface Metadata {
 }
 
 export interface PaginatedResult<T extends BaseEntity> {
-    data: T[];
-    pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrev: boolean;
-        nextPageUrl?: string | null;
-        prevPageUrl?: string | null;
-    };
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+    nextPageUrl?: string | null;
+    prevPageUrl?: string | null;
+  };
 }
 
 export type UserStatus = 'active' | 'inactive' | 'banned' | 'reset_required'
@@ -130,8 +130,8 @@ export type UserStatus = 'active' | 'inactive' | 'banned' | 'reset_required'
 export type UserRole = 'admin' | 'manager' | 'regular' | 'guest'
 
 export enum SessionType {
-	ACTIVE = 'active',
-	RESET = 'reset_required'
+  ACTIVE = 'active',
+  RESET = 'reset_required'
 }
 
 export enum UserStatusType {
@@ -145,6 +145,7 @@ export type errorDetails = string[]
 
 export type ErrorContext = {
   entity?: string,
-  id?: number,
-  details?: errorDetails
+  id?: number | string,
+  details?: errorDetails,
+
 }

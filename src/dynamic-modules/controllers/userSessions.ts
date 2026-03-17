@@ -5,6 +5,6 @@ import { UserSessionsEntity } from '@dynamic-modules/entities/userSessions';
 
 export class UserSessionsController extends BaseController<UserSessionsEntity> {
   constructor() {
-      super(UserSessionsModel);
+    super(UserSessionsModel);
   }
 }

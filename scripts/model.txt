@@ -1,6 +1,8 @@
 // Gerado automáticamente
+import { MESSAGES } from '@constants/messages';
 import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
 import * as repository from '@services/repository';
+import { apiError } from '@utils/error';
 import { Model } from 'types/entity';
 
 const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
@@ -19,7 +21,7 @@ const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   excludedFields: [],
   metadata: async () => {
       const result = await repository.metadata('{{realTableName}}')();
-      if (!result) throw new Error('Metadata not found');
+      if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);
       return result;
     },
 };

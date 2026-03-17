@@ -1,16 +1,20 @@
 import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
-import { AuthController } from "@controllers/AuthController"
 import { UsersEntity } from "@dynamic-modules/entities/users"
-import { LoginRequest } from "types/entity"
+import { LoginRequest, PasswordChangeRequest, PasswordResetRequest } from "types/entity"
 import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 import { apiError } from '@utils/error';
+import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
+import { UserService } from '@dynamic-modules/services/user';
+import { getClientIP } from '@utils/ip';
 
 
 export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     constructor(
-        protected service: AuthController) {
+        protected service: UserService,
+        protected auth: AuthUserSessionWorkflow
+    ) {
         super(service)
     }
 
@@ -42,20 +46,9 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         try {
             // valida o input
             const [login, password] = this.validateLoginFields(req.body)
-            // valida o login
-            const session = await this.service.login(login, password, req.ip || '127.0.0.1')
-            if (!session) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.ERROR.INVALID_LOGIN,
-                    401
-                )
-                return
-            }
+            // efetua login e gera sessão
+            const session = await this.auth.login(login, password, getClientIP(req))
 
-            if (session && typeof session === 'object' && 'token' in session) {
-                res.setHeader('Authorization', `Bearer ${session.token}`);
-            }
             // resposta
             ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
         } catch (error) {
@@ -79,10 +72,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         res: Response
     ): Promise<void> {
         try {
-            if (!req.session) {
-                throw new Error('No active session')
-            }
-            await this.service.logout(req.session.sessionId as string)
+            await this.auth.logout(req.session.sessionId as string)
 
             ResponseHandler.success(res, { message: 'Logout realizado com sucesso' });
         } catch (error) {
@@ -96,5 +86,126 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
 
     }
 
-    
+
+    /** * Validates the input for updating the password fields.
+     * @param input - Object containing currentPassword and newPassword
+     * @returns Array containing currentPassword and newPassword
+     * @throws Error if the input is invalid or if the fields are missing
+     */
+    protected validateUpdatePasswordFields(
+        input: unknown
+    ): [string, string] {
+
+        if (!input || typeof input !== 'object') {
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+        }
+        const { currentPassword, newPassword } = input as PasswordChangeRequest
+        if (!currentPassword || !newPassword) {
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+        }
+
+        return [currentPassword, newPassword]
+    }
+
+    /** * Handles updating the user's password.
+     * @param req - Express request object containing the current and new passwords
+     * @param res - Express response object to send the result
+     */
+    async updatePassword(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+
+        try {
+            // validates input
+            const [currentPassword, newPassword] = this.validateUpdatePasswordFields(req.body)
+
+            await this.auth.updateUserPassword(
+                req.session.userId as number,
+                currentPassword,
+                newPassword
+            )
+
+            await this.auth.logout(req.session.sessionId as string)
+
+            ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
+
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.ERROR.INTERNAL_ERROR,
+                500,
+                error as Error
+            )
+        }
+
+    }
+
+    /**
+    * Valida os campos de login.
+        */
+    private validateResetPasswordFields(
+        input: unknown
+    ): { email: string, newPassword?: string } {
+
+        if (!input || typeof input !== 'object') {
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+        }
+        const { email, newPassword } = input as PasswordResetRequest
+        if (!email) {
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+        }
+
+        return { email, newPassword }
+    }
+
+    async forgotPassword(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        try {
+
+            const { email } = this.validateResetPasswordFields(req.body)
+            const session = await this.auth.resetPasswordSession(email, getClientIP(req))
+            ResponseHandler.success(res, session, MESSAGES.API.SUCCESS_DATA);
+
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.ERROR.INTERNAL_ERROR,
+                500,
+                error as Error
+            )
+        }
+    }
+
+    async resetPassword(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        try {
+
+            const { email, newPassword } = this.validateResetPasswordFields(req.body)
+            if (!newPassword) {
+                throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+            }
+            await this.auth.resetPassword(
+                req.session.sessionId as string,
+                req.session.userId as number,
+                email,
+                newPassword
+            )
+            ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
+
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.ERROR.INTERNAL_ERROR,
+                500,
+                error as Error
+            )
+        }
+    }
+
+
 }

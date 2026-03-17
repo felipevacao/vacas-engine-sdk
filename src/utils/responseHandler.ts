@@ -1,7 +1,7 @@
 // utils/response-handler.ts
 import { Response } from 'express';
 import { ApiResponse } from 'types/response';
-import env from "@lib/env"
+import env from "libs/env"
 import { MESSAGES, sMessage, getMessage } from '@constants/messages';
 import { apiError } from './error';
 

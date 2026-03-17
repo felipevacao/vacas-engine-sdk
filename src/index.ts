@@ -1,5 +1,5 @@
 import './alias'
-import env from "./lib/env"
+import env from "./libs/env"
 import express from 'express'
 import "./types/express"
 import router from "./routes/index"

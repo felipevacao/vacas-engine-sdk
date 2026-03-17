@@ -1,3 +1,4 @@
+import env from 'libs/env'
 import { Request, Response } from 'express'
 import { BaseAdapter } from './base.adapter'
 import { BaseEntity } from 'types/entity'
@@ -5,11 +6,18 @@ import { BaseController } from '@controllers/baseController'
 import { HateoasTransformer } from '@transformers/hateoas.transformer'
 import { ResponseHandler } from '@utils/responseHandler'
 import { MESSAGES } from '@constants/messages'
-import { UsersController } from '@dynamic-modules/controllers/users'
+import { UsersRolesService } from '@dynamic-modules/services/users.roles'
+import { BaseServices } from '@services/baseServices'
 
 export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
-    constructor(protected service: BaseController<T>) {
+
+    hateoas: boolean
+
+    constructor(
+        protected service: BaseServices<T, BaseController<T>>
+    ) {
         super(service)
+        this.hateoas = env.ENABLE_HATEOAS ?? false
     }
 
     /**
@@ -31,13 +39,13 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     protected getResourceUrl(req: Request, id: number | string | undefined): string {
         // Remove versão da API se existir (opcional)
         const basePath = req.baseUrl;
-        
+
         // Se a rota termina com '/', remove
         const cleanPath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-        
+
         // Remove 'create' ou 'novo' se estiver na URL (dependendo da sua rota)
         const resourcePath = cleanPath.replace(/\/?(create|new|\/)?$/, '');
-        
+
         return `${resourcePath}/${id}`;
     }
 
@@ -62,7 +70,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     this.service.getModelTable(),
                     result.id as number
                 ),
-                options.links
+                this.hateoas
             )
 
             const resourceUrl = this.getResourceUrl(req, result.id);
@@ -110,7 +118,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     this.service.getModelTable(),
                     item.id as number
                 ),
-                options.links
+                this.hateoas
             )
 
             // Retorno de sucesso
@@ -144,15 +152,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const options = this.generateQueryFields(req)
             // Busca entidade
             const result = await this.service.findByIdEntity(id, options)
-
-            if (!result) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.ERROR.NOT_FOUND,
-                    404
-                )
-                return
-            }
             // Retorno Hateoas
             const response = HateoasTransformer.addLinks(
                 result,
@@ -160,9 +159,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     this.service.getModelTable(),
                     result.id as number
                 ),
-                options.links
+                this.hateoas
             )
-            
             // resposta
             ResponseHandler.success(res, response)
 
@@ -192,14 +190,6 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             const options = this.generateQueryFields(req)
             // Busca entidade
             const result = await this.service.findByEntityPaginated(options)
-            if (result.data.length === 0) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.ERROR.NOT_FOUND,
-                    404
-                )
-                return
-            }
             // Retorno Hateoas
             result.data = HateoasTransformer.addCollectionLinks(
                 result.data,
@@ -207,9 +197,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     this.service.getModelTable(),
                     item.id as number
                 ),
-                options.links || false
+                this.hateoas
             )
-
             // resposta
             ResponseHandler.paginated(res, result.data, result.pagination)
 
@@ -237,15 +226,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         try {
             // Valida Input
             const id = parseInt(req.params.id)
-            const data = await this.validateUpdate(req)
-            if (isNaN(id)) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.INVALID_ID,
-                    400
-                )
-                return
-            }
+            const data = await this.validateUpdate(id, req)
             const options = this.generateQueryFields(req)
             // Atualiza entidade
             const result = await this.service.updateEntity(id, data, options)
@@ -256,7 +237,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                     this.service.getModelTable(),
                     result.id as number
                 ),
-                options.links
+                this.hateoas
             )
             // resposta
             ResponseHandler.success(res, response)
@@ -293,8 +274,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 return
             }
             // Valida usuário guest
-            const user = await (new UsersController()).findByIdEntity(req.session.userId as number)
-            if (!user || user.role === 'guest') {
+            const user = await new UsersRolesService(req.session.userId as number).setEntity()
+            if (user.isGuest()) {
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
@@ -304,18 +285,10 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
             }
             // Deleta entidade
             const success = await this.service.deleteEntity(id)
-            if (!success) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.NOT_FOUND,
-                    404
-                )
-                return
-            }
             // Resposta de sucesso
             ResponseHandler.success(
                 res,
-                {},
+                { deleted: success },
                 MESSAGES.DATABASE.ENTITY.DELETED,
                 204
             )
@@ -353,8 +326,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
                 return
             }
             // Valida usuário admin
-            const user = await (new UsersController()).findByIdEntity(req.session.userId as number)
-            if (!user || user.role !== 'admin') {
+            const user = await new UsersRolesService(req.session.userId as number).setEntity()
+            if (user.isAdmin()) {
                 ResponseHandler.error(
                     res,
                     MESSAGES.DATABASE.ENTITY.DELETE_ERROR,

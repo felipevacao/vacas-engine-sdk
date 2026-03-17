@@ -5,23 +5,27 @@ import { DatabaseFieldInfo, EnhancedFieldMetadata, EnhancedTableMetadata, EnumIn
 
 export class MetadataService {
   private db: typeof db;
-  constructor() {
+
+  constructor(
+    private tableName: string
+  ) {
     this.db = db;
   }
 
-  async getTableMetadata(tableName: string): Promise<EnhancedTableMetadata> {
+  async getTableMetadata(): Promise<EnhancedTableMetadata> {
+    const tableName = this.tableName
     // 1. Extrair informações do banco
     const dbFields = await this.extractDatabaseFields(tableName);
     const relationships = await this.extractRelationships(tableName);
     const constraints = await this.extractConstraints(tableName);
     const enums = await this.extractEnumValues(dbFields);
-    
+
     // 2. Carregar configurações do manifest
     const manifest = this.loadTableManifest(tableName);
 
     // 3. Combinar as informações
     const fields = this.combineFieldsMetadata(dbFields, manifest.fields || {}, enums || {});
-    
+
     const requestRaw = this.getTableObject(fields);
 
     return {
@@ -37,38 +41,38 @@ export class MetadataService {
   }
 
   private transformarComRegex(input: string): string {
-  return input
-    .replace(/^\{|\}$/g, '') // Remove chaves do início/fim
-    .replace(/\s*,\s*/g, ' | '); // Substitui vírgulas por |
+    return input
+      .replace(/^\{|\}$/g, '') // Remove chaves do início/fim
+      .replace(/\s*,\s*/g, ' | '); // Substitui vírgulas por |
   }
 
   private getTableObject(fields: EnhancedFieldMetadata[]): Record<string, string> {
     return fields.reduce((acc, field) => {
-      if(field.name === 'id') {
+      if (field.name === 'id') {
         return acc; // Skip 'id' field to avoid redundancy
       }
-      acc[field.name] = field.type == 'enum' 
-                        ? this.transformarComRegex(field.enum_values?.toString() as string) ?? field.defaultValue as string 
-                        : field.defaultValue as string ?? '';
+      acc[field.name] = field.type == 'enum'
+        ? this.transformarComRegex(field.enum_values?.toString() as string) ?? field.defaultValue as string
+        : field.defaultValue as string ?? '';
       return acc;
     }, {} as Record<string, string>);
   }
   // Novo método para extrair valores ENUM
   private async extractEnumValues(dbFields: DatabaseFieldInfo[]): Promise<EnumInfo[] | []> {
     // Encontra todos os tipos ENUM usados nos campos
-  const enumTypes = dbFields
-    .filter(field => field.data_type === 'USER-DEFINED' && field.udt_name)
-    .map(field => field.udt_name!)
-    .filter((value, index, self) => self.indexOf(value) === index);
+    const enumTypes = dbFields
+      .filter(field => field.data_type === 'USER-DEFINED' && field.udt_name)
+      .map(field => field.udt_name!)
+      .filter((value, index, self) => self.indexOf(value) === index);
 
-  if (enumTypes.length === 0) {
-    return [];
-  }
+    if (enumTypes.length === 0) {
+      return [];
+    }
 
-  const results: EnumInfo[] = [];
-  
-  for (const enumType of enumTypes) {
-    const query = `
+    const results: EnumInfo[] = [];
+
+    for (const enumType of enumTypes) {
+      const query = `
       SELECT 
         t.typname as enum_name,
         array_agg(e.enumlabel ORDER BY e.enumsortorder) as enum_values
@@ -77,14 +81,14 @@ export class MetadataService {
       WHERE t.typname = ?
       GROUP BY t.typname
     `;
-    
-    const result = await this.db.raw(query, [enumType]);
-    if (result.rows && result.rows.length > 0) {
-      results.push(...result.rows);
+
+      const result = await this.db.raw(query, [enumType]);
+      if (result.rows && result.rows.length > 0) {
+        results.push(...result.rows);
+      }
     }
-  }
-  
-  return results;
+
+    return results;
   }
 
   private async extractDatabaseFields(tableName: string): Promise<DatabaseFieldInfo[]> {
@@ -139,7 +143,7 @@ export class MetadataService {
     `;
 
     const fks = await this.db.raw(query, [tableName]).then(result => result.rows);
-    
+
     return fks.map((fk: { foreign_table: string; column_name: unknown; foreign_column: unknown; }) => ({
       name: this.camelCase(fk.foreign_table),
       type: 'belongsTo' as const,
@@ -174,6 +178,7 @@ export class MetadataService {
       const manifestContent = readFileSync(manifestPath, 'utf-8');
 
       return JSON.parse(manifestContent)[tableName];
+
     } catch {
       // Se não existir manifest, retorna configuração padrão
       return {};
@@ -181,19 +186,19 @@ export class MetadataService {
   }
 
   private combineFieldsMetadata(
-    dbFields: DatabaseFieldInfo[], 
-    manifestFields: Record<string, ManifestFieldConfig>, 
+    dbFields: DatabaseFieldInfo[],
+    manifestFields: Record<string, ManifestFieldConfig>,
     enums: EnumInfo[]
   ): EnhancedFieldMetadata[] {
     // Organiza enums por nome
-      const enumsByName = enums.reduce((acc, enumInfo) => {
-        acc[enumInfo.enum_name] = enumInfo.enum_values;
-        return acc;
-      }, {} as Record<string, string[]>);
+    const enumsByName = enums.reduce((acc, enumInfo) => {
+      acc[enumInfo.enum_name] = enumInfo.enum_values;
+      return acc;
+    }, {} as Record<string, string[]>);
 
     return dbFields.map(dbField => {
       const manifestField = manifestFields[dbField.column_name] || {};
-      
+
       const enumValues = dbField.udt_name ? enumsByName[dbField.udt_name] : [];
 
       return {
@@ -205,17 +210,17 @@ export class MetadataService {
         defaultValue: this.parseDefaultValue(dbField.column_default),
         enum_values: enumValues,
         udt_name: dbField.udt_name,
-        
+
         // Informações do manifest (com fallbacks inteligentes)
         formType: (manifestField.formType as EnhancedFieldMetadata['formType']) || this.inferFormType(dbField),
         label: manifestField.label || this.formatFieldName(dbField.column_name),
-        
+
         // Validações combinadas
         validation: {
           ...this.extractDatabaseValidations(dbField),
           ...manifestField.validation
         },
-        
+
         // Relacionamentos
         ...(dbField.foreign_table && {
           relationship: {
@@ -225,7 +230,7 @@ export class MetadataService {
             searchable: true
           }
         }),
-        
+
         // Configurações do manifest
         display: manifestField.display,
         format: manifestField.format,
@@ -266,7 +271,7 @@ export class MetadataService {
       'uuid': 'string',
       'USER-DEFINED': 'enum', // Para tipos ENUM
     };
-    
+
     return typeMap[pgType] || 'string';
   }
 
@@ -282,7 +287,7 @@ export class MetadataService {
     if (dbField.data_type === 'timestamp' || dbField.data_type === 'timestamptz') return 'datetime';
     if (dbField.data_type === 'text' && dbField.column_name.includes('description')) return 'textarea';
     if (['integer', 'bigint', 'smallint', 'decimal', 'numeric'].includes(dbField.data_type)) return 'number';
-    
+
     return 'text';
   }
 
@@ -292,7 +297,7 @@ export class MetadataService {
     if (dbField.character_maximum_length) {
       validation.maxLength = dbField.character_maximum_length;
     }
-    
+
     if (dbField.check_clause) {
       // Extrair validações de check constraints
       // Ex: CHECK (age >= 18) -> min: 18
@@ -301,12 +306,12 @@ export class MetadataService {
         validation.min = parseInt(ageMatch[2]);
       }
     }
-    
+
     return validation;
   }
 
   private extractTableValidations(constraints: [{ constraint_name: string; constraint_type: string; column_name: string; check_clause: string | null }] | [])
-  : { rule: string; message: string; fields: string[] }[] {
+    : { rule: string; message: string; fields: string[] }[] {
     return constraints
       .filter((c) => c.constraint_type === 'UNIQUE')
       .map((c) => ({
