@@ -3,7 +3,7 @@ import { MESSAGES } from "@constants/messages";
 import { BaseController } from "@controllers/baseController";
 import { MetadataService } from "@services/metadataServices"
 import { apiError } from "@utils/error";
-import { ErrorService } from "./erro";
+import { ErrorService } from "./error";
 import {
 	BaseEntity,
 	OutputData,
