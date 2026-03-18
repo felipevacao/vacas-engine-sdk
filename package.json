@@ -61,7 +61,7 @@
     "@utils": "dist/utils",
     "@entities": "dist/types/entities",
     "@transformers": "dist/transformers",
-    "@lib": "dist/lib",
+    "@libs": "dist/libs",
     "@services": "dist/services",
     "@middlewares": "dist/middlewares",
     "@dynamic-modules": "dist/dynamic-modules",
