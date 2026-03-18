@@ -34,9 +34,7 @@ CREATE INDEX IF NOT EXISTS idx_users_status ON "users"("status");
 -- Copiando dados para a tabela public.users: 2 rows
 /*!40000 ALTER TABLE "users" DISABLE KEYS */;
 INSERT INTO "users" ("id", "name", "email", "login", "password", "created_at", "updated_at", "deleted_at", "role", "status", "pepper") VALUES
-	(1, 'Felipe Trevenzoli', 'felipe.trevenzoli@gmail.com', 'felipe', '$2b$12$ErGGhhjF2HtJkB8cEwFtRuq5dDBqDLqIibwLKiIcPnf16r9YEDjr6', '2025-04-15 23:18:38.36265', '2026-03-10 23:32:08.224', NULL, 'admin', 'active', '1'),
-	(16, 'Tatiane Trevenzoli', 'tatiane.trevenzoli@gmail.com', 'tatiane', '$2b$12$LcbfR3JUlwYu3icV2AOS/OrqnR/ZGXkfIhXlA1gkLj/899bSKcoEu', '2025-04-16 23:45:50.649651', '2025-06-08 19:10:10.261', NULL, 'regular', 'active', '1'),
-	(39, 'Theodoro', 'theodoro@gmail.com', 'theodoro', '$2b$12$72Jw3mwgIZJs0bLyHn4Yu.6TDPD9A3fOD2yqBxptPBPz/dwDN/dsS', '2025-06-15 22:25:02.57854', '2026-03-09 15:50:57.692', NULL, 'guest', 'active', '1');
+	(1, 'Felipe Trevenzoli', 'felipe.trevenzoli@gmail.com', 'felipe', '$2b$12$ErGGhhjF2HtJkB8cEwFtRuq5dDBqDLqIibwLKiIcPnf16r9YEDjr6', '2025-04-15 23:18:38.36265', '2026-03-10 23:32:08.224', NULL, 'admin', 'active', '1');
 /*!40000 ALTER TABLE "users" ENABLE KEYS */;
 
 -- Copiando estrutura para tabela public.user_sessions
