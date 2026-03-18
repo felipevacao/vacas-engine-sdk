@@ -1,7 +1,13 @@
 {
   "name": "treis",
-  "version": "0.0.1",
-  "description": "Treis - Api Gerenciamento de Dados",
+  "version": "3.3.58",
+  "description": "Treis Api - Gerenciamento de Dados",
+  "author": : {
+    "name": "Felipe Trevenzoli",
+    "email": "felipe.trevenzoli@gmail.com",
+    "url": "https://github.com/felipevacao"
+  },
+  "license": "ISC",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
@@ -67,7 +73,5 @@
       "./node_modules/@types",
       "./src/types"
     ]
-  },
-  "author": "Felipe Trevenzoli",
-  "license": "ISC"
+  }
 }
