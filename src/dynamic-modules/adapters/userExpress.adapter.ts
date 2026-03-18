@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
 import { UsersEntity } from "@dynamic-modules/entities/users"
-import { LoginRequest, PasswordChangeRequest, PasswordResetRequest } from "types/entity"
+import { InputRequest, LoginRequest, PasswordChangeRequest, PasswordResetRequest, UpdateData } from "types/entity"
 import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 import { apiError } from '@utils/error';
 import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
 import { UserService } from '@dynamic-modules/services/user';
 import { getClientIP } from '@utils/ip';
+import { UsersRolesService } from '@dynamic-modules/services/users.roles';
 
 
 export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
@@ -207,5 +208,44 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         }
     }
 
+    async updateUser(
+        req: Request,
+        res: Response
+    ): Promise<void> {
 
+        try {
+            // Valida Input
+            const id = parseInt(req.params.id)
+            const data = await this.validateUpdate(id, req, req.session.userId as number)
+            const options = this.generateQueryFields(req)
+            // Atualiza entidade
+            const result = await this.service.updateEntity(id, data, options)
+            // resposta
+            ResponseHandler.success(res, result)
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.DATABASE.ENTITY.UPDATE_ERROR,
+                500,
+                error as Error
+            )
+        }
+    }
+
+    protected async validateUpdate(
+        id: number,
+        input: InputRequest<Request>,
+        userSession: number | null = null
+    ): Promise<UpdateData<UsersEntity>> {
+
+        if (userSession) {
+            const user = await new UsersRolesService(userSession as number).setEntity()
+            if (user.isAdmin()) {
+                return input.body as UpdateData<UsersEntity>;
+            }
+        }
+
+        return await this.service.withId(id).generateBodyUpdate(input) ?? input.body as UpdateData<UsersEntity>;
+
+    }
 }

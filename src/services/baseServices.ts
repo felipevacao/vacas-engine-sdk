@@ -92,7 +92,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this
 	}
 
-	protected getContext() {
+	getContext() {
 		return this.errorService.getErrorContext()
 	}
 

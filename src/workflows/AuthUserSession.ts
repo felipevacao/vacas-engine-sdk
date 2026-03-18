@@ -303,4 +303,21 @@ export class AuthUserSessionWorkflow {
 		}
 	}
 
+	async updateUserStatus(
+		userId: number,
+		status: UserStatusType
+	) {
+		try {
+			await this.userService.withId(userId).setEntity()
+			await this.userService.updateStatus(status)
+		} catch (error) {
+
+			this.userService.contextDetail(JSON.stringify(error))
+
+			throw new apiError(MESSAGES.DATABASE.ENTITY.UPDATE_ERROR, 500, this.userService.getContext())
+		}
+	}
+
+
+
 }

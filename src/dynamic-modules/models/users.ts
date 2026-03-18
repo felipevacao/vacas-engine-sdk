@@ -17,7 +17,7 @@ const UsersModel: Model<UsersEntity> = {
   forceDelete: repository.forceDelete('users'),
   selectAbleFields: ['name', 'login', 'email'],
   defaultFields: ['id'],
-  excludedFields: ['password', 'pepper', 'role', 'status'],
+  excludedFields: ['password', 'pepper'],
   metadata: async () => {
     const result = await repository.metadata('users')();
     if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);

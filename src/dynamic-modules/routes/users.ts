@@ -22,6 +22,7 @@ router.get('/:id', expressAdapter.findById.bind(expressAdapter));
 
 // U
 router.patch('/:id', expressAdapter.update.bind(expressAdapter));
+router.patch('/update/:id', expressAdapter.updateUser.bind(expressAdapter));
 
 
 // D
