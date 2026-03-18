@@ -1,260 +1,112 @@
-# Treis API
+# 🚀 Treis API (v3.3.58)
 
-API de CRUD Genérico para gerenciamento de dados.
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-brightgreen)](https://nodejs.org/)
+[![Typescript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
-**Versão:** 3.3.58-beta  
-**Status:** Em desenvolvimento (beta)
-
-## Sobre o Projeto
-
-A Treis API é uma solução flexível para criação de CRUDs dinâmicos a partir de tabelas de banco de dados. Através de um script gerador de módulos, são criados automaticamente **models**, **controllers**, **services** e **routes** para cada recurso, incluindo endpoints de metadados que descrevem a estrutura esperada nos payloads. Isso permite uma rápida prototipagem e padronização de APIs REST.
-
-### Tecnologias Utilizadas
-
-- **TypeScript** – Tipagem estática e maior segurança no desenvolvimento.
-- **Node.js** + **Express.js** – Framework web rápido e escalável.
-- **Knex.js** – Query builder para SQL, facilitando a comunicação com o banco.
-- **PostgreSQL** – Banco de dados relacional robusto.
-- **Bcrypt** – Hash de senhas para autenticação segura.
-- **Docker** – Containerização da aplicação e do banco de dados.
+A **Treis API** é uma solução avançada e modular para o gerenciamento dinâmico de dados. Projetada seguindo princípios de **Clean Architecture**, ela permite a criação automatizada de recursos CRUD completos (Model, Controller, Service, Route e Entity) a partir de definições de banco de dados, reduzindo drasticamente o tempo de desenvolvimento.
 
 ---
 
-## Configuração e Instalação
+## 🌟 Principais Diferenciais
+
+- **⚙️ Geração Dinâmica:** Script automatizado para scaffolding de novos módulos.
+- **🗺️ HATEOAS Ready:** Suporte nativo para hipermídia nas respostas da API.
+- **📋 Metadata Driven:** Endpoints que descrevem a estrutura dos dados, facilitando a integração com front-ends dinâmicos.
+- **🛡️ Segurança Robusta:** Autenticação via Token, gerenciamento de Roles e proteção contra brute-force.
+- **🔌 Arquitetura de Adaptadores:** Desacoplamento do framework Express através de adapters, facilitando testes e manutenibilidade.
+
+---
+
+## 🛠️ Tecnologias
+
+- **Runtime:** Node.js (TypeScript)
+- **Framework:** Express.js
+- **Banco de Dados:** PostgreSQL via Knex.js & Objection.js (ORM)
+- **Comunicação:** Suporte a Protocol Buffers (gRPC/Proto)
+- **Container:** Docker & Docker Compose
+- **Segurança:** Bcrypt, Express Rate Limit, Validator
+
+---
+
+## 🚀 Configuração e Instalação
 
 ### Pré-requisitos
+- Node.js 18+
+- Docker & Docker Compose (Recomendado)
 
-- Node.js (versão 18 ou superior)
-- npm ou yarn
-- PostgreSQL (caso não utilize Docker)
-- Docker e Docker Compose (opcional, mas recomendado)
-
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto baseado no `.env.example` fornecido. As principais variáveis são:
-
-```env
-API_NAME=API Treis
-NODE_ENV=development
-DB_USER=
-DB_PASS=
-DB_NAME=
-DB_HOST=
-DB_PORT=
-API_PORT=
-ORIGIN=
-ENABLE_TEST_ROUTES=true
-ENABLE_HATEOAS=true
-ENABLE_RETURN_ERRORS=true
-```
-
-### Instalação sem Docker
+### Instalação via Docker (Rápida)
 
 ```bash
 # Clone o repositório
 git clone https://github.com/felipevacao/treis.git
 cd treis
 
-# Instale as dependências
-npm install
-
-# Inicie o servidor
-npm start
-```
-
-A API estará disponível em `http://localhost:` + API_PORT.
-
-<!-- ### Instalação com Docker
-
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/treis-api.git
-cd treis-api
-
-# Suba os containers (PostgreSQL + API)
+# Suba o ambiente completo (Banco + API)
 docker-compose up -d
-
-# O servidor estará disponível em http://localhost:3000
 ```
+A API estará disponível em `http://localhost:3000` (ou na porta configurada).
 
-O `docker-compose.yml` já configura o banco de dados e a aplicação, aplicando migrações automaticamente. -->
+### Instalação Manual
 
----
-
-## Autenticação
-
-A API utiliza Token para autenticação. Para acessar rotas protegidas, é necessário incluir no cabeçalho `Authorization` o token no formato `Bearer <token>`.
-
-O token é obtido através da rota `/auth/login` e seu tempo de expiração varia conforme o **role** do usuário (admin, guest).
-
-### Rotas de Autenticação
-
-| Método | Rota                       | Descrição                                                      |
-| ------ | -------------------------- | -------------------------------------------------------------- |
-| POST   | `/auth/login`              | Realiza login e retorna um token                               |
-| GET    | `/auth/logout`             | Invalida o token e a sessão                                    |
-| GET    | `/auth/password/metadata`  | Retorna a estrutura esperada para alteração de senha           |
-| PATCH  | `/auth/password`           | Altera a senha do usuário autenticado                          |
-| POST   | `/auth/password/forgot`    | Solicita recuperação de senha, retorna token para reset        |
-| GET    | `/auth/check/token=:token` | Verifica a validade do um token de reset e ativa a recuperacao |
-| PATCH  | `/auth/password/reset`     | Redefine a senha usando token de recuperação                   |
-
-> **Exemplo:** A rota `GET /auth/password/metadata` retorna um JSON como:
->
-> ```json
-> {
->   "currentPassword": "string",
->   "newPassword": "string"
-> }
-> ```
->
-> Esse é o formato esperado no corpo da requisição `PATCH /auth/password`.
+1.  **Dependências:** `npm install`
+2.  **Variáveis de Ambiente:** Copie o `.env.example` para `.env` e configure suas credenciais.
+3.  **Execução:**
+    - Desenvolvimento: `npm run dev`
+    - Produção: `npm run build && npm start`
 
 ---
 
-## API de Recursos (CRUD Genérico)
+## 🏗️ Geração de Novos Módulos
 
-A Treis API gera automaticamente módulos para cada tabela do banco de dados. Para cada recurso (ex.: `usuarios`, `produtos`, `categorias`), são criados os seguintes endpoints:
-
-| Método | Rota                  | Descrição                                |
-| ------ | --------------------- | ---------------------------------------- |
-| GET    | `/{recurso}`          | Lista todos os registros (com paginação) |
-| GET    | `/{recurso}/:id`      | Retorna um registro específico           |
-| POST   | `/{recurso}`          | Cria um novo registro                    |
-| PATCH  | `/{recurso}/:id`      | Atualiza parcialmente um registro        |
-| DELETE | `/{recurso}/:id`      | Remove um registro                       |
-| GET    | `/{recurso}/metadata` | Retorna a estrutura esperada             |
-| GET    | `/{recurso}/search`   | Pesquisa registro                        |
-
-**Exemplo para o recurso `users`:**
-
-- `GET /users` → lista de usuários.
-- `GET /users/1` → usuário com ID 1.
-- `GET /users/metadata` → retorna os campos necessários para criar/atualizar usuário, com tipos e validações.
-
-### Estrutura de Resposta Padrão
-
-Todas as respostas seguem o formato:
-
-```json
-{
-  "success": true,
-  "message": "Operação realizada com sucesso.",
-  "data": { ... },        // ou array, dependendo do endpoint
-  "error": { ... }, 	  // em caso de error
-  "meta": {
-		"timestamp": ""
-  }
-}
-```
-
-Em caso de erro, o campo `success` é `false` e `error` contém a descrição do erro.
-
----
-
-## Exemplos de Uso com `curl`
-
-### Login
+Um dos pilares da Treis API é a automação. Para criar um novo recurso (ex: `produtos`):
 
 ```bash
-curl -X POST http://localhost:$API_PORT/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"usuario@exemplo.com","password":"123456"}'
+npm run generate:entity
 ```
+*Siga as instruções do prompt para definir o nome da tabela e os campos. O script criará automaticamente toda a estrutura em `src/dynamic-modules`.*
 
-Resposta:
+---
 
-```json
-{
-  "success": true,
-  "message": "Login realizado com sucesso",
-  "data": {
-    "token": "132837b6dc13c92929503a9115...",
-    "expiresAt": ""
-  },
-  "meta": {
-    "timestamp": ""
-  }
-}
-```
+## 🔐 Autenticação e Roles
 
-### Acessando rota protegida (listar usuários)
+A API gerencia o acesso através de níveis (Roles). O tempo de vida do token e as permissões de rota variam conforme o perfil.
 
-```bash
-curl -X GET http://localhost:$API_PORT/users \
-  -H "Authorization: Bearer 132837b6dc13c92929503a9115..."
-```
+| Método | Endpoint | Descrição |
+| :--- | :--- | :--- |
+| `POST` | `/auth/login` | Autenticação inicial |
+| `PATCH` | `/auth/password` | Alteração de senha logada |
+| `GET` | `/{resource}/metadata` | Estrutura de campos e validações |
 
-### Obtendo metadados para criação de um usuário
+---
 
-```bash
-curl -X GET http://localhost:$API_PORT/users/metadata \
-  -H "Authorization: Bearer <token>"
-```
+## 📁 Estrutura de Pastas
 
-Resposta:
-
-```json
-{
-  "success": true,
-    "message": "Operação realizada com sucesso",
-    "data": {
-        "table": "users",
-        "displayName": "Usuários",
-        "description": "Gerenciamento de usuários",
-        "fields": [{
-                "name": "id",
-                "type": "integer",
-                "required": true,
-                ...
-        }]
-	  }
-}
+```text
+src/
+├── adapters/          # Adaptadores de framework (Express/gRPC)
+├── dynamic-modules/   # Módulos gerados automaticamente
+├── repositories/      # Lógica de persistência genérica (CRUD)
+├── services/          # Regras de negócio compartilhadas
+├── workflows/         # Orquestração de processos complexos
+├── types/             # Definições de interfaces e tipos TS
+└── utils/             # Helpers e utilitários globais
 ```
 
 ---
 
-## Estrutura do Projeto
+## 📄 Licença
 
-```
-treis-api/
-├── scripts/				# Gera módulos
-├── src/					# Source folder
-│   ├── adapters/           # Adaptadores Padrão
-│   ├── constants/          # Contansts do projeto
-│   │   └── messages/       # Mensagens de codigo e texto
-│   ├── controllers/        # Controladores Padrão
-│   ├── dynamic-modules/    # Módulos gerados
-│   │   ├── adapters/       # Adaptadores (Sem geração dinâmica)
-│   │   ├── controllers/    # Controladores Gerados
-│   │   ├── entities/       # Entidades Gerados
-│   │   ├── manifests/      # Manifestos das Entidades (Sem geração dinâmica)
-│   │   ├── models/         # Modelos Gerados
-│   │   ├── routes/         # Rotas Gerados
-│   │   └── services/       # Serviços Gerados
-│   ├── libs/				# Libs
-│   ├── middlewares/		# Middlewares
-│   ├── repositories/		# CRUD genérico
-│   ├── routes/				# Rotas Padrão
-│   ├── services/			# Services Padrão
-│   ├── transformers/		# Transformadores
-│   ├── types/				# Tipos
-│   ├── utils/				# Utilitários
-│   ├── workflows/			# Workflows
-│   └── index.ts            # Ponto de entrada
-├── .env.example
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-└── README.md
-```
-
-Os módulos gerados dinamicamente são organizados automaticamente nas pastas `controllers`, 'entities', `models`, `services` e `routes` dentro da pasta `dinamyc-modules`.
-Os `adapters` e `manifests` não são gerados automáticamente.
+Este projeto está sob a licença [ISC](https://opensource.org/licenses/ISC).
 
 ---
 
-## Contato
+## 👨‍💻 Autor
 
- - **E-mail:** felipe.trevenzoli@gmail.com
- - **Instagram:** [https://www.instagram.com/felipe.trevenzoli](https://www.instagram.com/felipe.trevenzoli)
+**Felipe Trevenzoli**
+- [GitHub](https://github.com/felipevacao)
+- [Instagram](https://www.instagram.com/felipe.trevenzoli)
+- [LinkedIn](https://www.linkedin.com/in/felipe-trevenzoli/)
+
+---
+*Treis API - Construindo o futuro do gerenciamento de dados de forma dinâmica.*
