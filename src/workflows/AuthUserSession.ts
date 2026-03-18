@@ -266,14 +266,17 @@ export class AuthUserSessionWorkflow {
 			await this.userService.withId(userId).setEntity()
 
 			if (this.userSessionService.getEntity().status !== UserStatusType.RESET) {
+				await this.revokeAllUserSessions()
 				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
 			}
 
 			if (this.userService.getEntity().status !== UserStatusType.RESET) {
+				await this.revokeAllUserSessions()
 				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
 			}
 
 			if (this.userService.getEntity().email !== email) {
+				await this.revokeAllUserSessions()
 				throw new apiError(MESSAGES.ERROR.TOKEN_VALIDATION_ERROR, 403)
 			}
 

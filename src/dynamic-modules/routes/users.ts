@@ -3,6 +3,7 @@ import { tokenMiddleware } from '@middlewares/token';
 import { UserService } from '@dynamic-modules/services/user';
 import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
 import { UserExpressAdapter } from '@dynamic-modules/adapters/userExpress.adapter';
+import { verifyAdmin } from '@middlewares/userRoles';
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ router.get('/:id', expressAdapter.findById.bind(expressAdapter));
 
 // U
 router.patch('/:id', expressAdapter.update.bind(expressAdapter));
-router.patch('/update/:id', expressAdapter.updateUser.bind(expressAdapter));
+router.patch('/update/:id', verifyAdmin, expressAdapter.updateUser.bind(expressAdapter));
 
 
 // D
