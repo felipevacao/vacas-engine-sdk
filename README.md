@@ -1,3 +1,25 @@
+# Treis API
+
+API de CRUD Genérico para gerenciamento de dados.
+
+**Versão:** 3.3.58-beta  
+**Status:** Em desenvolvimento (beta)
+
+## Sobre o Projeto
+
+A Treis API é uma solução flexível para criação de CRUDs dinâmicos a partir de tabelas de banco de dados. Através de um script gerador de módulos, são criados automaticamente **models**, **controllers**, **services** e **routes** para cada recurso, incluindo endpoints de metadados que descrevem a estrutura esperada nos payloads. Isso permite uma rápida prototipagem e padronização de APIs REST.
+
+### Tecnologias Utilizadas
+
+- **TypeScript** – Tipagem estática e maior segurança no desenvolvimento.
+- **Node.js** + **Express.js** – Framework web rápido e escalável.
+- **Knex.js** – Query builder para SQL, facilitando a comunicação com o banco.
+- **PostgreSQL** – Banco de dados relacional robusto.
+- **Bcrypt** – Hash de senhas para autenticação segura.
+- **Docker** – Containerização da aplicação e do banco de dados.
+
+---
+
 ## Configuração e Instalação
 
 ### Pré-requisitos
