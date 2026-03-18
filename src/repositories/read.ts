@@ -6,10 +6,10 @@ import { BaseEntity, OutputData, PaginatedResult, QueryFields } from 'types/enti
  */
 export const read = <T extends BaseEntity>(table: string) => {
 
-    const findAll = async ( 
-        options: QueryFields<T> = {} 
+    const findAll = async (
+        options: QueryFields<T> = {}
     ): Promise<OutputData<T>[]> => {
-        
+
         const result = await queryGenerator({
             fields: options.fields,
             limit: options.limit || 10,
@@ -22,18 +22,18 @@ export const read = <T extends BaseEntity>(table: string) => {
 
     }
 
-    const findAllPaginated = async ( 
-        options: QueryFields<T> = {} 
+    const findAllPaginated = async (
+        options: QueryFields<T> = {}
     ): Promise<PaginatedResult<T>> => {
-        
+
         const result = await queryGeneratorPaginated(options)
         return result || []
 
     }
 
     const findById = async (
-        id: number | string, 
-        options: QueryFields<T> = {} 
+        id: number | string,
+        options: QueryFields<T> = {}
     ): Promise<OutputData<T> | undefined> => {
 
         const result = await queryGenerator({
@@ -75,20 +75,20 @@ export const read = <T extends BaseEntity>(table: string) => {
     ): Promise<OutputData<T>[] | undefined> => {
 
         let query = db(table)
-                .select(options.fields || '*')
-                .where(options.where || {})
+            .select(options.fields || '*')
+            .where(options.where || {})
 
         if (options.filters) {
             options.filters.forEach(filter => {
                 query = query.where(filter.field, filter.operator, filter.value);
             });
         }
-        
+
         query = query
             .limit(options.limit || 10)
             .offset(options.offset || 0)
             .orderBy(options.orderBy || 'id', options.order || 'asc')
-            .whereNull('deletedAt')            
+            .whereNull('deletedAt')
 
         return query
     }
@@ -101,17 +101,16 @@ export const read = <T extends BaseEntity>(table: string) => {
     const queryGeneratorPaginated = async (
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> => {
-
         let query = db(table)
-                .select(options.fields || '*')
-                .where(options.where || {})
+            .select(options.fields || '*')
+            .where(options.where || {})
 
         if (options.filters) {
             options.filters.forEach(filter => {
                 query = query.where(filter.field, filter.operator, filter.value);
             });
         }
-        
+
         query = query
             .orderBy(options.orderBy || 'id', options.order || 'asc')
             .whereNull('deletedAt')
@@ -122,30 +121,30 @@ export const read = <T extends BaseEntity>(table: string) => {
         const skipRecords = options.offset ?? (currentPage - 1) * pageSize;
 
         query = query
-                    .limit(pageSize)
-                    .offset(skipRecords);
+            .limit(pageSize)
+            .offset(skipRecords);
 
         let countQuery = db(table)
-                        .where(options.where || {})
-                        .count('* as count')
-                        .whereNull('deletedAt')
-                        .first();
+            .where(options.where || {})
+            .count('* as count')
+            .whereNull('deletedAt')
+            .first();
         if (options.filters) {
             options.filters.forEach(filter => {
                 countQuery = countQuery.where(filter.field, filter.operator, filter.value);
             });
         }
 
-        const [ result, totalCount ] = await Promise.all([
+        const [result, totalCount] = await Promise.all([
             query,
             countQuery
         ]);
 
         const total = totalCount ? parseInt(totalCount.count as string) : 0 as number;
 
-        const newUrl = options.originalUrl?.replace(`&page=${currentPage}`,'').replace(`page=${currentPage}`,'') as string || '';
+        const newUrl = options.originalUrl?.replace(`&page=${currentPage}`, '').replace(`page=${currentPage}`, '') as string || '';
         let urlChar = '&';
-        if(!newUrl.includes('?')) {
+        if (!newUrl.includes('?')) {
             urlChar = '?';
         }
         const nextPage = (skipRecords || 0) + (options.limit || 10) < total ? currentPage + 1 : null;
@@ -166,9 +165,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                 prevPageUrl,
             }
         } as PaginatedResult<T>;
-        
-    }   
+
+    }
 
     return { findAll, findById, findBy, findByPaginated, findAllPaginated }
-    
+
 }

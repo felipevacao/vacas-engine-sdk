@@ -282,7 +282,6 @@ export class AuthUserSessionWorkflow {
 			await this.revokeAllUserSessions()
 
 		} catch (error) {
-			console.log(error)
 			throw error
 		}
 	}

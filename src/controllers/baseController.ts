@@ -5,7 +5,8 @@ import {
     UpdateData,
     QueryFields,
     OutputData,
-    PaginatedResult
+    PaginatedResult,
+    QueryFilter
 } from 'types/entity'
 
 export class BaseController<T extends BaseEntity> {
@@ -104,6 +105,10 @@ export class BaseController<T extends BaseEntity> {
 
         return await this.model.forceDelete(id)
 
+    }
+
+    public getDefaultFilters(): QueryFilter[] {
+        return []
     }
 
 }

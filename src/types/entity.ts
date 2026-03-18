@@ -141,6 +141,13 @@ export enum UserStatusType {
   INACTIVE = 'inactive'
 }
 
+export enum UserRolesType {
+  ADMIN = 'admin',
+  MANAGER = 'manager',
+  REGULAR = 'regular',
+  GUEST = 'guest'
+}
+
 export type errorDetails = string[]
 
 export type ErrorContext = {

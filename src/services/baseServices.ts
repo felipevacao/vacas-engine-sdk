@@ -12,7 +12,9 @@ import {
 	Model,
 	UpdateData,
 	InputRequest,
-	EnhancedTableMetadata
+	EnhancedTableMetadata,
+	QueryFields,
+	QueryFilter
 } from 'types/entity'
 
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
@@ -24,6 +26,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	protected _bodyUpdateExtended: boolean
 	protected _showErrors: boolean
 	protected _metadataService: MetadataService
+	protected defaultFilters: QueryFilter[] = this.entityController.getDefaultFilters()
 
 	constructor(
 		protected entityController: C
@@ -93,8 +96,14 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this.errorService.getErrorContext()
 	}
 
-	async setUpdate() {
+	setDefaultFilters(options: QueryFields<T>): QueryFields<T> {
+		const hasWhere = options.where && Object.keys(options.where).length > 0
+		const hasFilters = options.filters && options.filters.length > 0
 
+		options.filters = (hasWhere || hasFilters)
+			? options.filters
+			: this.defaultFilters
+		return options
 	}
 
 	async generateBodyCreate(
@@ -144,7 +153,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	async findEntityBy(
 		...args: Parameters<BaseController<T>['findByEntity']>
 	): Promise<Awaited<ReturnType<BaseController<T>['findByEntity']>>> {
-
+		args[0] = this.setDefaultFilters(args[0])
 		const result = await this.getController().findByEntity(args[0])
 		if (!result) {
 			return []
@@ -172,12 +181,14 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 	async findAllEntityPaginated(
 		...args: Parameters<BaseController<T>['findAllEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findAllEntityPaginated']>>> {
+		args[0] = this.setDefaultFilters(args[0])
 		return await this.getController().findAllEntityPaginated(args[0])
 	}
 
 	async findByEntityPaginated(
 		...args: Parameters<BaseController<T>['findByEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findByEntityPaginated']>>> {
+		args[0] = this.setDefaultFilters(args[0])
 		const result = await this.getController().findByEntityPaginated(args[0])
 		if (result.data.length === 0) {
 			throw new apiError(
