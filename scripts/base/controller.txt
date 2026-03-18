@@ -2,9 +2,15 @@
 import { BaseController } from '@controllers/baseController';
 import {{tablenameCapital}}Model from '@dynamic-modules/models/{{tableNameCamel}}';
 import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
+import { QueryFilter } from 'types/entity';
 
 export class {{tablenameCapital}}Controller extends BaseController<{{tablenameCapital}}Entity> {
   constructor() {
       super({{tablenameCapital}}Model);
+  }
+
+  // Filtro padrão do findAll e find - inserido na pesquisa caso não exista outro filtro ou where
+  public getDefaultFilters(): QueryFilter[] {
+    return []
   }
 }

@@ -7,7 +7,7 @@ export class UsersController extends BaseController<UsersEntity> {
 		super(UsersModel);
 	}
 
-	public override getDefaultFilters(): QueryFilter[] {
+	public getDefaultFilters(): QueryFilter[] {
 		return [
 			{ field: 'status', operator: '=', value: UserStatusType.ACTIVE },
 			{ field: 'role', operator: '!=', value: UserRolesType.GUEST }
