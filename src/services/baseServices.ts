@@ -16,6 +16,7 @@ import {
 	QueryFields,
 	QueryFilter
 } from 'types/entity'
+import { HttpStatus } from "@constants/HttpStatus";
 
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
@@ -47,7 +48,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		) {
 			throw new apiError(
 				MESSAGES.DATABASE.ENTITY.INVALID_ID,
-				400,
+				HttpStatus.FORBIDDEN,
 				this.getContext()
 			)
 		}
@@ -71,9 +72,13 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this
 	}
 
-	getEntity() {
+	getEntity(): OutputData<T> {
 		if (!this._entity) {
-			throw new apiError(MESSAGES.DATABASE.ENTITY.NOT_FOUND)
+			throw new apiError(
+				MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+				HttpStatus.NOT_FOUND,
+				this.getContext()
+			)
 		}
 		return this._entity
 	}
@@ -131,7 +136,9 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 			...extraFields
 		] as (keyof Model<T>)[])
 			.filter(
-				(field) => !this.getController().getExcludedFields().includes(field as keyof BaseEntity)
+				(field) => !this.getController()
+					.getExcludedFields()
+					.includes(field as keyof BaseEntity)
 			)
 
 	}
@@ -143,7 +150,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		if (!result) {
 			throw new apiError(
 				MESSAGES.DATABASE.ENTITY.NOT_FOUND,
-				404,
+				HttpStatus.NOT_FOUND,
 				this.getContext()
 			)
 		}
@@ -193,7 +200,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		if (result.data.length === 0) {
 			throw new apiError(
 				MESSAGES.ERROR.NOT_FOUND,
-				404,
+				HttpStatus.NOT_FOUND,
 				this.getContext()
 			)
 		}
@@ -213,7 +220,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		if (!result) {
 			throw new apiError(
 				MESSAGES.ERROR.NOT_FOUND,
-				404,
+				HttpStatus.NOT_FOUND,
 				this.getContext()
 			)
 		}
@@ -227,7 +234,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		if (!result) {
 			throw new apiError(
 				MESSAGES.ERROR.NOT_FOUND,
-				404,
+				HttpStatus.NOT_FOUND,
 				this.getContext()
 			)
 		}

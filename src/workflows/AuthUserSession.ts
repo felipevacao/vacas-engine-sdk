@@ -3,6 +3,8 @@ import { UserSessionService } from "@dynamic-modules/services/userSession";
 import { UserService } from "@dynamic-modules/services/user";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
+import { AuthService } from "@services/auth";
+import { TokenSessionType } from "types/token";
 import session from "express-session";
 import {
 	OutputData,
@@ -11,8 +13,7 @@ import {
 	UserStatus,
 	UserStatusType
 } from "types/entity";
-import { AuthService } from "@services/auth";
-import { TokenSessionType } from "types/token";
+import { HttpStatus } from "@constants/HttpStatus";
 
 export class AuthUserSessionWorkflow {
 
@@ -29,8 +30,10 @@ export class AuthUserSessionWorkflow {
 	async setUser(
 		userId: number
 	): Promise<this> {
+
 		await this.userService.withId(userId).setEntity()
 		return this
+
 	}
 
 	async validateUserSession(
@@ -38,15 +41,21 @@ export class AuthUserSessionWorkflow {
 		ipAddress: string,
 		status: UserStatus = 'active'
 	): Promise<OutputData<UserSessionsEntity>> {
+
 		const sessionList = await this.returnPreviousUserSession(ipAddress, status,)
 		if (Array.isArray(sessionList)) {
 			for (const session of sessionList) {
 				if (this.userSessionService.validateToken(token, session.tokenHash)) {
-					return await this.userSessionService.updateEntity(session.id, session, {})
+					return await this.userSessionService.updateEntity(session.id, session)
 				}
 			}
 		}
-		throw new apiError(MESSAGES.DATABASE.LOGIN.INVALID_SESSION, 403)
+		throw new apiError(
+			MESSAGES.DATABASE.LOGIN.INVALID_SESSION,
+			HttpStatus.UNAUTHORIZED,
+			this.userSessionService.getContext()
+		)
+
 	}
 
 	private async createSession(
@@ -54,31 +63,37 @@ export class AuthUserSessionWorkflow {
 		expiresAt: Date,
 		status: UserStatus = "active"
 	): Promise<TokenSessionType> {
+
 		return this.userSessionService.createUserSession(
 			this.userService.getEntity().id as number,
 			ipAddress,
 			expiresAt,
 			status
 		)
+
 	}
 
 	async createRegularSession(
 		ipAddress: string,
 	): Promise<TokenSessionType> {
+
 		return await this.createSession(
 			ipAddress,
 			this.userSessionService.setExpiresAtDate(this.userService.getExpiresAtMinutes())
 		)
+
 	}
 
 	async createResetSession(
 		ipAddress: string,
 	): Promise<TokenSessionType> {
+
 		return await this.createSession(
 			ipAddress,
 			this.userSessionService.setExpiresAtDate(this.resetSessionExpireMinutes),
 			'reset_required'
 		)
+
 	}
 
 	private async returnPreviousUserSession(
@@ -101,35 +116,46 @@ export class AuthUserSessionWorkflow {
 			}]
 		} as QueryFields<UserSessionsEntity>
 		return await this.userSessionService.getUserSessionByOptions(options)
+
 	}
 
 	async verifyPreviousUserSession(
 		ipAddress: string,
 		status: UserStatus = "active"
 	): Promise<boolean> {
+
 		const userSessions = await this.returnPreviousUserSession(ipAddress, status)
 		if (userSessions) {
 			return true
 		}
 		return false
+
 	}
 
 	async verifyPreviousActiveUserSession(
 		ipAddress: string
 	): Promise<boolean> {
+
 		return await this.verifyPreviousUserSession(ipAddress, 'active')
+
 	}
 
-	private async revokeAllUserSessions() {
-		const userSessions = await this.returnPreviousUserSession(null, null, this.userService.getEntity().id)
-		if (userSessions) {
-			if (Array.isArray(userSessions)) {
-				const promises = userSessions.map(userSession =>
-					this.userSessionService.revokeSession(userSession.id)
-				)
-				await Promise.all(promises)
+	private async revokeAllUserSessions(): Promise<void> {
+
+		try {
+			const userSessions = await this.returnPreviousUserSession(null, null, this.userService.getEntity().id)
+			if (userSessions) {
+				if (Array.isArray(userSessions)) {
+					const promises = userSessions.map(userSession =>
+						this.userSessionService.revokeSession(userSession.id)
+					)
+					await Promise.all(promises)
+				}
 			}
+		} catch (error) {
+			throw error;
 		}
+
 	}
 
 	async validateSessionUser(
@@ -147,7 +173,11 @@ export class AuthUserSessionWorkflow {
 		const user = await this.userService.findByIdEntity(session.userId, { filters: [this.userService.getFilterUserStatus(userType)] })
 		if (!user) {
 			await this.userSessionService.revokeSession(session.id)
-			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 403)
+			throw new apiError(
+				MESSAGES.ERROR.INVALID_SESSION,
+				HttpStatus.FORBIDDEN,
+				this.userService.getContext()
+			)
 		}
 
 		return {
