@@ -10,18 +10,14 @@ const userService = new UserService()
 const authWorkflow = new AuthUserSessionWorkflow(userService)
 const userExpressAdapter = new UserExpressAdapter(userService, authWorkflow);
 
+
 router.post('/login', userExpressAdapter.login.bind(userExpressAdapter));
 
 router.get('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpressAdapter));
 
-// TROCAR SENHA OU RESETAR
+router.get('/me', tokenMiddleware, userExpressAdapter.getMe.bind(userExpressAdapter));
 
-/**
- * Rota para obter metadados de senha
- * Esta rota é protegida pelo tokenMiddleware, que valida o token de autenticação antes de permitir o acesso.
- * Retorna um objeto JSON com os campos currentPassword e newPassword, que são strings.
- * Esses campos podem ser usados para exibir informações sobre a senha atual e a nova senha que o usuário deseja definir.
- */
+// TROCAR SENHA OU RESETAR
 router.get('/password/metadata', tokenMiddleware, (req, res) => {
 	res.json({
 		success: true,

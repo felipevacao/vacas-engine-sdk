@@ -248,4 +248,23 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         return await this.service.withId(id).generateBodyUpdate(input) ?? input.body as UpdateData<UsersEntity>;
 
     }
+
+    async getMe(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        try {
+
+            const user = await this.service.findByIdEntity(req.session.userId as number, this.generateQueryFields(req))
+            ResponseHandler.success(res, user)
+
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+                500,
+                error as Error
+            )
+        }
+    }
 }

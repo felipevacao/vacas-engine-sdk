@@ -28,8 +28,7 @@ router.get('/db', enableTestRoute, async (req: Request, res: Response) => {
 
 router.get('/script', async (req: Request, res: Response) => {
 
-	const teste = MESSAGES.ERROR.MISSING_TOKEN
-	console.log(teste)
+	const teste = 'rota de teste'
 	res.json(teste)
 })
 
