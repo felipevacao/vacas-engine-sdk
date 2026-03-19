@@ -321,6 +321,18 @@ export class AuthUserSessionWorkflow {
 		}
 	}
 
-
+	async resetSession(
+		sessionId: string
+	) {
+		try {
+			await this.userSessionService.withId(sessionId).setEntity()
+			await this.userSessionService.revoke()
+			const session = this.userSessionService.getEntity()
+			await this.userService.withId(session.userId).setEntity()
+			return await this.createRegularSession(session.ipAddress)
+		} catch (error) {
+			throw error
+		}
+	}
 
 }

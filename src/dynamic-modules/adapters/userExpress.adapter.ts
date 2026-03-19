@@ -9,6 +9,7 @@ import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
 import { UserService } from '@dynamic-modules/services/user';
 import { getClientIP } from '@utils/ip';
 import { UsersRolesService } from '@dynamic-modules/services/users.roles';
+import { HttpStatus } from '@constants/HttpStatus';
 
 
 export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
@@ -263,6 +264,25 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
                 res,
                 MESSAGES.DATABASE.ENTITY.NOT_FOUND,
                 500,
+                error as Error
+            )
+        }
+    }
+
+    async refreshSession(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        try {
+
+            const session = await this.auth.resetSession(req.session.sessionId as string)
+            ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.ACTIVE_SESSION);
+
+        } catch (error) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.ERROR.INVALID_SESSION,
+                HttpStatus.METHOD_NOT_ALLOWED,
                 error as Error
             )
         }

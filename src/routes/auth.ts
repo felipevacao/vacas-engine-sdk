@@ -17,6 +17,8 @@ router.get('/logout', tokenMiddleware, userExpressAdapter.logout.bind(userExpres
 
 router.get('/me', tokenMiddleware, userExpressAdapter.getMe.bind(userExpressAdapter));
 
+router.get('/refresh', tokenMiddleware, userExpressAdapter.refreshSession.bind(userExpressAdapter));
+
 // TROCAR SENHA OU RESETAR
 router.get('/password/metadata', tokenMiddleware, (req, res) => {
 	res.json({
