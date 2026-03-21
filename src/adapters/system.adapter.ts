@@ -34,4 +34,18 @@ export class SystemAdapter {
         const logs = await this.service.listAvailableLogs();
         ResponseHandler.success(res, { logs });
     });
+
+    /**
+     * Limpa logs antigos.
+     * DELETE /system/logs?keep=7
+     */
+    clearLogs = asyncHandler(async (req: Request, res: Response) => {
+        const keep = req.query.keep ? parseInt(req.query.keep as string) : 7;
+        const result = await this.service.deleteOldLogs(keep);
+        
+        ResponseHandler.success(res, result, { 
+            name: 'LOGS_CLEARED', 
+            message: `Limpeza concluída. ${result.count} arquivos removidos.` 
+        });
+    });
 }

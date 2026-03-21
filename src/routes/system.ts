@@ -17,5 +17,8 @@ router.get('/logs', adapter.listLogs);
 // Obter conteúdo de um log por data (ex: /system/logs/2026-03-20)
 router.get('/logs/:date', adapter.getLog);
 
+// Limpar logs antigos (ex: DELETE /system/logs?keep=15)
+router.delete('/logs', adapter.clearLogs);
+
 export const middleware = [tokenMiddleware, verifyAdmin];
 export default router;

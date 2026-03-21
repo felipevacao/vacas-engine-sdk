@@ -53,4 +53,39 @@ export class SystemService {
         }
         return fs.readdirSync(this.logDir).filter(file => file.endsWith('.log'));
     }
+
+    /**
+     * Remove arquivos de log mais antigos que a quantidade de dias especificada.
+     * @param daysToKeep Quantidade de dias de logs que devem ser mantidos (padrão 7)
+     */
+    async deleteOldLogs(daysToKeep: number = 7): Promise<{ deleted: string[], count: number }> {
+        if (!fs.existsSync(this.logDir)) {
+            return { deleted: [], count: 0 };
+        }
+
+        const files = fs.readdirSync(this.logDir);
+        const now = new Date();
+        const deletedFiles: string[] = [];
+
+        files.forEach(file => {
+            if (file.endsWith('.log')) {
+                const filePath = path.join(this.logDir, file);
+                const stats = fs.statSync(filePath);
+
+                // Calcula a diferença em dias entre agora e a última modificação do arquivo
+                const diffInMs = now.getTime() - stats.mtime.getTime();
+                const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+                if (diffInDays > daysToKeep) {
+                    fs.unlinkSync(filePath);
+                    deletedFiles.push(file);
+                }
+            }
+        });
+
+        return {
+            deleted: deletedFiles,
+            count: deletedFiles.length
+        };
+    }
 }
