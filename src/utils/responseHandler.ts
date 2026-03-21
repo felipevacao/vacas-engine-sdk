@@ -26,7 +26,6 @@ export class ResponseHandler {
 				requestId: res.locals.requestId
 			}
 		};
-
 		if (headers) {
 			for (const [key, value] of Object.entries(headers)) {
 				res.header(key, value);

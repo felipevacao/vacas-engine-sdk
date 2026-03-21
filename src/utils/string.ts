@@ -7,9 +7,12 @@ export const stringUtils = {
 		const maskedDomain = domainName.charAt(0) + domainName.charAt(1) + '*'.repeat(domainName.length - 2);
 		return `${maskedLocal}@${maskedDomain}.${tld}`;
 	},
-		
+
 	truncate(text: string, length: number): string {
-        return text.length > length ? text.substring(0, length) + '...' : text;
-    }
-	
+		return text.length > length ? text.substring(0, length) + '...' : text;
+	},
+
+	logSeparator(): string {
+		return '\n___________________\n'
+	}
 }

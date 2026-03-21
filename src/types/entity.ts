@@ -107,8 +107,8 @@ export interface Metadata {
     label?: string;
     required?: boolean;
   }[];
-  // relationships?: any[]; // Placeholder for future relationships
-  // constraints?: any[]; // Placeholder for future constraints
+  // relationships?: unknown[]; // Placeholder for future relationships
+  // constraints?: unknown[]; // Placeholder for future constraints
 }
 
 export interface PaginatedResult<T extends BaseEntity> {

@@ -14,6 +14,7 @@ export const verifyAdmin = async (
 	const user = await new UsersRolesService(req.session.userId as number).setEntity()
 	if (user.isAdmin()) {
 		next()
+		return
 	}
 
 	ResponseHandler.error(res, MESSAGES.ERROR.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED)

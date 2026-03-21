@@ -1,4 +1,9 @@
 import { db } from "@utils/db";
+import { ErrorHandler } from "@utils/ErrorHandler";
+import { apiError } from "@utils/error";
+import { MESSAGES } from "@constants/messages";
+import { ErrorContext } from "types/entity";
+import { HttpStatus } from "@constants/HttpStatus";
 
 export const deleteById = (table: string) => {
 	/**
@@ -8,17 +13,29 @@ export const deleteById = (table: string) => {
    * soft delete
    */
 	return async (id: number | string): Promise<boolean> => {
-		const deleteData = {
-			deletedAt: new Date(),
-		};
-		const [result] = await db(table)
-								.where({ id })
-								.update(deleteData)
-								.returning("*");
-		if (!result) {
-			throw new Error(`Record with ID ${id} not found in table ${table}`);
+		const context = {} as ErrorContext
+		context.entity = table
+		context.id = id
+		try {
+			const deleteData = {
+				deletedAt: new Date(),
+			};
+			const [result] = await db(table)
+				.where({ id })
+				.update(deleteData)
+				.returning("*");
+			if (!result) {
+				throw new apiError(
+					MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+					HttpStatus.NOT_FOUND,
+					context
+				);
+			}
+			return true;
+		} catch (error) {
+			if (error instanceof apiError) throw error;
+			throw ErrorHandler.handleDatabaseError(error, context);
 		}
-		return true;
 	};
 };
 
@@ -30,14 +47,27 @@ export const deleteById = (table: string) => {
  */
 export const forceDelete = (table: string) => {
 	return async (id: number | string): Promise<boolean> => {
-		const [result] = await db(table)
-								.where({ id })
-								.whereNotNull("deletedAt")
-								.del()
-								.returning("*");
-		if (!result) {
-		throw new Error(`Record with ID ${id} not found in table ${table}`);
+		const context = {} as ErrorContext
+		context.entity = table
+		context.id = id
+		try {
+			const [result] = await db(table)
+				.where({ id })
+				.whereNotNull("deletedAt")
+				.del()
+				.returning("*");
+			if (!result) {
+				throw new apiError(
+					MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+					HttpStatus.NOT_FOUND,
+					context
+				);
+			}
+			return true;
+		} catch (error) {
+			if (error instanceof apiError) throw error;
+			throw ErrorHandler.handleDatabaseError(error, context);
 		}
-		return true;
 	};
 };
+

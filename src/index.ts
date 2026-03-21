@@ -6,6 +6,19 @@ import router from "./routes/index"
 import cors from 'cors'
 import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
+import { Logger } from '@utils/log';
+
+/**
+ * Prevenção de quebra da API por erros não capturados
+ */
+process.on('uncaughtException', (error) => {
+	Logger.error('FALHA CRÍTICA (uncaughtException)', error);
+	// Em produção, você pode querer reiniciar o processo aqui
+});
+
+process.on('unhandledRejection', (reason) => {
+	Logger.error('FALHA CRÍTICA (unhandledRejection)', reason);
+});
 
 /**
  * Configuração do servidor Express

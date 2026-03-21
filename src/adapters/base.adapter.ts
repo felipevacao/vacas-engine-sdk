@@ -3,12 +3,48 @@ import { BaseController } from "@controllers/baseController";
 import { BaseServices } from "@services/baseServices";
 import { apiError } from "@utils/error";
 import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData } from "types/entity";
+import { asyncHandler, AsyncHandlerFn } from "@utils/asyncHandler";
 
 export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapter<V, U> {
     constructor(
         protected service: BaseServices<T, BaseController<T>>
     ) {
         this.service = service;
+        this.wrapMethods();
+    }
+
+    /**
+     * Envolve todos os métodos públicos da classe com asyncHandler
+     * e faz o bind automático do 'this'.
+     */
+    private wrapMethods() {
+        let currentProto = Object.getPrototypeOf(this);
+
+        // Percorre a cadeia de protótipos até chegar no BaseAdapter
+        while (currentProto && currentProto.constructor !== Object) {
+            const methods = Object.getOwnPropertyNames(currentProto) as (keyof this)[];
+
+            methods.forEach((method) => {
+                const member = this[method];
+                // Evita envolver o mesmo método duas vezes (se sobrescrito)
+                const isAlreadyWrapped = Object.prototype.hasOwnProperty.call(this, method);
+
+                if (
+                    !isAlreadyWrapped &&
+                    method !== 'constructor' &&
+                    typeof member === 'function' &&
+                    !String(method).startsWith('_') &&
+                    !['validateCreate', 'validateUpdate', 'generateQueryFields', 'parseFilter', 'wrapMethods'].includes(String(method))
+                ) {
+                    const boundMethod = (member as (...args: never[]) => Promise<unknown>).bind(this);
+                    (this as Record<keyof this, unknown>)[method] = asyncHandler(boundMethod as unknown as AsyncHandlerFn);
+                }
+            });
+
+            currentProto = Object.getPrototypeOf(currentProto);
+            // Para se chegarmos no BaseAdapter (não precisamos envolver métodos do próprio BaseAdapter)
+            if (currentProto && currentProto.constructor === BaseAdapter) break;
+        }
     }
 
     abstract create(input: V, output: U): Promise<void>;

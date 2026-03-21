@@ -7,13 +7,18 @@ import { AuthService } from "@services/auth";
 import { TokenSessionType } from "types/token";
 import session from "express-session";
 import {
+	InputRequest,
+	LoginRequest,
 	OutputData,
 	QueryFields,
 	SessionType,
+	UpdateData,
 	UserStatus,
 	UserStatusType
 } from "types/entity";
 import { HttpStatus } from "@constants/HttpStatus";
+import { UsersEntity } from "@dynamic-modules/entities/users";
+import { UsersRolesService } from "@dynamic-modules/services/users.roles";
 
 export class AuthUserSessionWorkflow {
 
@@ -363,6 +368,38 @@ export class AuthUserSessionWorkflow {
 		} catch (error) {
 			throw error
 		}
+	}
+
+	validateLoginFields(
+		input: unknown
+	): [email: string, password: string] {
+
+		if (!input || typeof input !== 'object') {
+			throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+		}
+		const { email, password } = input as LoginRequest
+		if (!email || !password) {
+			throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
+		}
+
+		return [email, password]
+	}
+
+	async validateUpdate(
+		id: number,
+		input: InputRequest<Request>,
+		userSession: number | null = null
+	): Promise<UpdateData<UsersEntity>> {
+
+		if (userSession) {
+			const user = await new UsersRolesService(userSession as number).setEntity()
+			if (user.isAdmin()) {
+				return input.body as UpdateData<UsersEntity>;
+			}
+		}
+
+		return await this.userService.withId(id).generateBodyUpdate(input) ?? input.body as UpdateData<UsersEntity>;
+
 	}
 
 }

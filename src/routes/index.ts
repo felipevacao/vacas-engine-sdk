@@ -59,6 +59,10 @@ const loadRoutes = async () => {
 
     router.use('/auth', authRoutes)
     router.use('/test', testRoutes)
+    
+    // Importa rotas de sistema
+    const systemRoutes = await import('./system');
+    router.use('/system', systemRoutes.middleware, systemRoutes.default);
 
     router.use(eg) // Easter Egg Routes
 

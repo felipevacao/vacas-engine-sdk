@@ -22,7 +22,7 @@ router.get('/db', enableTestRoute, async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		const error = new Error(MESSAGES.DATABASE.CONNECTION.ERROR + ' ' + err);
-		errorHandler(error, req, res);
+		errorHandler(error, req, res, () => { })
 	}
 });
 

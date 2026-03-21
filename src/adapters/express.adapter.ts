@@ -57,43 +57,31 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
-            // Valida Input
-            const options = this.generateQueryFields(req)
-            const data = await this.validateCreate(req)
-            // Cria entidade
-            const result = await this.service.createEntity(data, options)
-            // Estrutura resposta 
-            const response = HateoasTransformer.addLinks(
-                result,
-                this.generateHateoasLinks(
-                    this.service.getModelTable(),
-                    result.id as number
-                ),
-                this.hateoas
-            )
+        // Valida Input
+        const options = this.generateQueryFields(req)
+        const data = await this.validateCreate(req)
+        // Cria entidade
+        const result = await this.service.createEntity(data, options)
+        // Estrutura resposta 
+        const response = HateoasTransformer.addLinks(
+            result,
+            this.generateHateoasLinks(
+                this.service.getModelTable(),
+                result.id as number
+            ),
+            this.hateoas
+        )
 
-            const resourceUrl = this.getResourceUrl(req, result.id);
+        const resourceUrl = this.getResourceUrl(req, result.id);
 
-            // Retorno de sucesso
-            ResponseHandler.success(
-                res,
-                response,
-                MESSAGES.DATABASE.ENTITY.CREATED,
-                201,
-                { 'Location': resourceUrl }
-            )
-
-        } catch (error) {
-
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.CREATED_ERROR,
-                500,
-                error
-            )
-
-        }
+        // Retorno de sucesso
+        ResponseHandler.success(
+            res,
+            response,
+            MESSAGES.DATABASE.ENTITY.CREATED,
+            201,
+            { 'Location': resourceUrl }
+        )
 
     }
 
@@ -105,34 +93,22 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
+        // Valida Input
+        const options = this.generateQueryFields(req)
+        // Busca entidades
+        const result = await this.service.findAllEntityPaginated(options)
+        // Estrutura resposta
+        result.data = HateoasTransformer.addCollectionLinks(
+            result.data,
+            (item) => this.generateHateoasLinks(
+                this.service.getModelTable(),
+                item.id as number
+            ),
+            this.hateoas
+        )
 
-            // Valida Input
-            const options = this.generateQueryFields(req)
-            // Busca entidades
-            const result = await this.service.findAllEntityPaginated(options)
-            // Estrutura resposta
-            result.data = HateoasTransformer.addCollectionLinks(
-                result.data,
-                (item) => this.generateHateoasLinks(
-                    this.service.getModelTable(),
-                    item.id as number
-                ),
-                this.hateoas
-            )
-
-            // Retorno de sucesso
-            ResponseHandler.paginated(res, result.data, result.pagination)
-
-        } catch (error) {
-
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.READ_ERROR,
-                500,
-                error
-            )
-        }
+        // Retorno de sucesso
+        ResponseHandler.paginated(res, result.data, result.pagination)
 
     }
 
@@ -146,32 +122,22 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
-            // Valida Input
-            const id = parseInt(req.params.id)
-            const options = this.generateQueryFields(req)
-            // Busca entidade
-            const result = await this.service.findByIdEntity(id, options)
-            // Retorno Hateoas
-            const response = HateoasTransformer.addLinks(
-                result,
-                this.generateHateoasLinks(
-                    this.service.getModelTable(),
-                    result.id as number
-                ),
-                this.hateoas
-            )
-            // resposta
-            ResponseHandler.success(res, response)
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.READ_ERROR,
-                500,
-                error as Error
-            )
-        }
+        // Valida Input
+        const id = parseInt(req.params.id)
+        const options = this.generateQueryFields(req)
+        // Busca entidade
+        const result = await this.service.findByIdEntity(id, options)
+        // Retorno Hateoas
+        const response = HateoasTransformer.addLinks(
+            result,
+            this.generateHateoasLinks(
+                this.service.getModelTable(),
+                result.id as number
+            ),
+            this.hateoas
+        )
+        // resposta
+        ResponseHandler.success(res, response)
 
     }
 
@@ -185,31 +151,21 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
-            // Valida Input
-            const options = this.generateQueryFields(req)
-            // Busca entidade
-            const result = await this.service.findByEntityPaginated(options)
-            // Retorno Hateoas
-            result.data = HateoasTransformer.addCollectionLinks(
-                result.data,
-                (item) => this.generateHateoasLinks(
-                    this.service.getModelTable(),
-                    item.id as number
-                ),
-                this.hateoas
-            )
-            // resposta
-            ResponseHandler.paginated(res, result.data, result.pagination)
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.READ_ERROR,
-                500,
-                error as Error
-            )
-        }
+        // Valida Input
+        const options = this.generateQueryFields(req)
+        // Busca entidade
+        const result = await this.service.findByEntityPaginated(options)
+        // Retorno Hateoas
+        result.data = HateoasTransformer.addCollectionLinks(
+            result.data,
+            (item) => this.generateHateoasLinks(
+                this.service.getModelTable(),
+                item.id as number
+            ),
+            this.hateoas
+        )
+        // resposta
+        ResponseHandler.paginated(res, result.data, result.pagination)
 
     }
 
@@ -223,32 +179,23 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
-            // Valida Input
-            const id = parseInt(req.params.id)
-            const data = await this.validateUpdate(id, req)
-            const options = this.generateQueryFields(req)
-            // Atualiza entidade
-            const result = await this.service.updateEntity(id, data, options)
-            // Retorno Hateoas
-            const response = HateoasTransformer.addLinks(
-                result,
-                this.generateHateoasLinks(
-                    this.service.getModelTable(),
-                    result.id as number
-                ),
-                this.hateoas
-            )
-            // resposta
-            ResponseHandler.success(res, response)
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.UPDATE_ERROR,
-                500,
-                error as Error
-            )
-        }
+        // Valida Input
+        const id = parseInt(req.params.id)
+        const data = await this.validateUpdate(id, req)
+        const options = this.generateQueryFields(req)
+        // Atualiza entidade
+        const result = await this.service.updateEntity(id, data, options)
+        // Retorno Hateoas
+        const response = HateoasTransformer.addLinks(
+            result,
+            this.generateHateoasLinks(
+                this.service.getModelTable(),
+                result.id as number
+            ),
+            this.hateoas
+        )
+        // resposta
+        ResponseHandler.success(res, response)
 
     }
 
@@ -262,45 +209,36 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
-            // Valida Input
-            const id = parseInt(req.params.id)
-            if (isNaN(id)) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.INVALID_ID,
-                    400
-                )
-                return
-            }
-            // Valida usuário guest
-            const user = await new UsersRolesService(req.session.userId as number).setEntity()
-            if (user.isGuest()) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
-                    401
-                )
-                return
-            }
-            // Deleta entidade
-            const success = await this.service.deleteEntity(id)
-            // Resposta de sucesso
-            ResponseHandler.success(
-                res,
-                { deleted: success },
-                MESSAGES.DATABASE.ENTITY.DELETED,
-                204
-            )
-
-        } catch (error) {
+        // Valida Input
+        const id = parseInt(req.params.id)
+        if (isNaN(id)) {
             ResponseHandler.error(
                 res,
-                MESSAGES.DATABASE.ENTITY.DELETED,
-                500,
-                error as Error
+                MESSAGES.DATABASE.ENTITY.INVALID_ID,
+                400
             )
+            return
         }
+        // Valida usuário guest
+        const user = await new UsersRolesService(req.session.userId as number).setEntity()
+        if (user.isGuest()) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
+                401
+            )
+            return
+        }
+        // Deleta entidade
+        const success = await this.service.deleteEntity(id)
+        // Resposta de sucesso
+        ResponseHandler.success(
+            res,
+            { deleted: success },
+            MESSAGES.DATABASE.ENTITY.DELETED,
+            204
+        )
+
     }
 
     /**
@@ -313,54 +251,45 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
 
-        try {
-            // Valida Input
-            const { id } = req.params
-            const numericId = Number(id)
-            if (isNaN(numericId)) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.INVALID_ID,
-                    400
-                )
-                return
-            }
-            // Valida usuário admin
-            const user = await new UsersRolesService(req.session.userId as number).setEntity()
-            if (user.isAdmin()) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
-                    401
-                )
-                return
-            }
-            // Deleta entidade
-            const success = await this.service.forceDeleteEntity(numericId)
-            if (!success) {
-                ResponseHandler.error(
-                    res,
-                    MESSAGES.DATABASE.ENTITY.NOT_FOUND,
-                    404
-                )
-                return
-            }
-            // Resposta de sucesso
-            ResponseHandler.success(
+        // Valida Input
+        const { id } = req.params
+        const numericId = Number(id)
+        if (isNaN(numericId)) {
+            ResponseHandler.error(
                 res,
-                {},
-                MESSAGES.DATABASE.ENTITY.DELETED,
-                204
+                MESSAGES.DATABASE.ENTITY.INVALID_ID,
+                400
             )
-
-        } catch (error) {
+            return
+        }
+        // Valida usuário admin
+        const user = await new UsersRolesService(req.session.userId as number).setEntity()
+        if (user.isAdmin()) {
             ResponseHandler.error(
                 res,
                 MESSAGES.DATABASE.ENTITY.DELETE_ERROR,
-                500,
-                error as Error
+                401
             )
+            return
         }
+        // Deleta entidade
+        const success = await this.service.forceDeleteEntity(numericId)
+        if (!success) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.DATABASE.ENTITY.NOT_FOUND,
+                404
+            )
+            return
+        }
+        // Resposta de sucesso
+        ResponseHandler.success(
+            res,
+            {},
+            MESSAGES.DATABASE.ENTITY.DELETED,
+            204
+        )
+
     }
 
     async metadata(

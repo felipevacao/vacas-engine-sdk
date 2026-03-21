@@ -1,15 +1,13 @@
 import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
 import { UsersEntity } from "@dynamic-modules/entities/users"
-import { InputRequest, LoginRequest, PasswordChangeRequest, PasswordResetRequest, UpdateData } from "types/entity"
+import { PasswordChangeRequest, PasswordResetRequest } from "types/entity"
 import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 import { apiError } from '@utils/error';
 import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
 import { UserService } from '@dynamic-modules/services/user';
 import { getClientIP } from '@utils/ip';
-import { UsersRolesService } from '@dynamic-modules/services/users.roles';
-import { HttpStatus } from '@constants/HttpStatus';
 
 
 export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
@@ -20,23 +18,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         super(service)
     }
 
-    /**
-    * Valida os campos de login.
-     */
-    private validateLoginFields(
-        input: unknown
-    ): [email: string, password: string] {
 
-        if (!input || typeof input !== 'object') {
-            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
-        }
-        const { email, password } = input as LoginRequest
-        if (!email || !password) {
-            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
-        }
-
-        return [email, password]
-    }
 
     /**
     *  Requisição para Login de usuário.
@@ -45,23 +27,13 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         req: Request,
         res: Response
     ): Promise<void> {
-        try {
-            // valida o input
-            const [login, password] = this.validateLoginFields(req.body)
-            // efetua login e gera sessão
-            const session = await this.auth.login(login, password, getClientIP(req))
+        // valida o input
+        const [login, password] = this.auth.validateLoginFields(req.body)
+        // efetua login e gera sessão
+        const session = await this.auth.login(login, password, getClientIP(req))
 
-            // resposta
-            ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.ERROR.ERROR_LOGIN,
-                500,
-                error as Error
-            )
-        }
-
+        // resposta
+        ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
     }
 
     /**
@@ -73,19 +45,8 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         req: Request,
         res: Response
     ): Promise<void> {
-        try {
-            await this.auth.logout(req.session.sessionId as string)
-
-            ResponseHandler.success(res, { message: 'Logout realizado com sucesso' });
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.ERROR.OPERATION_ERROR,
-                400,
-                error as Error
-            )
-        }
-
+        await this.auth.logout(req.session.sessionId as string)
+        ResponseHandler.success(res, { message: 'Logout realizado com sucesso' });
     }
 
 
@@ -118,28 +79,18 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         res: Response
     ): Promise<void> {
 
-        try {
-            // validates input
-            const [currentPassword, newPassword] = this.validateUpdatePasswordFields(req.body)
+        // validates input
+        const [currentPassword, newPassword] = this.validateUpdatePasswordFields(req.body)
 
-            await this.auth.updateUserPassword(
-                req.session.userId as number,
-                currentPassword,
-                newPassword
-            )
+        await this.auth.updateUserPassword(
+            req.session.userId as number,
+            currentPassword,
+            newPassword
+        )
 
-            await this.auth.logout(req.session.sessionId as string)
+        await this.auth.logout(req.session.sessionId as string)
 
-            ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.ERROR.INTERNAL_ERROR,
-                500,
-                error as Error
-            )
-        }
+        ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
 
     }
 
@@ -165,126 +116,55 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         req: Request,
         res: Response
     ): Promise<void> {
-        try {
-
-            const { email } = this.validateResetPasswordFields(req.body)
-            const session = await this.auth.resetPasswordSession(email, getClientIP(req))
-            ResponseHandler.success(res, session, MESSAGES.API.SUCCESS_DATA);
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.ERROR.INTERNAL_ERROR,
-                500,
-                error as Error
-            )
-        }
+        const { email } = this.validateResetPasswordFields(req.body)
+        const session = await this.auth.resetPasswordSession(email, getClientIP(req))
+        ResponseHandler.success(res, session, MESSAGES.API.SUCCESS_DATA);
     }
 
     async resetPassword(
         req: Request,
         res: Response
     ): Promise<void> {
-        try {
-
-            const { email, newPassword } = this.validateResetPasswordFields(req.body)
-            if (!newPassword) {
-                throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
-            }
-            await this.auth.resetPassword(
-                req.session.sessionId as string,
-                req.session.userId as number,
-                email,
-                newPassword
-            )
-            ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.ERROR.INTERNAL_ERROR,
-                500,
-                error as Error
-            )
+        const { email, newPassword } = this.validateResetPasswordFields(req.body)
+        if (!newPassword) {
+            throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
         }
+        await this.auth.resetPassword(
+            req.session.sessionId as string,
+            req.session.userId as number,
+            email,
+            newPassword
+        )
+        ResponseHandler.success(res, { message: MESSAGES.API.PASSWORD_CHANGED.message });
     }
 
     async updateUser(
         req: Request,
         res: Response
     ): Promise<void> {
-
-        try {
-            // Valida Input
-            const id = parseInt(req.params.id)
-            const data = await this.validateUpdate(id, req, req.session.userId as number)
-            const options = this.generateQueryFields(req)
-            // Atualiza entidade
-            const result = await this.service.updateEntity(id, data, options)
-            // resposta
-            ResponseHandler.success(res, result)
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.UPDATE_ERROR,
-                500,
-                error as Error
-            )
-        }
-    }
-
-    protected async validateUpdate(
-        id: number,
-        input: InputRequest<Request>,
-        userSession: number | null = null
-    ): Promise<UpdateData<UsersEntity>> {
-
-        if (userSession) {
-            const user = await new UsersRolesService(userSession as number).setEntity()
-            if (user.isAdmin()) {
-                return input.body as UpdateData<UsersEntity>;
-            }
-        }
-
-        return await this.service.withId(id).generateBodyUpdate(input) ?? input.body as UpdateData<UsersEntity>;
-
+        // Valida Input
+        const id = parseInt(req.params.id)
+        const data = await this.auth.validateUpdate(id, req, req.session.userId as number)
+        const options = this.generateQueryFields(req)
+        // Atualiza entidade
+        const result = await this.service.updateEntity(id, data, options)
+        // resposta
+        ResponseHandler.success(res, result)
     }
 
     async getMe(
         req: Request,
         res: Response
     ): Promise<void> {
-        try {
-
-            const user = await this.service.findByIdEntity(req.session.userId as number, this.generateQueryFields(req))
-            ResponseHandler.success(res, user)
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.DATABASE.ENTITY.NOT_FOUND,
-                500,
-                error as Error
-            )
-        }
+        const user = await this.service.findByIdEntity(req.session.userId as number, this.generateQueryFields(req))
+        ResponseHandler.success(res, user)
     }
 
     async refreshSession(
         req: Request,
         res: Response
     ): Promise<void> {
-        try {
-
-            const session = await this.auth.resetSession(req.session.sessionId as string)
-            ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.ACTIVE_SESSION);
-
-        } catch (error) {
-            ResponseHandler.error(
-                res,
-                MESSAGES.ERROR.INVALID_SESSION,
-                HttpStatus.METHOD_NOT_ALLOWED,
-                error as Error
-            )
-        }
+        const session = await this.auth.resetSession(req.session.sessionId as string)
+        ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.ACTIVE_SESSION);
     }
 }
