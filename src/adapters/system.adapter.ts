@@ -48,4 +48,13 @@ export class SystemAdapter {
             message: `Limpeza concluída. ${result.count} arquivos removidos.` 
         });
     });
+
+    /**
+     * Obtém o status geral do sistema.
+     * GET /system/status
+     */
+    getStatus = asyncHandler(async (req: Request, res: Response) => {
+        const status = await this.service.getSystemStatus();
+        ResponseHandler.success(res, status);
+    });
 }

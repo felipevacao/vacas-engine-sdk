@@ -4,9 +4,71 @@ import { apiError } from '@utils/error';
 import { MESSAGES } from '@constants/messages';
 import { HttpStatus } from '@constants/HttpStatus';
 import { stringUtils } from '@utils/string';
+import { db } from '@utils/db';
+import os from 'os';
 
 export class SystemService {
     private logDir = path.join(process.cwd(), 'logs');
+
+    /**
+     * Retorna o status de saúde do sistema (Health Check).
+     */
+    async getSystemStatus(): Promise<any> {
+        // 1. Database Check
+        let dbStatus = 'connected';
+        let dbLatency = 0;
+        try {
+            const dbStart = Date.now();
+            await db.raw('SELECT 1');
+            dbLatency = Date.now() - dbStart;
+        } catch (error) {
+            dbStatus = 'disconnected';
+        }
+
+        // 2. Event Loop Lag (Medição simples)
+        const lag = await this.measureEventLoopLag();
+
+        // 3. Memory Usage
+        const memUsage = process.memoryUsage();
+
+        return {
+            status: dbStatus === 'connected' ? 'healthy' : 'degraded',
+            uptime: process.uptime(), // Segundos desde o início do processo
+            timestamp: new Date().toISOString(),
+            database: {
+                status: dbStatus,
+                latency: `${dbLatency}ms`
+            },
+            server: {
+                platform: process.platform,
+                nodeVersion: process.version,
+                cpuCores: os.cpus().length,
+                totalMemory: `${Math.round(os.totalmem() / 1024 / 1024)}MB`,
+                freeMemory: `${Math.round(os.freemem() / 1024 / 1024)}MB`
+            },
+            process: {
+                memory: {
+                    rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`, // Total alocado para o processo
+                    heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
+                    heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
+                    external: `${Math.round(memUsage.external / 1024 / 1024)}MB`
+                },
+                eventLoopLag: `${lag.toFixed(2)}ms`
+            }
+        };
+    }
+
+    /**
+     * Mede o lag do Event Loop em milissegundos.
+     */
+    private measureEventLoopLag(): Promise<number> {
+        return new Promise((resolve) => {
+            const start = Date.now();
+            setImmediate(() => {
+                resolve(Date.now() - start);
+            });
+        });
+    }
 
     /**
      * Lê o conteúdo de um arquivo de log baseado na data e tipo.

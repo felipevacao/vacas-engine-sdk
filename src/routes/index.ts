@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express'
-import testRoutes from "./test"
 import eg from "./eg"
 import { logging } from '@middlewares/logging'
 import { routeNotFound, errorHandler } from '@middlewares/errorHandlers'
@@ -58,8 +57,7 @@ const loadRoutes = async () => {
     })
 
     router.use('/auth', authRoutes)
-    router.use('/test', testRoutes)
-    
+
     // Importa rotas de sistema
     const systemRoutes = await import('./system');
     router.use('/system', systemRoutes.middleware, systemRoutes.default);
@@ -70,7 +68,7 @@ const loadRoutes = async () => {
         /**
          * Rota para listar todas as rotas registradas no roteador principal.
          */
-        router.get('/test/routes', (req: Request, res: Response) => {
+        router.get('/system/routes', systemRoutes.middleware, (req: Request, res: Response) => {
             const endpoints = listEndpoints(router);
             console.log(MESSAGES.ROUTES.LIST);
             console.table(endpoints);

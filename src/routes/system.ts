@@ -20,5 +20,8 @@ router.get('/logs/:date', adapter.getLog);
 // Limpar logs antigos (ex: DELETE /system/logs?keep=15)
 router.delete('/logs', adapter.clearLogs);
 
+// Status do sistema (Health Check)
+router.get('/status', adapter.getStatus);
+
 export const middleware = [tokenMiddleware, verifyAdmin];
 export default router;
