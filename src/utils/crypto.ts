@@ -137,10 +137,10 @@ export const cryptoUtils = {
     ): string {
 
         const token = req.params?.token
-        if (!this.validateToken(token)) {
+        if (!this.validateToken(token as string)) {
             throw new apiError(MESSAGES.ERROR.MISSING_TOKEN, 401)
         }
-        return token
+        return token as string
 
     },
 

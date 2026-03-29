@@ -143,7 +143,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         res: Response
     ): Promise<void> {
         // Valida Input
-        const id = parseInt(req.params.id)
+        const id = parseInt(req.params.id as string)
         const data = await this.auth.validateUpdate(id, req, req.session.userId as number)
         const options = this.generateQueryFields(req)
         // Atualiza entidade

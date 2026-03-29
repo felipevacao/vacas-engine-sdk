@@ -32,7 +32,7 @@ export const verifySameUser = async (
 		return
 	}
 
-	const id = parseInt(req.params.id)
+	const id = parseInt(req.params.id as string)
 	if (id) {
 		if (id === req.session.userId) {
 			next()

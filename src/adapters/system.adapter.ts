@@ -15,7 +15,7 @@ export class SystemAdapter {
         const { type } = req.query;
 
         const content = await this.service.getLogByDate(
-            date,
+            date as string,
             (type as 'error' | 'access') || 'error'
         );
 
@@ -42,10 +42,10 @@ export class SystemAdapter {
     clearLogs = asyncHandler(async (req: Request, res: Response) => {
         const keep = req.query.keep ? parseInt(req.query.keep as string) : 7;
         const result = await this.service.deleteOldLogs(keep);
-        
-        ResponseHandler.success(res, result, { 
-            name: 'LOGS_CLEARED', 
-            message: `Limpeza concluída. ${result.count} arquivos removidos.` 
+
+        ResponseHandler.success(res, result, {
+            name: 'LOGS_CLEARED',
+            message: `Limpeza concluída. ${result.count} arquivos removidos.`
         });
     });
 

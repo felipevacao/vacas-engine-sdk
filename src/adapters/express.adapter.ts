@@ -123,7 +123,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     ): Promise<void> {
 
         // Valida Input
-        const id = parseInt(req.params.id)
+        const id = parseInt(req.params.id as string)
         const options = this.generateQueryFields(req)
         // Busca entidade
         const result = await this.service.findByIdEntity(id, options)
@@ -180,7 +180,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     ): Promise<void> {
 
         // Valida Input
-        const id = parseInt(req.params.id)
+        const id = parseInt(req.params.id as string)
         const data = await this.validateUpdate(id, req)
         const options = this.generateQueryFields(req)
         // Atualiza entidade
@@ -210,7 +210,7 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
     ): Promise<void> {
 
         // Valida Input
-        const id = parseInt(req.params.id)
+        const id = parseInt(req.params.id as string)
         if (isNaN(id)) {
             ResponseHandler.error(
                 res,
