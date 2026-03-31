@@ -119,18 +119,18 @@ A API utiliza níveis de acesso (Roles) para proteger recursos sensíveis.
 ```text
 src/
 ├── adapters/          # Adaptadores (Express/System)
-├── constants/         # Status HTTP e mensagens do sistema                                                                                             │
-├── controllers/       # Controladores base e globais                                                                                                   │
-├── dynamic-modules/   # Módulos gerados automaticamente                                                                                                │
-│   ├── adapters/      # Adaptadores específicos de módulos                                                                                             │
-│   ├── controllers/   # Regras de fluxo de dados                                                                                                       │
-│   ├── entities/      # Definições de entidades + Swagger Schemas                                                                                      │
-│   ├── models/        # Modelos ORM (Objection.js)                                                                                                     │
-│   ├── routes/        # Definições de rotas + Swagger Docs                                                                                             │
-│   └── services/      # Lógica de negócio específica                                                                                                   │
+├── constants/         # Status HTTP e mensagens do sistema
+├── controllers/       # Controladores base e globais
+├── dynamic-modules/   # Módulos gerados automaticamente
+│   ├── adapters/      # Adaptadores específicos de módulos
+│   ├── controllers/   # Regras de fluxo de dados
+│   ├── entities/      # Definições de entidades + Swagger Schemas
+│   ├── models/        # Modelos ORM (Objection.js)
+│   ├── routes/        # Definições de rotas + Swagger Docs
+│   └── services/      # Lógica de negócio específica
 ├── middlewares/       # Auth, Log, Error Handlers
 ├── repositories/      # Persistência genérica (CRUD)
-├── routes/            # Rotas estáticas (Auth, System, etc)                                                                                            │
+├── routes/            # Rotas estáticas (Auth, System, etc)
 ├── services/          # Regras de negócio globais
 ├── utils/             # Log, Swagger, ResponseHandler
 └── workflows/         # Orquestração de processos complexos
