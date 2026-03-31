@@ -212,18 +212,24 @@ export class AuthUserSessionWorkflow {
 		email: string,
 		password: string
 	): Promise<boolean> {
-		await this.userService.getUserByEmail(email)
-		const user = this.userService.getEntity()
-		const [match, pepper] = await this.authService.comparePassword(password, user.password, parseInt(user.pepper))
-		if (!match) {
-			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, 403)
-		}
+		try {
+			await this.userService.getUserByEmail(email)
+			const user = this.userService.getEntity()
 
-		if (this.authService.verifyUserPepperVersion(pepper)) {
-			await this.updatePassword(password)
-		}
+			const [match, pepper] = await this.authService.comparePassword(password, user.password, parseInt(user.pepper))
+			if (!match) {
+				throw new Error
+			}
 
-		return match
+			if (this.authService.verifyUserPepperVersion(pepper)) {
+				await this.updatePassword(password)
+			}
+
+			return match
+
+		} catch {
+			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, HttpStatus.UNAUTHORIZED)
+		}
 	}
 
 	async login(
@@ -391,14 +397,16 @@ export class AuthUserSessionWorkflow {
 		userSession: number | null = null
 	): Promise<UpdateData<UsersEntity>> {
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { pepper, password, ...rest } = input.body as UpdateData<UsersEntity>;
+
 		if (userSession) {
 			const user = await new UsersRolesService(userSession as number).setEntity()
 			if (user.isAdmin()) {
-				return input.body as UpdateData<UsersEntity>;
+				return rest as UpdateData<UsersEntity>;
 			}
 		}
-
-		return await this.userService.withId(id).generateBodyUpdate(input) ?? input.body as UpdateData<UsersEntity>;
+		return await this.userService.withId(id).generateBodyUpdate(input) ?? rest as UpdateData<UsersEntity>;
 
 	}
 

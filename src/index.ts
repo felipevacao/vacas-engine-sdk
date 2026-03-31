@@ -9,6 +9,7 @@ import { swaggerSpec } from './utils/swagger';
 import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
 import { Logger } from '@utils/log';
+import helmet from 'helmet'
 
 /**
  * Prevenção de quebra da API por erros não capturados
@@ -27,6 +28,18 @@ process.on('unhandledRejection', (reason) => {
  */
 const app = express()
 
+// Ativa o Helmet
+app.use(helmet({
+	contentSecurityPolicy: {
+		directives: {
+			...helmet.contentSecurityPolicy.getDefaultDirectives(),
+			// Necessário para o Swagger UI funcionar corretamente
+			"img-src": ["'self'", "data:", "https://validator.swagger.io"],
+			"script-src": ["'self'", "'unsafe-inline'"],
+			"style-src": ["'self'", "https:", "'unsafe-inline'"],
+		}
+	}
+}));
 
 // Definindo o rate limit global
 const limiter = rateLimit({

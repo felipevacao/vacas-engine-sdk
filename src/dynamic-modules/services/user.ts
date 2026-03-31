@@ -1,10 +1,11 @@
 import { UsersController } from "@dynamic-modules/controllers/users";
-import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserStatus } from 'types/entity';
+import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from 'types/entity';
 import { hashUtils } from '@utils/hash';
 import { BaseServices } from "@services/baseServices";
 import { UsersEntity } from "@dynamic-modules/entities/users";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
+import { HttpStatus } from "@constants/HttpStatus";
 
 export class UserService extends BaseServices<UsersEntity, UsersController> {
 
@@ -50,6 +51,17 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 		}
 
 		return body as CreateData<UsersEntity>;
+	}
+
+	override getEntity(): OutputData<UsersEntity> {
+		if (!this._entity) {
+			throw new apiError(
+				MESSAGES.ERROR.INVALID_LOGIN,
+				HttpStatus.UNAUTHORIZED,
+				this.getContext()
+			)
+		}
+		return this._entity
 	}
 
 	override async generateBodyUpdate(

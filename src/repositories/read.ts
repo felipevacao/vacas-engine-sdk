@@ -1,6 +1,7 @@
 import { db } from '@utils/db'
 import { BaseEntity, ErrorContext, OutputData, PaginatedResult, QueryFields } from 'types/entity'
 import { ErrorHandler } from '@utils/ErrorHandler'
+import { env } from 'process'
 
 /**
  * Operações de leitura para entidades, incluindo métodos para buscar todos os registros, buscar por ID, buscar por critérios específicos e realizar consultas paginadas.
@@ -95,7 +96,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                 .orderBy(options.orderBy || 'id', options.order || 'asc')
                 .whereNull('deletedAt')
 
-            context.details = [query.toQuery()]
+            if (env.NODE_ENV === 'development') {
+                context.details = [query.toQuery()]
+            }
 
             return query
         } catch (error) {
@@ -147,7 +150,9 @@ export const read = <T extends BaseEntity>(table: string) => {
                     countQuery = countQuery.where(filter.field, filter.operator, filter.value);
                 });
             }
-            context.details = [query.toQuery(), countQuery.toQuery()]
+            if (env.NODE_ENV === 'development') {
+                context.details = [query.toQuery(), countQuery.toQuery()]
+            }
 
             const [result, totalCount] = await Promise.all([
                 query,

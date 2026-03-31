@@ -62,7 +62,7 @@ export class ResponseHandler {
 				requestId: res.locals.requestId
 			}
 		}
-		if (env.ENABLE_RETURN_ERRORS && response.error) {
+		if (env.ENABLE_RETURN_ERRORS && response.error && env.NODE_ENV === 'development') {
 			response.error.details = details instanceof apiError ? details.stack : details ?? MESSAGES.ERROR.UNKNOWN.message;
 		}
 		if (headers) {

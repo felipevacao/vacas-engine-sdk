@@ -23,7 +23,7 @@ if (env.NODE_ENV === 'development') {
 
 router.use((req, res, next) => {
     // Prevenir que o token vaze em referrers
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    // res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     // Controlar cache de requisições autenticadas
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');

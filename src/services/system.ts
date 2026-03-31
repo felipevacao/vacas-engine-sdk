@@ -13,7 +13,7 @@ export class SystemService {
     /**
      * Retorna o status de saúde do sistema (Health Check).
      */
-    async getSystemStatus(): Promise<any> {
+    async getSystemStatus(): Promise<unknown> {
         // 1. Database Check
         let dbStatus = 'connected';
         let dbLatency = 0;
@@ -21,7 +21,7 @@ export class SystemService {
             const dbStart = Date.now();
             await db.raw('SELECT 1');
             dbLatency = Date.now() - dbStart;
-        } catch (error) {
+        } catch {
             dbStatus = 'disconnected';
         }
 

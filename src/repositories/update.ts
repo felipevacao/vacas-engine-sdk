@@ -4,6 +4,7 @@ import { ErrorHandler } from '@utils/ErrorHandler'
 import { apiError } from '@utils/error'
 import { MESSAGES } from '@constants/messages'
 import { HttpStatus } from '@constants/HttpStatus'
+import { env } from 'process'
 
 export const update = <T extends BaseEntity>(table: string) => {
 
@@ -31,8 +32,9 @@ export const update = <T extends BaseEntity>(table: string) => {
 					query = query.where(filter.field, filter.operator, filter.value);
 				});
 			}
-
-			context.details = [query.toQuery()]
+			if (env.NODE_ENV === 'development') {
+				context.details = [query.toQuery()]
+			}
 			const [result] = await query;
 			if (!result) {
 				throw new apiError(
