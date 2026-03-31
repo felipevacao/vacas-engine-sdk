@@ -4,8 +4,6 @@ import express from 'express'
 import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
-import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './utils/swagger';
 import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
 import { Logger } from '@utils/log';
@@ -70,14 +68,10 @@ app.use(cors({
 /**
  * Configuração do body-parser
  * Permite que o Express entenda requisições com payload JSON e urlencoded
+ * Limita o JSON recebido a 10kb (ajuste se precisar de mais, mas mantenha baixo)
  */
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
-
-/**
- * Configuração da documentação da API (Swagger)
- */
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(express.json({ limit: '10kb' }))
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 /** 
  * Configuração das rotas

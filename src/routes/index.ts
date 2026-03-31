@@ -8,6 +8,8 @@ import listEndpoints from 'express-list-endpoints';
 import authRoutes from './auth';
 import env from 'libs/env';
 import { MESSAGES } from '@constants/messages/index';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from '@utils/swagger';
 
 // Route → Adapter → Service (workflow) → Service (entidade) → Controller → Model → Entity → Banco
 
@@ -19,6 +21,12 @@ const router = express.Router()
 
 if (env.NODE_ENV === 'development') {
     router.use(logging)
+
+    /**
+     * Configuração da documentação da API (Swagger)
+     */
+    router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 }
 
 router.use((req, res, next) => {

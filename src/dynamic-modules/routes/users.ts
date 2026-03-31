@@ -46,7 +46,7 @@ const expressAdapter = new UserExpressAdapter(userService, authWorkflow);
  *               items:
  *                 $ref: '#/components/schemas/Users'
  */
-router.post('/', expressAdapter.create.bind(expressAdapter));
+router.post('/', verifyAdmin, expressAdapter.create.bind(expressAdapter));
 
 /**
  * @swagger
@@ -70,9 +70,9 @@ router.get('/metadata', expressAdapter.metadata.bind(expressAdapter))
  *       200:
  *         description: Resultados da busca
  */
-router.get('/search', expressAdapter.findBy.bind(expressAdapter));
+router.get('/search', verifyAdmin, expressAdapter.findBy.bind(expressAdapter));
 
-router.get('/', expressAdapter.findAll.bind(expressAdapter));
+router.get('/', verifyAdmin, expressAdapter.findAll.bind(expressAdapter));
 
 /**
  * @swagger
