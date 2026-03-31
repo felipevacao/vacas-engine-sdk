@@ -25,8 +25,28 @@ A **Treis API** é uma solução avançada e modular para o gerenciamento dinâm
 - **Framework:** Express.js
 - **Documentação:** Swagger UI & Swagger JSDoc (OpenAPI 3.0)
 - **Banco de Dados:** PostgreSQL via Knex.js & Objection.js
-- **Segurança:** Bcrypt, Express Rate Limit, Validator
+- **Segurança:** Helmet, Bcrypt + HMAC Pepper, Express Rate Limit, Express Validator
 - **Container:** Docker & Docker Compose
+
+---
+
+## 🔒 Segurança
+
+A API implementa diversas camadas de proteção seguindo as melhores práticas do OWASP:
+
+- **Cabeçalhos HTTP:** Utiliza `Helmet` para proteção automática contra XSS, Clickjacking, MIME Sniffing e desativação do fingerprinting do servidor.
+- **Limitação de Taxa (Rate Limit):** Proteção global de 100 requisições a cada 15 minutos por IP para prevenir ataques de força bruta e DoS.
+- **Integridade de Dados:** 
+  - Proteção rigorosa contra *Mass Assignment* (atribuição em massa) em rotas de atualização de usuários.
+  - Payload máximo de JSON limitado a **10kb** para prevenir ataques de exaustão de memória.
+- **Autenticação Avançada:**
+  - Senhas criptografadas com `bcrypt` combinado a um `HMAC Pepper` de versão controlada.
+  - Validação de sessão vinculada ao endereço IP do cliente.
+  - Respostas de erro genéricas e unificadas em fluxos de login/reset para evitar **enumeração de usuários**.
+- **Exposição de Dados:**
+  - SQL Queries brutas nunca são enviadas ao cliente, mesmo em caso de erro, garantindo a privacidade da infraestrutura.
+  - Documentação Swagger (`/api-docs`) e rotas de sistema disponíveis apenas quando `NODE_ENV=development`.
+- **Cache Control:** Cabeçalhos `no-store, no-cache, must-revalidate` aplicados globalmente para proteger dados sensíveis em navegadores e proxies.
 
 ---
 
