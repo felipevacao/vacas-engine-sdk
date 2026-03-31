@@ -14,7 +14,7 @@ A **Treis API** é uma solução avançada e modular para o gerenciamento dinâm
 - **⚙️ Geração Dinâmica:** Scaffolding automatizado de novos módulos (Entity, Model, Service, Controller, Route).
 - **📖 Auto-Documentação:** Integração nativa com **Swagger**. Novos módulos já nascem documentados.
 - **🗺️ HATEOAS & Metadata:** Respostas inteligentes que descrevem a estrutura dos dados e ações relacionadas.
-- **🛡️ Segurança:** Autenticação JWT, Refresh Tokens, Roles e proteção contra brute-force (Rate Limit).
+- **🛡️ Segurança:** Autenticação Bearer Token, Refresh Tokens, Roles e proteção contra brute-force (Rate Limit).
 - **🔌 Arquitetura de Adaptadores:** Desacoplamento total do framework de entrega.
 
 ---
