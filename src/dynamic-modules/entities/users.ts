@@ -1,3 +1,21 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Users:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         login:
+ *           type: string
+ */
+
 // Gerado automáticamente
 import { BaseEntity, UserStatus, UserRole } from 'types/entity'
 

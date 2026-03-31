@@ -112,8 +112,29 @@ async function getTableStructure(tableName) {
 // Função para gerar o arquivo de entidade
 function generateEntityFile(columns, tableNameCamel, tablenameCapital) {
 	
+	const swaggerProperties = columns.map(col => {
+		const type = col.converted_type === 'number' ? 'integer' : col.converted_type.toLowerCase();
+		return ` *         ${col.column_name}:
+ *           type: ${type}`;
+	}).join('\n');
+
+	const swaggerBlock = `/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ${tablenameCapital}:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+${swaggerProperties}
+ */
+
+`;
+
 	const entityTemplateContent = getContent('entity.txt', tableNameCamel, tablenameCapital);
-	const entityContent = `${entityTemplateContent}
+	const entityContent = `${swaggerBlock}${entityTemplateContent}
 		${columns.map(col => `    ${col.column_name}: ${mapDataType(col.data_type)};`).join('\n')}
 	}`;
 	const filePath = join(__dirname, __pathToSave + 'entities', `${tableNameCamel}.ts`);
@@ -159,7 +180,102 @@ function generateServiceFile(tableNameCamel, tablenameCapital) {
 
 	// Função para gerar o arquivo de rotas
 function generateRoutesFile(tableNameCamel, tablenameCapital) {
-	const routesContent = getContent('routes.txt', tableNameCamel, tablenameCapital);
+	const swaggerRoutes = `/**
+ * @swagger
+ * tags:
+ *   name: ${tablenameCapital}
+ *   description: Gerenciamento de ${tablenameCapital}
+ */
+
+/**
+ * @swagger
+ * /${tableNameCamel}:
+ *   post:
+ *     summary: Cria um novo registro de ${tablenameCapital}
+ *     tags: [${tablenameCapital}]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/${tablenameCapital}'
+ *     responses:
+ *       201:
+ *         description: Criado com sucesso
+ *   get:
+ *     summary: Lista todos os registros de ${tablenameCapital}
+ *     tags: [${tablenameCapital}]
+ *     responses:
+ *       200:
+ *         description: Lista retornada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/${tablenameCapital}'
+ */
+
+/**
+ * @swagger
+ * /${tableNameCamel}/metadata:
+ *   get:
+ *     summary: Obtém metadados de ${tablenameCapital}
+ *     tags: [${tablenameCapital}]
+ *     responses:
+ *       200:
+ *         description: Metadados retornados
+ */
+
+/**
+ * @swagger
+ * /${tableNameCamel}/{id}:
+ *   get:
+ *     summary: Obtém um registro de ${tablenameCapital} pelo ID
+ *     tags: [${tablenameCapital}]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro encontrado
+ *   patch:
+ *     summary: Atualiza um registro de ${tablenameCapital}
+ *     tags: [${tablenameCapital}]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/${tablenameCapital}'
+ *     responses:
+ *       200:
+ *         description: Registro atualizado
+ *   delete:
+ *     summary: Marca um registro de ${tablenameCapital} como deletado
+ *     tags: [${tablenameCapital}]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro removido
+ */
+
+`;
+	const routesContent = swaggerRoutes + getContent('routes.txt', tableNameCamel, tablenameCapital);
 
 	const filePath = join(__dirname, __pathToSave + 'routes', `${tableNameCamel}.ts`);
 	ensureDirectoryExistence(filePath);

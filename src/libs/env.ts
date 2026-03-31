@@ -9,6 +9,7 @@ const env = cleanEnv(
     process.env,
     {
         API_NAME: str({ default: 'API' }),
+        API_VERSION: str({ default: '0.0.1' }),
         NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
         DB_USER: str(),
         DB_PASS: str(),
@@ -25,9 +26,9 @@ const env = cleanEnv(
         PEPPER_CURRENT: str({ default: '1' }),
         ENABLE_CONSOLE_LOG: bool({ default: false }),
 
-        TOKEN_BYTES: str({ default: '32'}),
-        TOKEN_ALGOR: str({ default: 'sha256'}),
-        TOKEN_PEPPER: str({ default: ''})
+        TOKEN_BYTES: str({ default: '32' }),
+        TOKEN_ALGOR: str({ default: 'sha256' }),
+        TOKEN_PEPPER: str({ default: '' })
     }
 )
 

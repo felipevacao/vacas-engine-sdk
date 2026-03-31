@@ -4,6 +4,8 @@ import express from 'express'
 import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './utils/swagger';
 import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
 import { Logger } from '@utils/log';
@@ -58,6 +60,11 @@ app.use(cors({
  */
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
+/**
+ * Configuração da documentação da API (Swagger)
+ */
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /** 
  * Configuração das rotas

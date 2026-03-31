@@ -120,7 +120,7 @@ export class MetadataService {
         ON tc.constraint_name = cc.constraint_name
       WHERE c.table_name = ?
       AND c.table_schema = 'public'
-      AND c.column_name NOT IN ('created_at', 'updated_at', 'deleted_at')
+      AND c.column_name NOT IN ('created_at', 'updated_at', 'deleted_at', 'password', 'pepper')
       ORDER BY c.ordinal_position
     `;
 
@@ -234,15 +234,15 @@ export class MetadataService {
         // Configurações do manifest
         display: manifestField.display,
         format: manifestField.format,
-        crud: {
-          creatable: true,
-          editable: true,
-          listable: true,
-          searchable: !dbField.column_name.includes('password'),
-          sortable: true,
-          filterable: false,
-          ...manifestField.crud
-        },
+        // crud: {
+        //   creatable: true,
+        //   editable: true,
+        //   listable: true,
+        //   searchable: !dbField.column_name.includes('password'),
+        //   sortable: true,
+        //   filterable: false,
+        //   ...manifestField.crud
+        // },
         config: manifestField.config,
         options: manifestField.options
       };
