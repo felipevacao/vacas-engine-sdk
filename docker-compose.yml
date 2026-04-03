@@ -20,7 +20,7 @@ services:
     ports:
       - "3002:3002"
     environment:
-      DB_HOST: postdb  # Atualizado para refletir o novo nome do container
+      DB_HOST: postdb 
       DB_USER: felipe
       DB_PASS: ${DB_PASS} 
       DB_NAME: apitreis
