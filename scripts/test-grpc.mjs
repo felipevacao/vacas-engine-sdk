@@ -19,16 +19,19 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const usersProto = grpc.loadPackageDefinition(packageDefinition).users;
 
 function main() {
-  // @ts-ignore - UsersService existe dinamicamente
   const client = new usersProto.UsersService(
     'localhost:50051',
     grpc.credentials.createInsecure()
   );
 
-  console.log('--- Testando gRPC: List Users ---');
-  client.List({ page: 1, limit: 5 }, (error, response) => {
+  const metadata = new grpc.Metadata();
+  metadata.add('x-internal-key', 'S3cr3t_K3y_F0r_gRPC_BFF');
+  metadata.add('x-user-id', '12345');
+
+  console.log('--- Testando gRPC com Segurança: List Users ---');
+  client.List({ page: 1, limit: 5 }, metadata, (error, response) => {
     if (error) {
-      console.error('Erro no gRPC:', error.message);
+      console.error('Erro no gRPC (Status ' + error.code + '):', error.message);
       return;
     }
     console.log('Status:', response.status);

@@ -4,6 +4,8 @@ import { join } from 'path';
 import { Logger } from '@utils/log';
 import { readdirSync, existsSync } from 'fs';
 
+import env from './libs/env';
+
 /**
  * Interface para representar a estrutura do descriptor do gRPC carregado
  */
@@ -15,13 +17,58 @@ interface GrpcPackage {
   [key: string]: GrpcServiceDefinition | unknown;
 }
 
+/**
+ * Tipo para métodos gRPC unários
+ */
+type UnaryHandler = (
+  call: grpc.ServerUnaryCall<unknown, unknown>,
+  callback: grpc.sendUnaryData<unknown>
+) => void;
+
 export class GrpcServer {
   private server: grpc.Server;
   private port: number;
 
   constructor(port: number = 50051) {
-    this.server = new grpc.Server();
+    this.server = new grpc.Server({
+      'grpc.initial_reconnect_backoff_ms': 1000,
+      'grpc.max_reconnect_backoff_ms': 5000,
+    });
     this.port = port;
+  }
+
+  /**
+   * Envolve a implementação do serviço com uma camada de autenticação
+   */
+  private wrapServiceWithAuth(implementation: grpc.UntypedServiceImplementation): grpc.UntypedServiceImplementation {
+    const wrapped: grpc.UntypedServiceImplementation = {};
+
+    for (const methodName of Object.keys(implementation)) {
+      const originalMethod = implementation[methodName];
+
+      if (typeof originalMethod === 'function') {
+        const handler: UnaryHandler = (call, callback) => {
+          const metadata = call.metadata.get('x-internal-key');
+          const internalKey = metadata[0];
+
+          if (internalKey !== env.INTERNAL_API_KEY) {
+            Logger.warn(`[gRPC] Tentativa de acesso não autorizado: ${methodName}`);
+            callback({
+              code: grpc.status.UNAUTHENTICATED,
+              message: 'Invalid Internal API Key'
+            }, null);
+            return;
+          }
+
+          // Executa o método original com a tipagem correta
+          (originalMethod as UnaryHandler)(call, callback);
+        };
+
+        wrapped[methodName] = handler as unknown as grpc.UntypedHandleCall;
+      }
+    }
+
+    return wrapped;
   }
 
   private async loadDynamicModules(): Promise<void> {
@@ -35,7 +82,7 @@ export class GrpcServer {
     for (const file of files) {
       const entityName = file.replace('.proto', '');
       const protoPath = join(protosPath, file);
-      
+
       const packageDefinition = protoLoader.loadSync(protoPath, {
         keepCase: true,
         longs: String,
@@ -46,24 +93,27 @@ export class GrpcServer {
       });
 
       const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as unknown as Record<string, GrpcPackage>;
-      
+
       const adapterFile = join(adaptersPath, `${entityName}.ts`);
       const adapterJsFile = join(__dirname, 'dynamic-modules', 'grpc-adapters', `${entityName}.js`);
       const targetFile = existsSync(adapterJsFile) ? adapterJsFile : (existsSync(adapterFile) ? adapterFile : null);
-      
+
       if (targetFile) {
         try {
           // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const adapterModule = require(targetFile) as { default?: grpc.UntypedServiceImplementation; [key: string]: unknown };
+          const adapterModule = require(targetFile) as { default?: grpc.UntypedServiceImplementation;[key: string]: unknown };
           const serviceName = `${entityName.charAt(0).toUpperCase() + entityName.slice(1)}Service`;
-          
+
           const pkg = protoDescriptor[entityName];
           if (pkg && typeof pkg === 'object') {
             const serviceDef = pkg[serviceName] as GrpcServiceDefinition;
             if (serviceDef && serviceDef.service) {
               const implementation = adapterModule.default || (adapterModule as unknown as grpc.UntypedServiceImplementation);
-              this.server.addService(serviceDef.service, implementation);
-              Logger.info(`[gRPC] Serviço carregado: ${serviceName}`);
+              
+              const securedImplementation = this.wrapServiceWithAuth(implementation);
+              
+              this.server.addService(serviceDef.service, securedImplementation);
+              Logger.info(`[gRPC] Serviço carregado com segurança: ${serviceName}`);
             }
           }
         } catch (error: unknown) {

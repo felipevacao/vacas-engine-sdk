@@ -28,7 +28,8 @@ const env = cleanEnv(
 
         TOKEN_BYTES: str({ default: '32' }),
         TOKEN_ALGOR: str({ default: 'sha256' }),
-        TOKEN_PEPPER: str({ default: '' })
+        TOKEN_PEPPER: str({ default: '' }),
+        INTERNAL_API_KEY: str({ default: 'S3cr3t_K3y_F0r_gRPC_BFF' })
     }
 )
 

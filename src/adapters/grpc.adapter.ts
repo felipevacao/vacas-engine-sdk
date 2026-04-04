@@ -72,6 +72,12 @@ export abstract class BaseGrpcAdapter<T extends BaseEntity, C extends BaseContro
 
   async create(call: ServerUnaryCall<ProtobufStruct, unknown>, callback: sendUnaryData<unknown>): Promise<void> {
     try {
+      const userId = call.metadata.get('x-user-id')[0] as string;
+      if (userId) {
+        // Aqui você pode injetar o userId no contexto do serviço se necessário
+        // ex: this.service.context({ userId });
+      }
+
       const data = this.fromStruct(call.request);
       const result = await this.service.createEntity(data as CreateData<T>);
       callback(null, {
