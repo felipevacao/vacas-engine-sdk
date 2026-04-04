@@ -1,20 +1,22 @@
-# 🚀 Treis API (v3.3.58)
+# 🚀 Treis API (v3.4.0)
 
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-brightgreen)](https://nodejs.org/)
 [![Typescript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![gRPC](https://img.shields.io/badge/gRPC-Proto3-blue)](https://grpc.io/)
 [![Swagger](https://img.shields.io/badge/OpenAPI-3.0-green)](http://localhost:3000/api-docs)
 
-A **Treis API** é uma solução avançada e modular para o gerenciamento dinâmico de dados. Projetada seguindo princípios de **Clean Architecture**, ela permite a criação automatizada de recursos CRUD completos a partir de definições de banco de dados.
+A **Treis API** é uma solução avançada e modular para o gerenciamento dinâmico de dados. Projetada seguindo princípios de **Clean Architecture**, ela permite a criação automatizada de recursos CRUD completos tanto via **REST (JSON)** quanto via **gRPC (Protocol Buffers)**.
 
 ---
 
 ## 🌟 Principais Diferenciais
 
-- **⚙️ Geração Dinâmica:** Scaffolding automatizado de novos módulos (Entity, Model, Service, Controller, Route).
-- **📖 Auto-Documentação:** Integração nativa com **Swagger**. Novos módulos já nascem documentados.
+- **⚙️ Geração Dinâmica:** Scaffolding automatizado de novos módulos (Entity, Model, Service, Controller, Route, Proto, GrpcAdapter).
+- **📡 Multi-Protocolo:** Suporte nativo a **REST/HTTP** e **gRPC (BFF Architecture)**.
+- **📖 Auto-Documentação:** Integração nativa com **Swagger** para REST. Novos módulos já nascem documentados.
 - **🗺️ HATEOAS & Metadata:** Respostas inteligentes que descrevem a estrutura dos dados e ações relacionadas.
-- **🛡️ Segurança:** Autenticação Bearer Token, Refresh Tokens, Roles e proteção contra brute-force (Rate Limit).
+- **🛡️ Segurança:** Autenticação Bearer Token, Refresh Tokens, Roles e proteção **Service-to-Service** via Internal API Key.
 - **🔌 Arquitetura de Adaptadores:** Desacoplamento total do framework de entrega.
 
 ---
@@ -22,7 +24,8 @@ A **Treis API** é uma solução avançada e modular para o gerenciamento dinâm
 ## 🛠️ Tecnologias
 
 - **Runtime:** Node.js (TypeScript)
-- **Framework:** Express.js
+- **Framework REST:** Express.js
+- **Framework Interno:** gRPC (Proto3)
 - **Documentação:** Swagger UI & Swagger JSDoc (OpenAPI 3.0)
 - **Banco de Dados:** PostgreSQL via Knex.js & Objection.js
 - **Segurança:** Helmet, Bcrypt + HMAC Pepper, Express Rate Limit, Express Validator
@@ -30,23 +33,30 @@ A **Treis API** é uma solução avançada e modular para o gerenciamento dinâm
 
 ---
 
+## 📡 gRPC (Backend-to-Backend)
+
+A Treis API foi projetada para atuar em uma arquitetura de microsserviços ou BFF (Backend-for-Frontend).
+- **Porta:** `50051`
+- **Contratos:** Arquivos `.proto` localizados em `src/dynamic-modules/protos/`.
+- **Performance:** Comunicação binária de baixa latência ideal para comunicação entre containers.
+- **Segurança:** Requer `x-internal-key` no metadata de cada chamada.
+
+---
+
 ## 🔒 Segurança
 
 A API implementa diversas camadas de proteção seguindo as melhores práticas do OWASP:
 
-- **Cabeçalhos HTTP:** Utiliza `Helmet` para proteção automática contra XSS, Clickjacking, MIME Sniffing e desativação do fingerprinting do servidor.
-- **Limitação de Taxa (Rate Limit):** Proteção global de 100 requisições a cada 15 minutos por IP para prevenir ataques de força bruta e DoS.
+- **Service-to-Service Auth:** Proteção de chamadas gRPC através de uma chave secreta compartilhada (`INTERNAL_API_KEY`), impedindo acessos não autorizados dentro da rede interna.
+- **Cabeçalhos HTTP:** Utiliza `Helmet` para proteção automática contra XSS, Clickjacking e MIME Sniffing.
+- **Limitação de Taxa (Rate Limit):** Proteção global de 100 requisições a cada 15 minutos por IP para prevenir ataques de força bruta.
 - **Integridade de Dados:** 
-  - Proteção rigorosa contra *Mass Assignment* (atribuição em massa) em rotas de atualização de usuários.
+  - Proteção rigorosa contra *Mass Assignment* (atribuição em massa) em rotas de atualização.
   - Payload máximo de JSON limitado a **10kb** para prevenir ataques de exaustão de memória.
 - **Autenticação Avançada:**
   - Senhas criptografadas com `bcrypt` combinado a um `HMAC Pepper` de versão controlada.
   - Validação de sessão vinculada ao endereço IP do cliente.
-  - Respostas de erro genéricas e unificadas em fluxos de login/reset para evitar **enumeração de usuários**.
-- **Exposição de Dados:**
-  - SQL Queries brutas nunca são enviadas ao cliente, mesmo em caso de erro, garantindo a privacidade da infraestrutura.
-  - Documentação Swagger (`/api-docs`) e rotas de sistema disponíveis apenas quando `NODE_ENV=development`.
-- **Cache Control:** Cabeçalhos `no-store, no-cache, must-revalidate` aplicados globalmente para proteger dados sensíveis em navegadores e proxies.
+- **Zero `any`:** Todo o codebase segue a diretriz estrita de tipagem forte, garantindo previsibilidade e segurança de memória.
 
 ---
 
@@ -65,60 +75,28 @@ cd treis
 docker-compose up -d
 ```
 
-API: `http://localhost:3000` | Swagger: `http://localhost:3000/api-docs`
+API REST: `http://localhost:3000` | gRPC Server: `localhost:50051` | Swagger: `http://localhost:3000/api-docs`
 
 ### Variáveis de Ambiente (.env)
 
-| Variável               | Descrição                               | Padrão      |
-| :--------------------- | :-------------------------------------- | :---------- |
-| `API_PORT`             | Porta de execução da API                | `3000`      |
-| `DB_HOST`              | Endereço do banco PostgreSQL            | `localhost` |
-| `ENABLE_HATEOAS`       | Habilita links hipermídia nas respostas | `true`      |
-| `ENABLE_RETURN_ERRORS` | Retorna stack trace em erros (Dev)      | `true`      |
-| `SALT_ROUNDS`          | Custo do Hash Bcrypt                    | `10`        |
+| Variável            | Descrição                                  | Padrão                      |
+| :------------------ | :----------------------------------------- | :-------------------------- |
+| `API_PORT`          | Porta de execução da API REST              | `3000`                      |
+| `DB_HOST`           | Endereço do banco PostgreSQL               | `localhost`                 |
+| `INTERNAL_API_KEY`  | Chave secreta para autenticação gRPC       | `S3cr3t_K3y_F0r_gRPC_BFF`   |
+| `ENABLE_HATEOAS`    | Habilita links hipermídia nas respostas    | `true`                      |
+| `SALT_ROUNDS`       | Custo do Hash Bcrypt                       | `10`                        |
 
 ---
 
 ## 🏗️ Geração de Módulos
 
-Crie um CRUD completo a partir de uma tabela existente:
+Crie um CRUD completo a partir de uma tabela existente no banco de dados:
 
 ```bash
 npm run generate:entity
 ```
-
-_O script mapeia automaticamente as colunas do banco para schemas Swagger e interfaces TypeScript._
-
----
-
-## 📡 Padrão de Resposta (JSON)
-
-Todas as respostas seguem um envelope padronizado para facilitar o consumo pelo Front-end:
-
-### Sucesso (Com HATEOAS)
-
-```json
-{
-  "success": true,
-  "message": "Operação realizada com sucesso",
-  "data": { "id": "uuid", "name": "Exemplo" },
-  "meta": {
-    "timestamp": "2023-10-27T10:00:00Z",
-    "requestId": "req-123",
-    "metadataUrl": "/recurso/metadata"
-  }
-}
-```
-
-### Busca e Filtros
-
-A API suporta filtros avançados via query string em endpoints de `/search`:
-
-- `field`: Campo para filtrar.
-- `operator`: Operador (`=`, `!=`, `like`).
-- `value`: Valor da busca.
-
-Exemplo: `GET /users/search?field=email&operator=like&value=@gmail.com`
+O script perguntará quais camadas deseja gerar (incluindo o contrato gRPC e o adaptador).
 
 ---
 
@@ -138,22 +116,22 @@ A API utiliza níveis de acesso (Roles) para proteger recursos sensíveis.
 
 ```text
 src/
-├── adapters/          # Adaptadores (Express/System)
+├── adapters/          # Adaptadores Base (Express/gRPC)
 ├── constants/         # Status HTTP e mensagens do sistema
 ├── controllers/       # Controladores base e globais
 ├── dynamic-modules/   # Módulos gerados automaticamente
-│   ├── adapters/      # Adaptadores específicos de módulos
-│   ├── controllers/   # Regras de fluxo de dados
+│   ├── grpc-adapters/ # Adaptadores gRPC específicos
+│   ├── protos/        # Contratos Protocol Buffers (.proto)
 │   ├── entities/      # Definições de entidades + Swagger Schemas
 │   ├── models/        # Modelos ORM (Objection.js)
 │   ├── routes/        # Definições de rotas + Swagger Docs
 │   └── services/      # Lógica de negócio específica
 ├── middlewares/       # Auth, Log, Error Handlers
+├── proto/             # Arquivos .proto comuns (common.proto)
 ├── repositories/      # Persistência genérica (CRUD)
-├── routes/            # Rotas estáticas (Auth, System, etc)
-├── services/          # Regras de negócio globais
-├── utils/             # Log, Swagger, ResponseHandler
-└── workflows/         # Orquestração de processos complexos
+├── utils/             # Log, Swagger, ErrorHandler
+├── grpc.ts            # Servidor gRPC Central
+└── index.ts           # Ponto de entrada (Express + gRPC)
 ```
 
 ---
