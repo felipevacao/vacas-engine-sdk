@@ -8,6 +8,7 @@ import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
 import { Logger } from '@utils/log';
 import helmet from 'helmet'
+import { GrpcServer } from 'grpc'
 
 /**
  * Prevenção de quebra da API por erros não capturados
@@ -91,3 +92,9 @@ app.listen(
 		console.log(`${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
 	}
 )
+
+/**
+ * Inicia o servidor gRPC
+ */
+const grpcServer = new GrpcServer(50051);
+grpcServer.start();

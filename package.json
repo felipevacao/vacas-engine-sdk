@@ -15,7 +15,7 @@
     "generate:entity": "node scripts/generate-entity.mjs"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.13.4",
+    "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.7.15",
     "@inquirer/prompts": "^7.3.3",
     "@types/cors": "^2.8.19",
