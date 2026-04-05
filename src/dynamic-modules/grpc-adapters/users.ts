@@ -1,0 +1,23 @@
+import { UserService } from '@dynamic-modules/services/user';
+import { UsersController } from '@dynamic-modules/controllers/users';
+import { UsersEntity } from '@dynamic-modules/entities/users';
+import { BaseGrpcAdapter } from '@adapters/grpc.adapter';
+
+class UsersGrpcAdapter extends BaseGrpcAdapter<UsersEntity, UsersController> {
+  constructor() {
+    const controller = new UsersController();
+    const service = new UserService(0, controller);
+    super(service);
+  }
+}
+
+const adapter = new UsersGrpcAdapter();
+
+export default {
+  Create: adapter.create.bind(adapter),
+  Get: adapter.get.bind(adapter),
+  Update: adapter.update.bind(adapter),
+  Delete: adapter.delete.bind(adapter),
+  List: adapter.list.bind(adapter),
+  Metadata: adapter.metadata.bind(adapter),
+};

@@ -48,6 +48,16 @@ export class Logger {
     }
 
     /**
+     * Log de aviso (Arquivo + Console)
+     */
+    static warn(message: string) {
+        this.writeToFile('warn', message);
+        if (env.ENABLE_CONSOLE_LOG) {
+            console.warn(`[WARN] ${message}`);
+        }
+    }
+
+    /**
      * Log de erro (Arquivo + Console opcional)
      */
     static error(message: string, error?: unknown, details?: ErrorContext) {

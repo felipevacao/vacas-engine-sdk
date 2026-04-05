@@ -39,11 +39,17 @@ async function main() {
 			if(await confirm({ message: 'Criar o Controller?'}) == true){
 				generateControllerFile(tableNameCamel, tablenameCapital);
 			}
+			if(await confirm({  message: 'Criar as Services?'}) == true){
+				generateServiceFile(tableNameCamel, tablenameCapital);
+			}
 			if(await confirm({  message: 'Criar as Rotas?'}) == true){
 				generateRoutesFile(tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({  message: 'Criar as Services?'}) == true){
-				generateServiceFile(tableNameCamel, tablenameCapital);
+			if(await confirm({  message: 'Criar o Proto?'}) == true){
+				generateProtoFile(tableNameCamel, tablenameCapital);
+			}
+			if(await confirm({  message: 'Criar o Grpc Adapter?'}) == true){
+				generateGrpcAdapterFile(tableNameCamel, tablenameCapital);
 			}
 		} else {
 			console.log('Tabela não existe ou não permitida!');	
@@ -175,6 +181,26 @@ function generateServiceFile(tableNameCamel, tablenameCapital) {
 	ensureDirectoryExistence(filePath);
 	writeFileSync(filePath, controllerContent);
 	console.log(`Arquivo de Services criado em: ${filePath}`);
+}
+
+// Função para gerar o arquivo proto
+function generateProtoFile(tableNameCamel, tablenameCapital) {
+	const protoContent = getContent('proto.txt', tableNameCamel, tablenameCapital);
+
+	const filePath = join(__dirname, __pathToSave + 'protos', `${tableNameCamel}.proto`);
+	ensureDirectoryExistence(filePath);
+	writeFileSync(filePath, protoContent);
+	console.log(`Arquivo Proto criado em: ${filePath}`);
+}
+
+// Função para gerar o arquivo de adaptador gRPC
+function generateGrpcAdapterFile(tableNameCamel, tablenameCapital) {
+	const adapterContent = getContent('grpc-adapter.txt', tableNameCamel, tablenameCapital);
+
+	const filePath = join(__dirname, __pathToSave + 'grpc-adapters', `${tableNameCamel}.ts`);
+	ensureDirectoryExistence(filePath);
+	writeFileSync(filePath, adapterContent);
+	console.log(`Arquivo de gRPC Adapter criado em: ${filePath}`);
 }
 
 
