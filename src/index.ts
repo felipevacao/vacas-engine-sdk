@@ -88,8 +88,7 @@ const port = env.API_PORT
 app.listen(
 	port,
 	() => {
-		console.log(getMessage(MESSAGES.API.START))
-		console.log(`${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
+		console.log(`[INFO] [Express] ${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
 	}
 )
 
@@ -98,3 +97,5 @@ app.listen(
  */
 const grpcServer = new GrpcServer(50051);
 grpcServer.start();
+
+console.log(`${getMessage(MESSAGES.API.START)}`)

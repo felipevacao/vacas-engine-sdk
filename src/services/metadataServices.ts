@@ -2,6 +2,7 @@ import { db } from '@utils/db'
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { DatabaseFieldInfo, EnhancedFieldMetadata, EnhancedTableMetadata, EnumInfo, ManifestFieldConfig, TableManifest } from 'types/metadata';
+import { METADATA_EXCLUDED_FIELDS } from '../constants/sensitiveFields';
 
 export class MetadataService {
   private db: typeof db;
@@ -120,7 +121,7 @@ export class MetadataService {
         ON tc.constraint_name = cc.constraint_name
       WHERE c.table_name = ?
       AND c.table_schema = 'public'
-      AND c.column_name NOT IN ('created_at', 'updated_at', 'deleted_at', 'password', 'pepper')
+      AND c.column_name NOT IN ('id', ${METADATA_EXCLUDED_FIELDS.map(f => `'${f}'`).join(', ')})
       ORDER BY c.ordinal_position
     `;
 

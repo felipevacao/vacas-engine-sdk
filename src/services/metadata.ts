@@ -1,5 +1,6 @@
 import { db } from '@utils/db'
 import { Metadata } from 'types/entity';
+import { METADATA_EXCLUDED_FIELDS } from '../constants/sensitiveFields';
 
 export const metadata = (table: string) => {
     return async ()
@@ -36,9 +37,7 @@ export const metadata = (table: string) => {
             .select('column_name', 'data_type', 'character_maximum_length', 'is_nullable')
             .where('table_name', tableName)
             .whereNot('column_name', 'id')
-            .whereNot('column_name', 'created_at')
-            .whereNot('column_name', 'updated_at')
-            .whereNot('column_name', 'deleted_at')
+            .whereNotIn('column_name', METADATA_EXCLUDED_FIELDS)
             .orderBy('ordinal_position')
             return Fields.map(field => {
                 return {

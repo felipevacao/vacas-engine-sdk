@@ -197,7 +197,7 @@ function generateProtoFile(tableNameCamel, tablenameCapital) {
 function generateGrpcAdapterFile(tableNameCamel, tablenameCapital) {
 	const adapterContent = getContent('grpc-adapter.txt', tableNameCamel, tablenameCapital);
 
-	const filePath = join(__dirname, __pathToSave + 'grpc-adapters', `${tableNameCamel}.ts`);
+	const filePath = join(__dirname, __pathToSave + 'adapters/grpc/', `${tableNameCamel}.ts`);
 	ensureDirectoryExistence(filePath);
 	writeFileSync(filePath, adapterContent);
 	console.log(`Arquivo de gRPC Adapter criado em: ${filePath}`);
