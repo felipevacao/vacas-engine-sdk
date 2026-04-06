@@ -1,5 +1,5 @@
 import { db } from '@utils/db'
-import { BaseEntity, CreateData, ErrorContext, OutputData, QueryFields } from 'types/entity'
+import { BaseEntity, CreateData, ErrorContext, OutputData, QueryFields } from '@app-types/entity'
 import { ErrorHandler } from '@utils/ErrorHandler'
 
 export const create = <T extends BaseEntity>(table: string) => {

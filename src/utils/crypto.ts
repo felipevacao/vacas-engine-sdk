@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import env from 'libs/env'
+import env from '@libs/env'
 import { Request, Response } from 'express'
 import { apiError } from './error'
 import { MESSAGES } from '@constants/messages'

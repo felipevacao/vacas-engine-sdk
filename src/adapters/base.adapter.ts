@@ -2,7 +2,7 @@ import { MESSAGES } from "@constants/messages";
 import { BaseController } from "@controllers/baseController";
 import { BaseServices } from "@services/baseServices";
 import { apiError } from "@utils/error";
-import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData } from "types/entity";
+import { BaseEntity, CreateData, IAdapter, InputRequest, QueryFields, Model, UpdateData } from "@app-types/entity";
 import { asyncHandler, AsyncHandlerFn } from "@utils/asyncHandler";
 
 export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapter<V, U> {

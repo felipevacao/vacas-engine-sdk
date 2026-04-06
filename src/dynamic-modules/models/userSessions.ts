@@ -3,7 +3,7 @@ import { MESSAGES } from '@constants/messages';
 import { UserSessionsEntity } from '@dynamic-modules/entities/userSessions';
 import * as repository from '@services/repository';
 import { apiError } from '@utils/error';
-import { Model } from 'types/entity';
+import { Model } from '@app-types/entity';
 
 const UserSessionsModel: Model<UserSessionsEntity> = {
   table: 'user_sessions',

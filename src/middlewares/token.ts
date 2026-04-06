@@ -4,8 +4,8 @@ import { ResponseHandler } from '@utils/responseHandler'
 import { Request, Response, NextFunction } from 'express'
 import { cryptoUtils } from '@utils/crypto'
 import { stringUtils } from '@utils/string'
-import { SessionType, UserStatusType } from 'types/entity'
-import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession'
+import { SessionType, UserStatusType } from '@app-types/entity'
+import { AuthUserSessionWorkflow } from '@workflows/AuthUserSession'
 
 const authUserSessionWorkflow = new AuthUserSessionWorkflow()
 

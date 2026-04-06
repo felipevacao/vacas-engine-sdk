@@ -1,4 +1,4 @@
-import { ErrorContext } from "types/entity"
+import { ErrorContext } from "@app-types/entity"
 
 export class ErrorService {
 

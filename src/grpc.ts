@@ -72,10 +72,18 @@ export class GrpcServer {
   }
 
   private async loadDynamicModules(): Promise<void> {
-    const protosPath = join(__dirname, 'dynamic-modules', 'protos');
-    const adaptersPath = join(__dirname, 'dynamic-modules', 'grpc-adapters');
+    // Busca os protos na pasta src (que é copiada para o container)
+    // Se estivermos em dist/grpc.js, voltamos um nível para achar src/
+    const protosPath = __dirname.includes('dist') 
+      ? join(__dirname, '..', 'src', 'dynamic-modules', 'protos')
+      : join(__dirname, 'dynamic-modules', 'protos');
 
-    if (!existsSync(protosPath)) return;
+    const adaptersPath = join(__dirname, 'dynamic-modules', 'adapters', 'grpc');
+
+    if (!existsSync(protosPath)) {
+      Logger.warn(`[gRPC] Pasta de protos não encontrada: ${protosPath}`);
+      return;
+    }
 
     const files = readdirSync(protosPath).filter(f => f.endsWith('.proto'));
 
@@ -89,7 +97,11 @@ export class GrpcServer {
         enums: String,
         defaults: true,
         oneofs: true,
-        includeDirs: [join(__dirname, 'proto')]
+        includeDirs: [
+          __dirname.includes('dist') 
+            ? join(__dirname, '..', 'src', 'proto')
+            : join(__dirname, 'proto')
+        ]
       });
 
       const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as unknown as Record<string, GrpcPackage>;

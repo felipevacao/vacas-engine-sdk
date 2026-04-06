@@ -17,7 +17,7 @@
  */
 
 // Gerado automáticamente
-import { BaseEntity, UserStatus, UserRole } from 'types/entity'
+import { BaseEntity, UserStatus, UserRole } from '@app-types/entity'
 
 export interface UsersEntity extends BaseEntity {
     name: string

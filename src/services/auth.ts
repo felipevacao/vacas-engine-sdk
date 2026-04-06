@@ -1,5 +1,5 @@
 import { hashUtils } from "@utils/hash";
-import { HashResult } from "types/hash";
+import { HashResult } from "@app-types/hash";
 
 export class AuthService {
 

@@ -1,5 +1,5 @@
 import { UsersController } from "@dynamic-modules/controllers/users";
-import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from 'types/entity';
+import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from '@app-types/entity';
 import { hashUtils } from '@utils/hash';
 import { BaseServices } from "@services/baseServices";
 import { UsersEntity } from "@dynamic-modules/entities/users";

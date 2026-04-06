@@ -1,9 +1,9 @@
-import env from "libs/env"
+import env from "@libs/env"
 import bcrypt from "bcrypt"
 import crypto from 'crypto'
 import { promisify } from "util"
 import { PepperConfig } from "./pepper"
-import { HashResult } from "types/hash"
+import { HashResult } from "@app-types/hash"
 
 const compareAsync = promisify(bcrypt.compare)
 const pepperConfig = new PepperConfig()

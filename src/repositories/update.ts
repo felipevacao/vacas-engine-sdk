@@ -1,5 +1,5 @@
 import { db } from '@utils/db'
-import { BaseEntity, UpdateData, OutputData, QueryFields, ErrorContext } from 'types/entity'
+import { BaseEntity, UpdateData, OutputData, QueryFields, ErrorContext } from '@app-types/entity'
 import { ErrorHandler } from '@utils/ErrorHandler'
 import { apiError } from '@utils/error'
 import { MESSAGES } from '@constants/messages'

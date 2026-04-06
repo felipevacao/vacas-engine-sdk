@@ -1,4 +1,4 @@
-import { HateoasEntity, HateoasLink, BaseEntity } from 'types/entity';
+import { HateoasEntity, HateoasLink, BaseEntity } from '@app-types/entity';
 
 /**
  * Classe utilitária para transformar entidades em formato HATEOAS, adicionando links de navegação conforme necessário.

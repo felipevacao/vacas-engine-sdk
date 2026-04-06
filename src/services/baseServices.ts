@@ -1,4 +1,4 @@
-import env from "libs/env"
+import env from "@libs/env"
 import { MESSAGES } from "@constants/messages";
 import { BaseController } from "@controllers/baseController";
 import { MetadataService } from "@services/metadataServices"
@@ -15,7 +15,7 @@ import {
 	EnhancedTableMetadata,
 	QueryFields,
 	QueryFilter
-} from 'types/entity'
+} from '@app-types/entity'
 import { HttpStatus } from "@constants/HttpStatus";
 
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {

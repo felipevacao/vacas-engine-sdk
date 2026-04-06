@@ -85,7 +85,9 @@
     "dynamic-modules": "dist/dynamic-modules",
     "workflows": "dist/workflows",
     "grpc": "dist/grpc",
-    "alias": "dist/alias"
+    "alias": "dist/alias",
+    "@app-types": "dist/types",
+    "@workflows": "dist/workflows"
   },
   "compilerOptions": {
     "typeRoots": [

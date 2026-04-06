@@ -4,7 +4,7 @@ import { UserService } from "@dynamic-modules/services/user";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
 import { AuthService } from "@services/auth";
-import { TokenSessionType } from "types/token";
+import { TokenSessionType } from "@app-types/token";
 import session from "express-session";
 import {
 	InputRequest,
@@ -15,7 +15,7 @@ import {
 	UpdateData,
 	UserStatus,
 	UserStatusType
-} from "types/entity";
+} from "@app-types/entity";
 import { HttpStatus } from "@constants/HttpStatus";
 import { UsersEntity } from "@dynamic-modules/entities/users";
 import { UsersRolesService } from "@dynamic-modules/services/users.roles";

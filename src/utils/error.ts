@@ -1,4 +1,4 @@
-import { ErrorContext } from "types/entity"
+import { ErrorContext } from "@app-types/entity"
 import { sMessage } from "@constants/messages/index"
 
 export class apiError extends Error {

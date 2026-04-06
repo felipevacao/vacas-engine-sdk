@@ -1,6 +1,6 @@
 import { DATABASE } from './database';
 import { ERROR } from './errorCodes';
-import env from 'libs/env';
+import env from '@libs/env';
 
 export type sMessage = {
 	name: string

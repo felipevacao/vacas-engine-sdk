@@ -1,4 +1,4 @@
-import env from "libs/env"
+import env from "@libs/env"
 
 export class PepperConfig {
 

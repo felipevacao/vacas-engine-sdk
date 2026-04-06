@@ -1,7 +1,7 @@
 import { ServerUnaryCall, sendUnaryData, status, Metadata as GrpcMetadata } from '@grpc/grpc-js';
 import { BaseServices } from '../services/baseServices';
 import { HttpStatus } from '../constants/HttpStatus';
-import { BaseEntity, CreateData, EnhancedTableMetadata, UpdateData } from 'types/entity';
+import { BaseEntity, CreateData, EnhancedTableMetadata, UpdateData } from '@app-types/entity';
 import { BaseController } from '@controllers/baseController';
 
 /**

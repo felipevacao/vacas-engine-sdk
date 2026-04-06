@@ -1,7 +1,7 @@
 import express from 'express';
 import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares/token';
 import { UserExpressAdapter } from '@dynamic-modules/adapters/express/userExpress.adapter';
-import { AuthUserSessionWorkflow } from 'workflows/AuthUserSession';
+import { AuthUserSessionWorkflow } from '@workflows/AuthUserSession';
 import { UserService } from '@dynamic-modules/services/user';
 
 /**

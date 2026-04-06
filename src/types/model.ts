@@ -1,4 +1,4 @@
-import { BaseEntity, CreateData, UpdateData, OutputData, QueryFields, Metadata, PaginatedResult } from "types/entity";
+import { BaseEntity, CreateData, UpdateData, OutputData, QueryFields, Metadata, PaginatedResult } from "@app-types/entity";
 
 export interface Model<T extends BaseEntity> {
     table: string,

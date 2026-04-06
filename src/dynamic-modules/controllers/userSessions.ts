@@ -2,7 +2,7 @@
 import { BaseController } from '@controllers/baseController';
 import UserSessionsModel from '@dynamic-modules/models/userSessions';
 import { UserSessionsEntity } from '@dynamic-modules/entities/userSessions';
-import { QueryFilter, SessionType } from 'types/entity';
+import { QueryFilter, SessionType } from '@app-types/entity';
 
 export class UserSessionsController extends BaseController<UserSessionsEntity> {
   constructor() {

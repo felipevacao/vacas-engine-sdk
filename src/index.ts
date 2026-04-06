@@ -1,5 +1,5 @@
 import './alias'
-import env from "./libs/env"
+import env from "@libs/env"
 import express from 'express'
 import "./types/express"
 import router from "./routes/index"
@@ -8,7 +8,7 @@ import { MESSAGES, getMessage } from '@constants/messages/index';
 import rateLimit from 'express-rate-limit';
 import { Logger } from '@utils/log';
 import helmet from 'helmet'
-import { GrpcServer } from 'grpc'
+import { GrpcServer } from './grpc'
 
 /**
  * Prevenção de quebra da API por erros não capturados

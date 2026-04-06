@@ -2,7 +2,7 @@ import { db } from "@utils/db";
 import { ErrorHandler } from "@utils/ErrorHandler";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
-import { ErrorContext } from "types/entity";
+import { ErrorContext } from "@app-types/entity";
 import { HttpStatus } from "@constants/HttpStatus";
 
 export const deleteById = (table: string) => {

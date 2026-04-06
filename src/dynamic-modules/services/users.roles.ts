@@ -1,5 +1,5 @@
 import { UserService } from "./user";
-import { UserRole } from 'types/entity'
+import { UserRole } from '@app-types/entity'
 
 export class UsersRolesService extends UserService {
 

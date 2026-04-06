@@ -1,40 +1,37 @@
 {
   "compilerOptions": {
-    "target": "ES2021", // Define a versão do ECMAScript
-    "module": "CommonJS", // Usa módulos CommonJS
-    "outDir": "./dist", // Pasta de saída para os arquivos compilados
-    "rootDir": "./src", // Pasta de entrada dos arquivos TypeScript
-    "strict": true, // Habilita todas as verificações de tipo estritas
-    "esModuleInterop": true, // Permite imports de módulos CommonJS
-    "skipLibCheck": true, // Ignora a verificação de tipos em arquivos de declaração
-    "baseUrl": "./src",
-    // "ignoreDeprecations": "6.0", // Ignora avisos de depreciação
+    "target": "ES2021",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "paths": {
-      "@controllers/*": ["controllers/*"],
-      "@adapters/*": ["adapters/*"],
-      "@models/*": ["models/*"],
-      "@utils/*": ["utils/*"],
-      "@entities/*": ["types/entities/*"],
-      "@transformers/*": ["transformers/*"],
-      "@libs/*": ["libs/*"],
-      "@services/*": ["services/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@dynamic-modules/*": ["dynamic-modules/*"],
-      "@constants/*": ["constants/*"],
-      "@repositories/*": ["repositories/*"]
+      "@controllers/*": ["./src/controllers/*"],
+      "@adapters/*": ["./src/adapters/*"],
+      "@models/*": ["./src/models/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@entities/*": ["./src/dynamic-modules/entities/*"],
+      "@transformers/*": ["./src/transformers/*"],
+      "@libs/*": ["./src/libs/*"],
+      "@services/*": ["./src/services/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@dynamic-modules/*": ["./src/dynamic-modules/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@repositories/*": ["./src/repositories/*"],
+      "@app-types/*": ["./src/types/*"],
+      "@workflows/*": ["./src/workflows/*"]
     }
   },
-  /* Especifica onde o TypeScript deve procurar por definições de tipo */
   "typeRoots": [
     "./node_modules/@types",
-    "./src/types" // Pasta onde está seu express.d.ts
+    "./src/types"
   ],
-  /* Garante que as extensões de tipo sejam reconhecidas */
   "types": ["node", "express"],
-  /* Inclua explicitamente a pasta de tipos */
   "include": [
     "src/**/*",
-    "src/types/**/*" // Inclui seus arquivos de tipo personalizados
+    "src/types/**/*"
   ],
-  "exclude": ["node_modules", "dist"] // Exclui pastas desnecessárias
+  "exclude": ["node_modules", "dist"]
 }

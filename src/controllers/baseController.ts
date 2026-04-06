@@ -7,7 +7,7 @@ import {
     OutputData,
     PaginatedResult,
     QueryFilter
-} from 'types/entity'
+} from '@app-types/entity'
 
 export class BaseController<T extends BaseEntity> {
 

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import env from "libs/env";
-import { ErrorContext } from 'types/entity';
+import env from "@libs/env";
+import { ErrorContext } from '@app-types/entity';
 import { stringUtils } from './string';
 
 /**

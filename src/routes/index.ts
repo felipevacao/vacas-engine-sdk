@@ -6,7 +6,7 @@ import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
 import authRoutes from './auth';
-import env from 'libs/env';
+import env from '@libs/env';
 import { MESSAGES } from '@constants/messages/index';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from '@utils/swagger';

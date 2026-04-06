@@ -2,7 +2,7 @@ import { BaseServices } from "@services/baseServices";
 import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
 import { UserSessionsController } from "@dynamic-modules/controllers/userSessions";
 import { cryptoUtils } from "@utils/crypto"
-import { TokenType, TokenSessionType } from "types/token"
+import { TokenType, TokenSessionType } from "@app-types/token"
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
 import {
@@ -11,7 +11,7 @@ import {
 	UserStatus,
 	UpdateData,
 	OutputData
-} from "types/entity";
+} from "@app-types/entity";
 import { BaseController } from "@controllers/baseController";
 
 export class UserSessionService

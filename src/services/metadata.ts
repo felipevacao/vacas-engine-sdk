@@ -1,5 +1,5 @@
 import { db } from '@utils/db'
-import { Metadata } from 'types/entity';
+import { Metadata } from '@app-types/entity';
 import { METADATA_EXCLUDED_FIELDS } from '../constants/sensitiveFields';
 
 export const metadata = (table: string) => {

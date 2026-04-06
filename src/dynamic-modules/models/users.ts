@@ -2,7 +2,7 @@ import { MESSAGES } from '@constants/messages';
 import { UsersEntity } from '@dynamic-modules/entities/users';
 import * as repository from '@services/repository';
 import { apiError } from '@utils/error';
-import { Model } from 'types/entity';
+import { Model } from '@app-types/entity';
 
 const UsersModel: Model<UsersEntity> = {
   table: 'users',
