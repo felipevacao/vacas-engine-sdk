@@ -19,6 +19,7 @@ services:
     container_name: treisapi
     ports:
       - "3002:3002"
+      - "50051:50051"
     environment:
       DB_HOST: postdb 
       DB_USER: felipe

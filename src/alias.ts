@@ -1,15 +1,17 @@
 // Detecta se está rodando em desenvolvimento (ts-node) ou produção (compiled)
-const isDev = process.env.NODE_ENV !== 'production' || __filename.endsWith('.ts');
+// Se o arquivo atual termina em .ts ou .mts, estamos rodando o código fonte TypeScript (provavelmente via ts-node).
+// Caso contrário, estamos rodando o código compilado em JavaScript (.js).
+const isTsFile = __filename.endsWith('.ts') || __filename.endsWith('.mts');
 
-// Configuração condicional de aliases: em desenvolvimento usa tsconfig-paths para resolver imports do TypeScript,
-// em produção usa module-alias para resolver os mesmos imports no JavaScript compilado,
+// Configuração condicional de aliases: em desenvolvimento (TS) usa tsconfig-paths para resolver imports,
+// em produção (JS) usa module-alias para resolver os mesmos imports no JavaScript compilado,
 // garantindo que os caminhos funcionem corretamente em ambos ambientes sem alterar o código fonte.
-if (isDev) {
-	// Desenvolvimento: usa tsconfig-paths
+if (isTsFile) {
+	// Desenvolvimento: usa tsconfig-paths para mapear aliases para arquivos .ts em /src
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	require('tsconfig-paths/register');
 } else {
-	// Produção: usa module-alias
+	// Produção: usa module-alias para mapear aliases para arquivos .js em /dist (conforme configurado no package.json)
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	require('module-alias/register');
 }

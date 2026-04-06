@@ -8,7 +8,7 @@
     "esModuleInterop": true, // Permite imports de módulos CommonJS
     "skipLibCheck": true, // Ignora a verificação de tipos em arquivos de declaração
     "baseUrl": "./src",
-    "ignoreDeprecations": "6.0", // Ignora avisos de depreciação
+    // "ignoreDeprecations": "6.0", // Ignora avisos de depreciação
     "paths": {
       "@controllers/*": ["controllers/*"],
       "@adapters/*": ["adapters/*"],
