@@ -1,6 +1,6 @@
-import { {{tablenameCapital}}Service } from '@dynamic-modules/services/{{tableNameCamel}}';
-import { {{tablenameCapital}}Controller } from '@dynamic-modules/controllers/{{tableNameCamel}}';
-import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
+import { {{tablenameCapital}}Service } from '@dynamic-modules/services/{{tablenameCapital}}';
+import { {{tablenameCapital}}Controller } from '@dynamic-modules/controllers/{{tablenameCapital}}';
+import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tablenameCapital}}';
 import { BaseGrpcAdapter } from '@adapters/grpc.adapter';
 
 class {{tablenameCapital}}GrpcAdapter extends BaseGrpcAdapter<{{tablenameCapital}}Entity, {{tablenameCapital}}Controller> {

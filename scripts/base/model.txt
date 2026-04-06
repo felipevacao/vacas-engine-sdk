@@ -1,9 +1,9 @@
 // Gerado automáticamente
 import { MESSAGES } from '@constants/messages';
-import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
+import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tablenameCapital}}';
 import * as repository from '@services/repository';
 import { apiError } from '@utils/error';
-import { Model } from 'types/entity';
+import { Model } from '@app-types/entity';
 
 const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   table: '{{realTableName}}',

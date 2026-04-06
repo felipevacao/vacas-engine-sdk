@@ -1,6 +1,6 @@
 // scripts/generate-entity.js
 import { writeFileSync, readFileSync, mkdirSync } from 'fs';
-import { join, dirname  } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { input, confirm } from '@inquirer/prompts';
 import "dotenv/config";
@@ -18,7 +18,7 @@ const db = knex({
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const __pathToSave = 'dynamic-modules/';
+const __pathToSave = '../src/dynamic-modules/';
 
 // Função principal
 async function main() {
@@ -30,34 +30,34 @@ async function main() {
 			console.table(columns);
 			const tableNameCamel = toCamelCase(tableName);
 			const tablenameCapital = tableNameCamel.charAt(0).toUpperCase() + tableNameCamel.slice(1)
-			if(await confirm({ message: 'Criar a Entidade?'}) == true){
+			if (await confirm({ message: 'Criar a Entidade?' }) == true) {
 				generateEntityFile(columns, tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({ message: 'Criar o Model?'}) == true){
+			if (await confirm({ message: 'Criar o Model?' }) == true) {
 				await generateModelFile(tableName, tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({ message: 'Criar o Controller?'}) == true){
+			if (await confirm({ message: 'Criar o Controller?' }) == true) {
 				generateControllerFile(tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({  message: 'Criar as Services?'}) == true){
+			if (await confirm({ message: 'Criar as Services?' }) == true) {
 				generateServiceFile(tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({  message: 'Criar as Rotas?'}) == true){
+			if (await confirm({ message: 'Criar as Rotas?' }) == true) {
 				generateRoutesFile(tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({  message: 'Criar o Proto?'}) == true){
+			if (await confirm({ message: 'Criar o Proto?' }) == true) {
 				generateProtoFile(tableNameCamel, tablenameCapital);
 			}
-			if(await confirm({  message: 'Criar o Grpc Adapter?'}) == true){
+			if (await confirm({ message: 'Criar o Grpc Adapter?' }) == true) {
 				generateGrpcAdapterFile(tableNameCamel, tablenameCapital);
 			}
 		} else {
-			console.log('Tabela não existe ou não permitida!');	
+			console.log('Tabela não existe ou não permitida!');
 		}
 	} catch (error) {
 		console.error('Erro durante a execução do script:', error);
 	} finally {
-		
+
 		await db.destroy();
 		console.log('Conexão com o banco de dados encerrada.');
 		console.log('Processo Finalizado.');
@@ -73,14 +73,14 @@ function ensureDirectoryExistence(filePath) {
 		mkdirSync(dir, { recursive: true });
 	} catch (error) {
 		if (error.code !== 'EEXIST') {
-		throw error;
+			throw error;
 		}
 	}
 }
 
 // Função para converter o nome da coluna para camelCase
 function toCamelCase(str) {
-    return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+	return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
 }
 
 // Função pra pegar o conteudo do arquivo e já alterar os valores para a entidade
@@ -102,7 +102,7 @@ async function getTableStructure(tableName) {
 				AND column_name NOT IN ('id','created_at','updated_at', 'deleted_at')
 				AND table_name NOT IN ('users')
 	`, [tableName]);
-	
+
 	const rows = columns.rows.map(col => {
 		return {
 			column_name: toCamelCase(col.column_name),
@@ -117,7 +117,7 @@ async function getTableStructure(tableName) {
 
 // Função para gerar o arquivo de entidade
 function generateEntityFile(columns, tableNameCamel, tablenameCapital) {
-	
+
 	const swaggerProperties = columns.map(col => {
 		const type = col.converted_type === 'number' ? 'integer' : col.converted_type.toLowerCase();
 		return ` *         ${col.column_name}:
@@ -156,7 +156,7 @@ async function generateModelFile(tableName, tableNameCamel, tablenameCapital) {
 	const columnNames = columns.map((row) => "'" + row.column_name + "'");
 	const columnsString = columnNames.join(', ');
 	const modelContent = (getContent('model.txt', tableNameCamel, tablenameCapital)).replaceAll('{{fields}}', columnsString).replaceAll('{{realTableName}}', tableName);
-	
+
 	const filePath = join(__dirname, __pathToSave + 'models', `${tableNameCamel}.ts`);
 	ensureDirectoryExistence(filePath);
 	writeFileSync(filePath, modelContent);
@@ -204,7 +204,7 @@ function generateGrpcAdapterFile(tableNameCamel, tablenameCapital) {
 }
 
 
-	// Função para gerar o arquivo de rotas
+// Função para gerar o arquivo de rotas
 function generateRoutesFile(tableNameCamel, tablenameCapital) {
 	const swaggerRoutes = `/**
  * @swagger

@@ -1,6 +1,6 @@
-import { {{tablenameCapital}}Controller } from "@dynamic-modules/controllers/{{tableNameCamel}}";
+import { {{tablenameCapital}}Controller } from "@dynamic-modules/controllers/{{tablenameCapital}}";
 import { BaseServices } from "@services/baseServices";
-import { {{tablenameCapital}}Entity } from "@dynamic-modules/entities/{{tableNameCamel}}";
+import { {{tablenameCapital}}Entity } from "@dynamic-modules/entities/{{tablenameCapital}}";
 
 export class {{tablenameCapital}}Service extends BaseServices < {{tablenameCapital}}Entity, {{tablenameCapital}}Controller > {
 

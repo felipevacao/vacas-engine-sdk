@@ -32,7 +32,8 @@
   ],
   "types": ["node", "express"],
   "include": [
-    "src/core/**/*"
+    "src/core/**/*",
+    "src/dynamic-modules/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }

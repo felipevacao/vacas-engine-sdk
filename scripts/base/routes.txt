@@ -1,6 +1,6 @@
 // Gerado automáticamente
 import express from 'express';
-import { {{tablenameCapital}}Service } from '@dynamic-modules/services/{{tableNameCamel}}';
+import { {{tablenameCapital}}Service } from '@dynamic-modules/services/{{tablenameCapital}}';
 import { ExpressAdapter } from '@adapters/express.adapter';
 import { tokenMiddleware } from '@middlewares/token';
 

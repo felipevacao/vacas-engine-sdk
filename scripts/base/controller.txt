@@ -1,8 +1,8 @@
 // Gerado automáticamente
 import { BaseController } from '@controllers/baseController';
-import {{tablenameCapital}}Model from '@dynamic-modules/models/{{tableNameCamel}}';
-import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tableNameCamel}}';
-import { QueryFilter } from 'types/entity';
+import {{tablenameCapital}}Model from '@dynamic-modules/models/{{tablenameCapital}}';
+import { {{tablenameCapital}}Entity } from '@dynamic-modules/entities/{{tablenameCapital}}';
+import { QueryFilter } from '@app-types/entity';
 
 export class {{tablenameCapital}}Controller extends BaseController<{{tablenameCapital}}Entity> {
   constructor() {
