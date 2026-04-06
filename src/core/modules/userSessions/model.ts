@@ -1,6 +1,6 @@
 // Gerado automáticamente
 import { MESSAGES } from '@constants/messages';
-import { UserSessionsEntity } from '@dynamic-modules/entities/userSessions';
+import { UserSessionsEntity } from '@core-modules/userSessions/entity';
 import * as repository from '@services/repository';
 import { apiError } from '@utils/error';
 import { Model } from '@app-types/entity';

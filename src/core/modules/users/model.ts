@@ -1,5 +1,5 @@
 import { MESSAGES } from '@constants/messages';
-import { UsersEntity } from '@dynamic-modules/entities/users';
+import { UsersEntity } from './entity';
 import * as repository from '@services/repository';
 import { apiError } from '@utils/error';
 import { Model } from '@app-types/entity';

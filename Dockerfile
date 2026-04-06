@@ -36,4 +36,4 @@ ENV PEPPER_CURRENT=""
 
 EXPOSE $PORT
 
-CMD ["node", "--trace-deprecation", "dist/index.js"]
+CMD ["node", "--trace-deprecation", "dist/core/index.js"]

@@ -7,11 +7,11 @@
     "email": "felipe.trevenzoli@gmail.com",
     "url": "https://github.com/felipevacao"
   },
-  "main": "src/index.ts",
+  "main": "src/core/index.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node --trace-deprecation -r ts-node/register src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "start": "node --trace-deprecation -r ts-node/register src/core/index.ts",
+    "dev": "nodemon --exec ts-node src/core/index.ts",
     "generate:entity": "node scripts/generate-entity.mjs"
   },
   "dependencies": {
@@ -60,39 +60,41 @@
     "typescript-eslint": "^8.26.1"
   },
   "_moduleAliases": {
-    "@controllers": "dist/controllers",
-    "@adapters": "dist/adapters",
-    "@models": "dist/models",
-    "@utils": "dist/utils",
+    "@core": "dist/core",
+    "@controllers": "dist/core/controllers",
+    "@adapters": "dist/core/adapters",
+    "@models": "dist/core/models",
+    "@utils": "dist/core/utils",
     "@entities": "dist/dynamic-modules/entities",
-    "@transformers": "dist/transformers",
-    "@libs": "dist/libs",
-    "@services": "dist/services",
-    "@middlewares": "dist/middlewares",
+    "@transformers": "dist/core/transformers",
+    "@libs": "dist/core/libs",
+    "@services": "dist/core/services",
+    "@middlewares": "dist/core/middlewares",
     "@dynamic-modules": "dist/dynamic-modules",
-    "@constants": "dist/constants",
-    "@repositories": "dist/repositories",
-    "libs": "dist/libs",
-    "utils": "dist/utils",
-    "services": "dist/services",
-    "middlewares": "dist/middlewares",
-    "constants": "dist/constants",
-    "adapters": "dist/adapters",
-    "repositories": "dist/repositories",
-    "types": "dist/types",
-    "models": "dist/models",
-    "controllers": "dist/controllers",
+    "@constants": "dist/core/constants",
+    "@repositories": "dist/core/repositories",
+    "@core-modules": "dist/core/modules",
+    "@app-types": "dist/core/types",
+    "@workflows": "dist/core/workflows",
+    "libs": "dist/core/libs",
+    "utils": "dist/core/utils",
+    "services": "dist/core/services",
+    "middlewares": "dist/core/middlewares",
+    "constants": "dist/core/constants",
+    "adapters": "dist/core/adapters",
+    "repositories": "dist/core/repositories",
+    "types": "dist/core/types",
+    "models": "dist/core/models",
+    "controllers": "dist/core/controllers",
     "dynamic-modules": "dist/dynamic-modules",
-    "workflows": "dist/workflows",
-    "grpc": "dist/grpc",
-    "alias": "dist/alias",
-    "@app-types": "dist/types",
-    "@workflows": "dist/workflows"
+    "workflows": "dist/core/workflows",
+    "grpc": "dist/core/grpc",
+    "alias": "dist/alias"
   },
   "compilerOptions": {
     "typeRoots": [
       "./node_modules/@types",
-      "./src/types"
+      "./src/core/types"
     ]
   },
   "license": "ISC"

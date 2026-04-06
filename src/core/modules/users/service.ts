@@ -1,8 +1,8 @@
-import { UsersController } from "@dynamic-modules/controllers/users";
+import { UsersController } from "./controller";
 import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from '@app-types/entity';
 import { hashUtils } from '@utils/hash';
 import { BaseServices } from "@services/baseServices";
-import { UsersEntity } from "@dynamic-modules/entities/users";
+import { UsersEntity } from "./entity";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
 import { HttpStatus } from "@constants/HttpStatus";

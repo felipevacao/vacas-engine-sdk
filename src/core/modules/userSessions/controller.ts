@@ -1,7 +1,7 @@
 // Gerado automáticamente
 import { BaseController } from '@controllers/baseController';
-import UserSessionsModel from '@dynamic-modules/models/userSessions';
-import { UserSessionsEntity } from '@dynamic-modules/entities/userSessions';
+import UserSessionsModel from '@core-modules/userSessions/model';
+import { UserSessionsEntity } from '@core-modules/userSessions/entity';
 import { QueryFilter, SessionType } from '@app-types/entity';
 
 export class UserSessionsController extends BaseController<UserSessionsEntity> {
