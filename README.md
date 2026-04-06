@@ -10,6 +10,16 @@ A **Treis API** é uma solução avançada e modular para o gerenciamento dinâm
 
 ---
 
+## 🏗️ Arquitetura Core Engine
+
+A API evoluiu para uma estrutura de **Core Engine**, onde a infraestrutura central (Core) é separada dos módulos dinâmicos específicos de cada projeto, permitindo a injeção de regras de negócio isoladas enquanto se mantém um núcleo compartilhado.
+
+- **Core Engine**: Contém a infraestrutura compartilhada (Adapters, Middlewares, BaseServices, Autenticação).
+- **Server-Driven UI**: A API fornece metadados dinâmicos para a montagem de formulários no Frontend.
+- **Herança Docker**: Facilita a criação de instâncias isoladas por projeto.
+
+---
+
 ## 🌟 Principais Diferenciais
 
 - **⚙️ Geração Dinâmica:** Scaffolding automatizado de novos módulos (Entity, Model, Service, Controller, Route, Proto, GrpcAdapter).
@@ -36,8 +46,9 @@ A **Treis API** é uma solução avançada e modular para o gerenciamento dinâm
 ## 📡 gRPC (Backend-to-Backend)
 
 A Treis API foi projetada para atuar em uma arquitetura de microsserviços ou BFF (Backend-for-Frontend).
+
 - **Porta:** `50051`
-- **Contratos:** Arquivos `.proto` localizados em `src/dynamic-modules/protos/`.
+- **Contratos:** Arquivos `.proto` localizados em `src/core/modules/*/` ou `src/dynamic-modules/protos/`.
 - **Performance:** Comunicação binária de baixa latência ideal para comunicação entre containers.
 - **Segurança:** Requer `x-internal-key` no metadata de cada chamada.
 
@@ -47,16 +58,16 @@ A Treis API foi projetada para atuar em uma arquitetura de microsserviços ou BF
 
 A API implementa diversas camadas de proteção seguindo as melhores práticas do OWASP:
 
-- **Service-to-Service Auth:** Proteção de chamadas gRPC através de uma chave secreta compartilhada (`INTERNAL_API_KEY`), impedindo acessos não autorizados dentro da rede interna.
+- **Service-to-Service Auth:** Proteção de chamadas gRPC através de uma chave secreta compartilhada (`INTERNAL_API_KEY`).
 - **Cabeçalhos HTTP:** Utiliza `Helmet` para proteção automática contra XSS, Clickjacking e MIME Sniffing.
-- **Limitação de Taxa (Rate Limit):** Proteção global de 100 requisições a cada 15 minutos por IP para prevenir ataques de força bruta.
-- **Integridade de Dados:** 
-  - Proteção rigorosa contra *Mass Assignment* (atribuição em massa) em rotas de atualização.
-  - Payload máximo de JSON limitado a **10kb** para prevenir ataques de exaustão de memória.
+- **Limitação de Taxa (Rate Limit):** Proteção global de 100 requisições a cada 15 minutos por IP.
+- **Integridade de Dados:**
+  - Proteção rigorosa contra _Mass Assignment_.
+  - Payload máximo de JSON limitado a **10kb**.
 - **Autenticação Avançada:**
-  - Senhas criptografadas com `bcrypt` combinado a um `HMAC Pepper` de versão controlada.
+  - Senhas criptografadas com `bcrypt` combinado a um `HMAC Pepper`.
   - Validação de sessão vinculada ao endereço IP do cliente.
-- **Zero `any`:** Todo o codebase segue a diretriz estrita de tipagem forte, garantindo previsibilidade e segurança de memória.
+- **Zero `any`:** Todo o codebase segue a diretriz estrita de tipagem forte.
 
 ---
 
@@ -79,13 +90,13 @@ API REST: `http://localhost:3000` | gRPC Server: `localhost:50051` | Swagger: `h
 
 ### Variáveis de Ambiente (.env)
 
-| Variável            | Descrição                                  | Padrão                      |
-| :------------------ | :----------------------------------------- | :-------------------------- |
-| `API_PORT`          | Porta de execução da API REST              | `3000`                      |
-| `DB_HOST`           | Endereço do banco PostgreSQL               | `localhost`                 |
-| `INTERNAL_API_KEY`  | Chave secreta para autenticação gRPC       | `S3cr3t_K3y_F0r_gRPC_BFF`   |
-| `ENABLE_HATEOAS`    | Habilita links hipermídia nas respostas    | `true`                      |
-| `SALT_ROUNDS`       | Custo do Hash Bcrypt                       | `10`                        |
+| Variável           | Descrição                               | Padrão                    |
+| :----------------- | :-------------------------------------- | :------------------------ |
+| `API_PORT`         | Porta de execução da API REST           | `3000`                    |
+| `DB_HOST`          | Endereço do banco PostgreSQL            | `localhost`               |
+| `INTERNAL_API_KEY` | Chave secreta para autenticação gRPC    | `S3cr3t_K3y_F0r_gRPC_BFF` |
+| `ENABLE_HATEOAS`   | Habilita links hipermídia nas respostas | `true`                    |
+| `SALT_ROUNDS`      | Custo do Hash Bcrypt                    | `10`                      |
 
 ---
 
@@ -96,7 +107,6 @@ Crie um CRUD completo a partir de uma tabela existente no banco de dados:
 ```bash
 npm run generate:entity
 ```
-O script perguntará quais camadas deseja gerar (incluindo o contrato gRPC e o adaptador).
 
 ---
 
@@ -116,23 +126,37 @@ A API utiliza níveis de acesso (Roles) para proteger recursos sensíveis.
 
 ```text
 src/
-├── adapters/          # Adaptadores Base (Express/gRPC)
-├── constants/         # Status HTTP e mensagens do sistema
-├── controllers/       # Controladores base e globais
-├── dynamic-modules/   # Módulos gerados automaticamente
-│   ├── grpc-adapters/ # Adaptadores gRPC específicos
-│   ├── protos/        # Contratos Protocol Buffers (.proto)
-│   ├── entities/      # Definições de entidades + Swagger Schemas
-│   ├── models/        # Modelos ORM (Objection.js)
-│   ├── routes/        # Definições de rotas + Swagger Docs
-│   └── services/      # Lógica de negócio específica
-├── middlewares/       # Auth, Log, Error Handlers
-├── proto/             # Arquivos .proto comuns (common.proto)
-├── repositories/      # Persistência genérica (CRUD)
-├── utils/             # Log, Swagger, ErrorHandler
-├── grpc.ts            # Servidor gRPC Central
-└── index.ts           # Ponto de entrada (Express + gRPC)
+├── core/                 # Core Engine (Infra, Auth, BaseServices)
+│   ├── modules/          # Módulos Base (Built-in: Users, Auth)
+│   ├── adapters/
+│   ├── libs/
+│   ├── middlewares/
+│   ├── repositories/
+│   ├── routes/
+│   ├── services/
+│   ├── transformers/
+│   ├── types/
+│   ├── utils/
+│   ├── workflows/
+│   └── index.ts        # Inicializador principal
+└── dynamic-modules/    # Extensões específicas de cada projeto
+    ├── adapters/       # Adaptadores
+    │   ├── express/
+    │   └── grpc/
+    ├── protos/         # Contratos Protocol Buffers (.proto)
+    ├── entities/       # Definições de entidades + Swagger Schemas
+    ├── models/         # Modelos ORM (Objection.js)
+    ├── routes/         # Definições de rotas + Swagger Docs
+    └── services/       # Lógica de negócio específica
 ```
+
+## ⚙️ Aliases (Path Mapping)
+
+- `@core/*`: `./src/core/*`
+- `@core-modules/*`: `./src/core/modules/*`
+- `@dynamic-modules/*`: `./src/dynamic-modules/*`
+- `@app-types/*`: `./src/core/types/*`
+- `@workflows/*`: `./src/core/workflows/*`
 
 ---
 

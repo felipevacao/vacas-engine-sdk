@@ -1,6 +1,6 @@
-import { UserService } from '@dynamic-modules/services/user';
-import { UsersController } from '@dynamic-modules/controllers/users';
-import { UsersEntity } from '@dynamic-modules/entities/users';
+import { UserService } from './service';
+import { UsersController } from './controller';
+import { UsersEntity } from './entity';
 import { BaseGrpcAdapter } from '@adapters/grpc.adapter';
 
 class UsersGrpcAdapter extends BaseGrpcAdapter<UsersEntity, UsersController> {

@@ -1,6 +1,6 @@
 import { HttpStatus } from '@constants/HttpStatus';
 import { MESSAGES } from '@constants/messages';
-import { UsersRolesService } from '@dynamic-modules/services/users.roles';
+import { UsersRolesService } from './roles.service';
 import { Request, Response, NextFunction } from 'express'
 import { ResponseHandler } from '@utils/responseHandler'
 

@@ -40,23 +40,45 @@ router.use((req, res, next) => {
 });
 
 /**
- * Função para carregar rotas dinamicamente a partir do diretório `src/dynamic-modules/routes`
+ * Função para carregar rotas dinamicamente a partir de múltiplos diretórios.
  * Ela lê os arquivos de rota, importa os módulos e registra as rotas no roteador principal.
- * Cada arquivo de rota deve exportar um roteador Express como `default` e pode opcionalmente exportar um array de middlewares.
- * O nome do arquivo de rota é usado para definir o caminho da rota (por exemplo, `userSessions.ts` se torna `/userSessions`).
  */
 const loadRoutes = async () => {
+    // 1. Carrega módulos padrão do Core (ex: users)
+    const coreModulesDir = path.join(__dirname, '../modules');
+    if (fs.existsSync(coreModulesDir)) {
+        const modules = fs.readdirSync(coreModulesDir);
+        for (const moduleName of modules) {
+            const routesPath = path.join(coreModulesDir, moduleName, 'routes.ts');
+            const routesJsPath = path.join(coreModulesDir, moduleName, 'routes.js');
+            const targetPath = fs.existsSync(routesJsPath) ? routesJsPath : (fs.existsSync(routesPath) ? routesPath : null);
 
-    const routesDir = path.join(__dirname, '../dynamic-modules/routes');
-    const items = fs.readdirSync(routesDir, { withFileTypes: true });
-    for (const item of items) {
-        const routeFile = path.join(routesDir, item.name);
-        if (fs.existsSync(routeFile)) {
-            const routeModule = await import(routeFile);
-            const routeName = item.name.replace('.ts', '').replace('.js', '')
-            const routePath = `/${routeName}`;
-            const middleware = routeModule.middleware || [];
-            router.use(routePath, middleware, routeModule.default);
+            if (targetPath) {
+                const routeModule = await import(targetPath);
+                const routePath = `/${moduleName}`;
+                const middleware = routeModule.middleware || [];
+                router.use(routePath, middleware, routeModule.default);
+            }
+        }
+    }
+
+    // 2. Carrega módulos dinâmicos específicos do projeto
+    const dynamicRoutesDir = path.join(__dirname, '../../../src/dynamic-modules/routes');
+    // Em produção, os arquivos compilados podem estar em dist/dynamic-modules/routes
+    const prodDynamicRoutesDir = path.join(__dirname, '../../dynamic-modules/routes');
+    const targetDynamicDir = fs.existsSync(prodDynamicRoutesDir) ? prodDynamicRoutesDir : (fs.existsSync(dynamicRoutesDir) ? dynamicRoutesDir : null);
+
+    if (targetDynamicDir) {
+        const items = fs.readdirSync(targetDynamicDir, { withFileTypes: true });
+        for (const item of items) {
+            const routeFile = path.join(targetDynamicDir, item.name);
+            if (fs.existsSync(routeFile) && (item.name.endsWith('.ts') || item.name.endsWith('.js'))) {
+                const routeModule = await import(routeFile);
+                const routeName = item.name.replace('.ts', '').replace('.js', '')
+                const routePath = `/${routeName}`;
+                const middleware = routeModule.middleware || [];
+                router.use(routePath, middleware, routeModule.default);
+            }
         }
     }
 

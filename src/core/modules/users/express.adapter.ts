@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { ExpressAdapter } from "@adapters/express.adapter"
-import { UsersEntity } from "@dynamic-modules/entities/users"
+import { UsersEntity } from "./entity"
 import { PasswordChangeRequest, PasswordResetRequest } from "@app-types/entity"
 import { MESSAGES } from '@constants/messages/index';
 import { ResponseHandler } from '@utils/responseHandler';
 import { apiError } from '@utils/error';
 import { AuthUserSessionWorkflow } from '@workflows/AuthUserSession';
-import { UserService } from '@dynamic-modules/services/user';
+import { UserService } from './service';
 import { getClientIP } from '@utils/ip';
 
 

@@ -1,6 +1,6 @@
 import { BaseServices } from "@services/baseServices";
-import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
-import { UserSessionsController } from "@dynamic-modules/controllers/userSessions";
+import { UserSessionsEntity } from "@core-modules/userSessions/entity";
+import { UserSessionsController } from "@core-modules/userSessions/controller";
 import { cryptoUtils } from "@utils/crypto"
 import { TokenType, TokenSessionType } from "@app-types/token"
 import { apiError } from "@utils/error";

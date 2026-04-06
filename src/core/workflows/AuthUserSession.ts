@@ -1,6 +1,6 @@
-import { UserSessionsEntity } from "@dynamic-modules/entities/userSessions";
-import { UserSessionService } from "@dynamic-modules/services/userSession";
-import { UserService } from "@dynamic-modules/services/user";
+import { UserSessionsEntity } from "@core-modules/userSessions/entity";
+import { UserSessionService } from "@core-modules/userSessions/service";
+import { UserService } from "@core-modules/users/service";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
 import { AuthService } from "@services/auth";
@@ -17,8 +17,8 @@ import {
 	UserStatusType
 } from "@app-types/entity";
 import { HttpStatus } from "@constants/HttpStatus";
-import { UsersEntity } from "@dynamic-modules/entities/users";
-import { UsersRolesService } from "@dynamic-modules/services/users.roles";
+import { UsersEntity } from "@core-modules/users/entity";
+import { UsersRolesService } from "@core-modules/users/roles.service";
 
 export class AuthUserSessionWorkflow {
 
