@@ -9,13 +9,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./apps/treis/data:/var/lib/postgresql
+      - ./apps/treis/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - internal_db
 
   treisapi: 
-    build: ./
+    build: ./apps/treis
     container_name: treisapi
     ports:
       - "3002:3002"

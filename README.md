@@ -1,4 +1,4 @@
-# 🚀 Treis API (v3.4.0)
+# 🚀 Treis API (v1.1.0)
 
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-brightgreen)](https://nodejs.org/)
 [![Typescript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)

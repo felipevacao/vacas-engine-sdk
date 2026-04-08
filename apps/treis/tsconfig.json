@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@core/*": ["./src/core/*"],
+      "@controllers/*": ["./src/core/controllers/*"],
+      "@adapters/*": ["./src/core/adapters/*"],
+      "@models/*": ["./src/core/models/*"],
+      "@utils/*": ["./src/core/utils/*"],
+      "@entities/*": ["./src/dynamic-modules/entities/*"],
+      "@transformers/*": ["./src/core/transformers/*"],
+      "@libs/*": ["./src/core/libs/*"],
+      "@services/*": ["./src/core/services/*"],
+      "@middlewares/*": ["./src/core/middlewares/*"],
+      "@dynamic-modules/*": ["./src/dynamic-modules/*"],
+      "@constants/*": ["./src/core/constants/*"],
+      "@repositories/*": ["./src/core/repositories/*"],
+      "@core-modules/*": ["./src/core/modules/*"],
+      "@app-types/*": ["./src/core/types/*"],
+      "@workflows/*": ["./src/core/workflows/*"]
+    }
+  },
+  "typeRoots": ["./node_modules/@types", "./src/core/types"],
+  "types": ["node", "express"],
+  "include": ["src/core/**/*", "src/dynamic-modules/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
