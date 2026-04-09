@@ -1,5 +1,5 @@
 {
-  "name": "vacas-origin",
+  "name": "vacas-engine",
   "version": "1.0.0",
   "private": true,
   "author": {
@@ -7,7 +7,7 @@
     "email": "felipe.trevenzoli@gmail.com",
     "url": "https://github.com/felipevacao"
   },
-  "description": "Vacas-Origin - Orquestrador do Ecossistema Treis & Verona",
+  "description": "Vacas-Engine - Orquestrador do Ecossistema Treis & Verona",
   "workspaces": [
     "apps/*",
     "packages/*"
