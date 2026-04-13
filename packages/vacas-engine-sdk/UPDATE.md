@@ -11,10 +11,12 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 - **Treis-DB**: Adicionada imagem de banco de dados customizada (`felipetrevenzoli/treis-db`) que já contém o DNA do Core.
 - **CLI de Automação**: Inclusão do script `generate-entity.mjs` para criação automática de módulos.
 - **Licença Apache 2.0**: Formalização da licença para o SDK público.
+- **Ambiente de Desenvolvimento Local**: Adicionado `package.json` com scripts para automação CLI e `.gitignore` para proteção de arquivos sensíveis.
 
 ### 📖 Documentação
 - **Refatoração do README**: Unificado com guia de instalação passo a passo, detalhamento da geração de módulos CLI e política de proteção de IP.
 - **UPDATE.md**: Implementado rastreamento de mudanças para o repositório público.
+
 
 ### 🛠️ Infraestrutura
 - **Docker Compose**: Simplificado para o usuário final, focado em "Plug-and-Play" de módulos em `src/dynamic-modules`.
