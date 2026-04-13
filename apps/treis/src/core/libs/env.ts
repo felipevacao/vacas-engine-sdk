@@ -26,28 +26,38 @@ for (const file of envFiles) {
 const env = cleanEnv(
     process.env,
     {
-        API_NAME: str({ default: 'API' }),
-        API_VERSION: str({ default: '0.0.1' }),
+        // Identificação da API
+        API_NAME: str({ default: 'API Treis' }),
+        API_VERSION: str({ default: '1.0.0' }),
         NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
-        DB_USER: str({ default: process.env.DB_USER }),
-        DB_PASS: str({ default: process.env.DB_PASS }),
-        DB_NAME: str({ default: process.env.DB_NAME }),
-        DB_HOST: str({ default: process.env.DB_HOST }),
-        DB_PORT: port({ default: Number(process.env.DB_PORT) || 5432 }),
-        API_PORT: port({ default: Number(process.env.API_PORT) || 3000 }),
+
+        // Banco de Dados (OBRIGATÓRIOS para o Motor)
+        DB_USER: str(),
+        DB_PASS: str(),
+        DB_NAME: str(),
+        DB_HOST: str(),
+        DB_PORT: port({ default: 5432 }),
+
+        // Servidor
+        API_PORT: port({ default: 3002 }),
+        ORIGIN: str({ default: 'http://localhost' }),
+
+        // Segurança e Criptografia (OBRIGATÓRIOS)
+        PEPPER_VERSIONS: str({ desc: 'JSON com versões de pepper para senhas' }),
+        PEPPER_CURRENT: str({ desc: 'Versão atual do pepper' }),
+        SALT_ROUNDS: port({ default: 10 }),
+
+        // Tokens e gRPC (OBRIGATÓRIOS)
+        TOKEN_BYTES: str({ default: '32' }),
+        TOKEN_ALGOR: str({ default: 'sha256' }),
+        TOKEN_PEPPER: str({ desc: 'Pepper para geração de tokens de sessão' }),
+        INTERNAL_API_KEY: str({ desc: 'Chave secreta para comunicação gRPC interna' }),
+
+        // Flags de Funcionalidade
         ENABLE_TEST_ROUTES: bool({ default: false }),
         ENABLE_HATEOAS: bool({ default: true }),
         ENABLE_RETURN_ERRORS: bool({ default: false }),
-        SALT_ROUNDS: port({ default: 10 }),
-        ORIGIN: str({ default: 'http://localhost' }),
-        PEPPER_VERSIONS: str({ default: '{"1": ""}' }),
-        PEPPER_CURRENT: str({ default: '1' }),
-        ENABLE_CONSOLE_LOG: bool({ default: false }),
-
-        TOKEN_BYTES: str({ default: '32' }),
-        TOKEN_ALGOR: str({ default: 'sha256' }),
-        TOKEN_PEPPER: str({ default: '' }),
-        INTERNAL_API_KEY: str({ default: 'S3cr3t_K3y_F0r_gRPC_BFF' })
+        ENABLE_CONSOLE_LOG: bool({ default: true }),
     }
 )
 

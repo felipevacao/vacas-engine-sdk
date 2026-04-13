@@ -7,8 +7,14 @@ export class PepperConfig {
 	pepperSeparator: string
 
 	constructor() {
-		this.pepperVersions = JSON.parse(env.PEPPER_VERSIONS)
-		this.currentVersion = env.PEPPER_CURRENT
+		try {
+			const rawVersions = env.PEPPER_VERSIONS?.trim();
+			this.pepperVersions = rawVersions ? JSON.parse(rawVersions) : { "1": "" };
+		} catch (error) {
+			console.error("[ERRO] Falha crítica ao parsear PEPPER_VERSIONS. Usando configuração padrão.", error);
+			this.pepperVersions = { "1": "" };
+		}
+		this.currentVersion = env.PEPPER_CURRENT || '1'
 		this.pepperSeparator = '\x00'
 	}
 

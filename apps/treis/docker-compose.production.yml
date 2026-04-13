@@ -1,0 +1,48 @@
+# ==============================================================================
+# MOTOR TREIS - AMBIENTE DE PRODUÇÃO (IMAGEM PROTEGIDA)
+# ==============================================================================
+services:
+  # Banco de Dados Core (O Dockerfile.db é o mesmo de dev)
+  postdb_prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    container_name: treis_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-felipe}
+      POSTGRES_PASSWORD: ${DB_PASS:-dbTreis0303}
+      POSTGRES_DB: ${DB_NAME:-apitreis}
+    ports:
+      - "5432:5432"
+    volumes:
+      - treis_prod_pgdata:/var/lib/postgresql/data
+    networks:
+      - prod_net
+
+  # API Core Treis (Usa a imagem limpa e segura de produção)
+  treisapi_prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: treis_api_prod
+    restart: always
+    ports:
+      - "3002:3002"
+      - "50051:50051"
+    env_file: .env
+    environment:
+      DB_HOST: postdb_prod
+      # Em produção, o motor já roda o JS compilado do estágio anterior
+    depends_on:
+      postdb_prod:
+        condition: service_healthy
+    networks:
+      - prod_net
+
+volumes:
+  treis_prod_pgdata:
+
+networks:
+  prod_net:
+    driver: bridge

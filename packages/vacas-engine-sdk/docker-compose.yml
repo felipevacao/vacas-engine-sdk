@@ -1,0 +1,36 @@
+services:
+  db:
+    # Usando a imagem personalizada que já contém o init.sql e tabelas base
+    image: felipevacao/treis-db:latest
+    container_name: treis_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-felipe}
+      POSTGRES_PASSWORD: ${DB_PASS:-dbTreis0303}
+      POSTGRES_DB: ${DB_NAME:-apitreis}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - treis_net
+
+  api:
+    build: .
+    container_name: treis_api
+    restart: always
+    ports:
+      - "3002:3002"
+      - "50051:50051"
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - treis_net
+
+volumes:
+  pgdata:
+
+networks:
+  treis_net:
+    driver: bridge

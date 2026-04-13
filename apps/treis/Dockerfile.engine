@@ -1,0 +1,28 @@
+# ==============================================================================
+# IMAGEM BASE DO MOTOR API TREIS (vaca/treis-engine:latest)
+# Esta imagem contém o Core e o ambiente necessário para compilar novos módulos.
+# ==============================================================================
+FROM node:25-alpine3.23
+
+LABEL project="Vacas-Engine"
+LABEL component="Treis-API-Core-Base"
+
+WORKDIR /app
+
+# Instala dependências nativas
+RUN apk add --no-cache python3 make g++
+
+# Copia arquivos de configuração e dependências do CORE
+COPY package*.json tsconfig.json ./
+
+# Instala TODAS as dependências (para permitir o build posterior)
+RUN npm install
+
+# Copia apenas o CORE do sistema
+COPY src/core ./src/core
+
+# Garante que as pastas de destino existam
+RUN mkdir -p src/dynamic-modules dist
+
+# Esta imagem não precisa de CMD, ela é feita para ser usada com 'FROM'
+# O usuário fará 'COPY ./meus-modulos ./src/dynamic-modules' e 'RUN npm run build'

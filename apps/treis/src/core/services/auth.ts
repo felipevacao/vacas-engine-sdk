@@ -14,9 +14,7 @@ export class AuthService {
 		passwordHash: string = '123',
 		pepper?: number
 	): Promise<[match: boolean, pepper: number]> {
-		const start = Date.now();
 		const [match, pepperVer] = await hashUtils.compareAsync(password, passwordHash, pepper);
-		console.log(`Bcrypt levou: ${Date.now() - start}ms`);
 		await new Promise(resolve => setTimeout(resolve, 100));
 		return [match, pepperVer];
 

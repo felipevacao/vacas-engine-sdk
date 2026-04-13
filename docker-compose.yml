@@ -1,7 +1,9 @@
 services:
-  postdb: 
+  # Banco de Dados do Vacas-Engine (PostgreSQL 18)
+  postdb:
     image: postgres:18
     container_name: postdb
+    restart: unless-stopped
     environment:
       POSTGRES_USER: felipe
       POSTGRES_PASSWORD: dbTreis0303
@@ -9,37 +11,43 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./apps/treis/data:/var/lib/postgresql
+      - ./data:/var/lib/postgresql
       - ./apps/treis/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U felipe -d apitreis"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
-      - internal_db
+      - internal_vacas_net
 
-  treisapi: 
-    build: ./apps/treis
+  # Motor Backend Treis (REST & gRPC)
+  treisapi:
+    build:
+      context: ./apps/treis
+      dockerfile: Dockerfile
     container_name: treisapi
+    restart: always
     ports:
       - "3002:3002"
       - "50051:50051"
-    environment:
-      DB_HOST: postdb 
-      DB_USER: felipe
-      DB_PASS: ${DB_PASS} 
-      DB_NAME: apitreis
-      ORIGIN: http://localhost:3003
-      PEPPER_VERSIONS: ${PEPPER_VERSIONS}
-      PEPPER_CURRENT: ${PEPPER_CURRENT}
-      ENABLE_CONSOLE_LOG: true
-    depends_on:
-      - postdb
-    networks:
-      - internal_db
     env_file:
-      - .env.production
-
+      - apps/treis/.env.production
+    environment:
+      # Sobrescrevendo HOST para o nome do serviço no Docker
+      DB_HOST: postdb
+      DB_USER: felipe
+      DB_PASS: dbTreis0303
+      DB_NAME: apitreis
+    depends_on:
+      postdb:
+        condition: service_healthy
+    networks:
+      - internal_vacas_net
 
 volumes:
   postgres_data:
 
 networks:
-  internal_db:
+  internal_vacas_net:
     driver: bridge

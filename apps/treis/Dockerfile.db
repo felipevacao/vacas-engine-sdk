@@ -1,0 +1,15 @@
+# ==============================================================================
+# IMAGEM DE BANCO DE DADOS DO MOTOR TREIS (apidb:latest)
+# ==============================================================================
+FROM postgres:18-alpine
+
+LABEL project="Vacas-Engine"
+LABEL component="Treis-DB-Core"
+
+# Copia o script de inicialização do CORE para a pasta de auto-execução do Postgres
+# O prefixo '10-' garante que ele rode antes de scripts específicos de cada App
+COPY db/init.sql /docker-entrypoint-initdb.d/10-core-init.sql
+
+# Saúde do banco
+HEALTHCHECK --interval=5s --timeout=5s --retries=5 \
+    CMD pg_isready -U ${POSTGRES_USER:-felipe} -d ${POSTGRES_DB:-apitreis}
