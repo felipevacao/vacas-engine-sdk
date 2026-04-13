@@ -58,14 +58,14 @@ $$ LANGUAGE plpgsql;
 
 -- 5. Carga de Dados Inicial (Seed Admin)
 -- ID gerado automaticamente pela sequência IDENTITY
-INSERT INTO "users" ("name", "email", "login", "password", "role", "status", "pepper") 
-VALUES (
-    'Felipe Trevenzoli', 
-    'felipe.trevenzoli@gmail.com', 
-    'felipe', 
-    '$2b$12$ErGGhhjF2HtJkB8cEwFtRuq5dDBqDLqIibwLKiIcPnf16r9YEDjr6', 
-    'admin', 
-    'active', 
-    '1'
-)
-ON CONFLICT (email) DO NOTHING;
+-- INSERT INTO "users" ("name", "email", "login", "password", "role", "status", "pepper") 
+-- VALUES (
+--     'Felipe Trevenzoli', 
+--     'felipe.trevenzoli@gmail.com', 
+--     'felipe', 
+--     '$2b$12$ErGGhhjF2HtJkB8cEwFtRuq5dDBqDLqIibwLKiIcPnf16r9YEDjr6', 
+--     'admin', 
+--     'active', 
+--     '1'
+-- )
+-- ON CONFLICT (email) DO NOTHING;
