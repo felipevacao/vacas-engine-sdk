@@ -1,0 +1,4 @@
+// Gerado automáticamente
+import { BaseEntity } from '@app-types/entity';
+
+export interface {{tablenameCapital}}Entity extends BaseEntity {
