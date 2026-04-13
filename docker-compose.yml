@@ -12,7 +12,8 @@ services:
       - "5432:5432"
     volumes:
       # PERSISTÊNCIA: Seus dados ficam salvos nesta pasta local
-      - ./data/postgres:/var/lib/postgresql/data
+      # Nota: No Postgres 18+, montamos em /var/lib/postgresql para suporte a subdiretórios de versão
+      - ./data/postgres:/var/lib/postgresql
       # EXTENSÃO: Coloque seus scripts .sql na pasta local ./db
       - ./db:/docker-entrypoint-initdb.d/
     networks:
