@@ -28,7 +28,8 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 - **Treis-DB**: Adicionada imagem de banco de dados customizada (`felipetrevenzoli/treis-db`) que já contém o DNA do Core.
 - **CLI de Automação**: Inclusão do script `generate-entity.mjs` para criação automática de módulos.
 - **Licença Apache 2.0**: Formalização da licença para o SDK público.
-- **Ambiente de Desenvolvimento Local**: Adicionado `package.json` com scripts para automação CLI e `.gitignore` para proteção de arquivos sensíveis.
+- **Persistência de Dados**: O banco de dados agora salva as informações na pasta local `./data/postgres`, garantindo que os dados não sejam perdidos ao parar os containers.
+- **Scripts SQL do Usuário**: Adicionada a pasta `./db` para que o usuário possa incluir seus próprios scripts SQL de criação de tabelas (`/docker-entrypoint-initdb.d/`).
 
 ### 📖 Documentação
 - **Refatoração do README**: Unificado com guia de instalação passo a passo, detalhamento da geração de módulos CLI e política de proteção de IP.

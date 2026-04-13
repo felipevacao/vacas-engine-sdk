@@ -34,4 +34,5 @@ logs/
 tmp/
 temp/
 
-UPDATE.md
+# Dados do Banco de Dados
+data/
