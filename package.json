@@ -20,7 +20,7 @@
     "verona:build": "npm run build -w packages/verona",
     "lint": "npm run lint -w apps/treis && npm run lint -w packages/verona",
     "publish:treis": "npm run publish:treis -w apps/treis",
-    "publish:sdk": "git subtree push --prefix packages/vacas-engine-sdk sdk-public main"
+    "publish:sdk": "node packages/vacas-engine-sdk/scripts/fix-models.mjs && git subtree push --prefix packages/vacas-engine-sdk sdk-public main"
   },
   "keywords": [
     "core",
