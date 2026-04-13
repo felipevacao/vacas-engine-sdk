@@ -1,94 +1,77 @@
-# 🚀 Vacas-Engine SDK ( Treis API )
+# 🚀 Treis SDK (Vacas-Engine)
 
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-brightgreen)](https://nodejs.org/)
-[![Typescript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![gRPC](https://img.shields.io/badge/gRPC-Proto3-blue)](https://grpc.io/)
-[![Swagger](https://img.shields.io/badge/OpenAPI-3.0-green)](http://localhost:3000/api-docs)
-
-Este é o kit de desenvolvimento oficial para criar aplicações modulares utilizando o **Treis**. Este SDK permite que você construa sistemas complexos (Comandas, Vendas, Financeiro) injetando sua lógica de negócio em um núcleo (Core) de alta performance, sem precisar lidar com a complexidade da infraestrutura base.
+O **Treis SDK** é o kit de desenvolvimento oficial para criar aplicações modulares, escaláveis e seguras utilizando o ecossistema **Vacas-Engine**. Com ele, você constrói a lógica de negócio (Comandas, Vendas, Financeiro) enquanto o **Treis** cuida da infraestrutura, gRPC, Auth e persistência.
 
 ---
 
-## 🏗️ 1. Preparação do Ambiente
+## 🏗️ 1. Instalação e Setup
 
-Antes de iniciar, certifique-se de ter o **Docker** e o **Docker Compose** instalados.
+Siga os passos abaixo para preparar seu ambiente local:
 
-### Dependências do Treis (API + Core)
+### Pré-requisitos
+- **Docker** e **Docker Compose** instalados.
+- **Node.js 22+** (para rodar as ferramentas CLI).
 
-O sistema consome as imagens base publicadas no Docker Hub:
+### Passo a Passo
+1. **Clone o repositório do SDK:**
+   ```bash
+   git clone https://github.com/felipevacao/vacas-engine-sdk.git
+   cd vacas-engine-sdk
+   ```
 
-- `felipevacao/treis-engine:latest`: O Treis de build e execução.
-- `felipevacao/treis-db:latest`: O banco de dados com o DNA do Core (opcional, você pode usar um Postgres puro).
+2. **Instale as Ferramentas CLI:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure o Ambiente:**
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Suba o Sistema:**
+   ```bash
+   npm run docker:dev
+   ```
 
 ---
 
-## 📱 2. Criando seu Primeiro Módulo
+## 📱 2. Geração de Módulos (CLI)
 
-O Treis detecta automaticamente qualquer lógica injetada na pasta `src/dynamic-modules`. Siga o passo a passo para criar sua funcionalidade:
+O Treis utiliza um assistente de linha de comando para garantir que seus novos módulos sigam os padrões arquiteturais do sistema.
 
-### Passo 1: Gere a Estrutura Base
-
-Execute o assistente CLI para criar os arquivos necessários (Entidade, Controller, Service, Proto, etc):
-
+### Criando um novo módulo:
 ```bash
-node scripts/generate-entity.mjs
+npm run generate:module
 ```
 
-_Siga as instruções no terminal para definir o nome do módulo e os campos da tabela._
-
-### Passo 2: Configure as Rotas
-
-O script criará a pasta em `src/dynamic-modules/[nome-do-modulo]`. O arquivo `routes.ts` gerado será registrado automaticamente pelo Treis no prefixo do módulo.
-
-### Passo 3: Implemente a Lógica
-
-Edite o arquivo `service.ts` para adicionar suas regras de negócio. O Treis já provê repositórios base (CRUD) prontos para uso.
+**O que o script gera automaticamente:**
+- ✅ **Entidade:** Modelagem com Objection.js.
+- ✅ **Controller:** Endpoints Express pré-configurados.
+- ✅ **Service:** Camada de negócio com repositórios CRUD base.
+- ✅ **Proto:** Definições gRPC de alta performance.
+- ✅ **Routes:** Registro automático de rotas no motor.
 
 ---
 
-## 🔧 3. Configuração (.env)
+## ⚡ 3. Desenvolvimento e Build
 
-Renomeie o arquivo `.env.example` para `.env` e ajuste as variáveis obrigatórias:
-
-- `DB_HOST=db` (nome do serviço no docker-compose)
-- `DB_USER=felipe`
-- `DB_PASS=dbTreis0303`
-- `PEPPER_VERSIONS='{"1": "sua-chave-secreta-aqui"}'`
-
----
-
-## ⚡ 4. Execução e Build (A Mágica)
-
-Para subir o aplicativo com seus módulos injetados no Treis:
+Sempre que você adicionar um novo módulo ou alterar a lógica em `src/dynamic-modules/`, execute o rebuild para injetar as mudanças no Treis:
 
 ```bash
-docker compose up --build
+npm run docker:dev
 ```
 
-### O que acontece durante o processo:
-
-1. **Injeção:** Seus módulos são copiados para dentro da estrutura do Treis em tempo de build.
-2. **Compilação JIT:** O Treis compila o Core + Seus Módulos em um único pacote `dist/`.
-3. **Proteção de IP:** Os arquivos `.ts` originais são descartados. O container final contém apenas o binário JS transpilado.
-4. **Auto-Discovery:** Ao iniciar, o Treis varre a pasta `dist/dynamic-modules`, detecta suas rotas e as registra automaticamente no Express e gRPC.
+### Por que o Build é necessário?
+O **Treis** utiliza uma arquitetura de compilação em tempo de build que injeta seus módulos no Core e gera um binário JavaScript otimizado (`dist/`), descartando os fontes TypeScript para proteger a propriedade intelectual.
 
 ---
 
-## 🛡️ 5. Benefícios da Arquitetura
+## 🛡️ 4. Licença
 
-1. **Segurança de IP:** O código-fonte do Core nunca é exposto. O cliente recebe apenas o "binário" JS resultante da compilação.
-2. **Manutenibilidade Centralizada:** Correções de segurança e melhorias no Core são propagadas para todos os Apps apenas atualizando a imagem base.
-3. **Escalabilidade:** Cada aplicativo é independente e isolado, mas compartilha a mesma robustez e padrões do Treis principal.
+Este SDK é distribuído sob a **Licença Apache 2.0**. 
+
+Você é livre para usar, modificar e distribuir este SDK em seus próprios projetos. Note que o **Core (Treis API)** consumido via imagem Docker (`felipetrevenzoli/treis-engine`) é de propriedade protegida e distribuído apenas como binário executável.
 
 ---
-
-## 👨‍💻 Autor
-
-**Felipe Trevenzoli**
-
-- [GitHub](https://github.com/felipevacao)
-- [Instagram](https://www.instagram.com/felipe.trevenzoli)
-- [LinkedIn](https://www.linkedin.com/in/felipetrevenzoli/)
-
-_Documentação oficial do ecossistema Vacas-Engine._
+*Documentação oficial mantida por @felipevacao.*
