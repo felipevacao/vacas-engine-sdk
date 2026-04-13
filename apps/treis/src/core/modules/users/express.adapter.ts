@@ -21,6 +21,20 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
 
 
     /**
+    *  Requisição para Registro de novo usuário.
+     */
+    async register(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        // Efetua o registro e gera sessão inicial
+        const session = await this.auth.register(req.body, getClientIP(req))
+
+        // resposta
+        ResponseHandler.success(res, session, MESSAGES.DATABASE.LOGIN.SUCCESS);
+    }
+
+    /**
     *  Requisição para Login de usuário.
      */
     async login(

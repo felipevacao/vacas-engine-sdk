@@ -19,6 +19,7 @@ import {
 import { HttpStatus } from "@constants/HttpStatus";
 import { UsersEntity } from "@core-modules/users/entity";
 import { UsersRolesService } from "@core-modules/users/roles.service";
+import env from "@libs/env";
 
 export class AuthUserSessionWorkflow {
 
@@ -388,6 +389,48 @@ export class AuthUserSessionWorkflow {
 		}
 
 		return [email, password]
+	}
+
+	async register(
+		userData: Partial<UsersEntity>,
+		ipAddress: string
+	): Promise<TokenSessionType> {
+		try {
+			// Verifica se já existem usuários no sistema
+			const usersCount = await this.userService.countAll();
+
+			// Se já existirem usuários E o registro público estiver desativado, bloqueia
+			if (usersCount > 0 && !env.ENABLE_PUBLIC_REGISTRATION) {
+				throw new apiError(MESSAGES.ERROR.OPERATION_ERROR, HttpStatus.FORBIDDEN, this.userService.getContext())
+			}
+
+			// Se for o primeiro usuário, ele vira admin automaticamente
+
+			if (usersCount === 0) {
+				userData.role = 'admin';
+				userData.status = 'active';
+			} else {
+				// Se não for o primeiro, segue o padrão ou regra de negócio
+				userData.role = userData.role || 'regular';
+				userData.status = userData.status || 'active';
+			}
+
+			// Gera o hash da senha usando o AuthService (e o pepper atual do env)
+			const { passwordHash, pepper } = await this.authService.generateHash(userData.password as string);
+			userData.password = passwordHash;
+			userData.pepper = pepper.toString();
+
+			// Cria o usuário no banco
+			const newUser = await this.userService.createEntity(userData as UsersEntity);
+
+			// Carrega a entidade no workflow para criar a sessão
+			await this.userService.withId(newUser.id as number).setEntity();
+
+			// Cria a sessão inicial
+			return await this.createRegularSession(ipAddress);
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	async validateUpdate(

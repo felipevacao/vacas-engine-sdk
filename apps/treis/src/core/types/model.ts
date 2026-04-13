@@ -10,7 +10,8 @@ export interface Model<T extends BaseEntity> {
     findByPaginated: (options: QueryFields<T>) => Promise<PaginatedResult<T>>,
     update: (id: number | string, data: UpdateData<T>, options: QueryFields<T>) => Promise<OutputData<T>>,
     delete: (id: number | string) => Promise<boolean>,
-    forceDelete: (id: number | string) => Promise<boolean>
+    forceDelete: (id: number | string) => Promise<boolean>,
+    count: (options?: QueryFields<T>) => Promise<number>,
     selectAbleFields: (keyof T)[],
     defaultFields: (keyof T)[],
     excludedFields: (keyof T)[],

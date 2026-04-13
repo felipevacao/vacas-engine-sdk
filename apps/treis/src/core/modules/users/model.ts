@@ -15,6 +15,7 @@ const UsersModel: Model<UsersEntity> = {
   update: repository.update<UsersEntity>('users'),
   delete: repository.deleteById('users'),
   forceDelete: repository.forceDelete('users'),
+  count: repository.read<UsersEntity>('users').count,
   selectAbleFields: ['name', 'login', 'email'],
   defaultFields: ['id'],
   excludedFields: ['password', 'pepper'],

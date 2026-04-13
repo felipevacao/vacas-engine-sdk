@@ -55,6 +55,7 @@ const env = cleanEnv(
 
         // Flags de Funcionalidade
         ENABLE_TEST_ROUTES: bool({ default: false }),
+        ENABLE_PUBLIC_REGISTRATION: bool({ default: true, desc: 'Permite novos registros via /auth/register se já existirem usuários' }),
         ENABLE_HATEOAS: bool({ default: true }),
         ENABLE_RETURN_ERRORS: bool({ default: false }),
         ENABLE_CONSOLE_LOG: bool({ default: true }),

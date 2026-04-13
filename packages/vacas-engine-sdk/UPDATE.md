@@ -4,6 +4,23 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ---
 
+## [1.2.0] - 2026-04-13
+
+### ✨ Novidades
+- **Auto-Setup Admin**: Implementação de lógica de provisionamento automático. O primeiro usuário que se registrar no sistema (`/auth/register`) receberá automaticamente o cargo de `admin`.
+- **Controle de Registro**: Adicionada a flag `ENABLE_PUBLIC_REGISTRATION` no `.env` para habilitar ou desabilitar o cadastro público de novos usuários após o setup inicial.
+- **Registro Público**: Adicionada rota POST `/auth/register` no Core para facilitar o cadastro de novos usuários com suporte a hashing e pepper automático.
+- **Suporte a Contagem (Count)**: Adicionado método `countAll()` aos serviços base e suporte a contagem de registros em todos os repositórios de leitura.
+
+### 📖 Documentação
+- **Documentação de Auth**: Atualizado o README para refletir o novo fluxo de criação de usuário administrador.
+
+### 🛠️ Infraestrutura
+- **Templates de Módulos**: Atualizado o template `model.txt` no SDK para suportar o novo método `count` nativamente.
+- **Repositórios Base**: Atualizada a interface `Model` e o `BaseServices` para maior flexibilidade em operações de contagem.
+
+---
+
 ## [1.1.0] - 2026-04-13
 
 ### ✨ Novidades

@@ -241,4 +241,10 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return result
 	}
 
+	async countAll(
+		options: QueryFields<T> = {}
+	): Promise<number> {
+		return await this.getController().count(options)
+	}
+
 }	

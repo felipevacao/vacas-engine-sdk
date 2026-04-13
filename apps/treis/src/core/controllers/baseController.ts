@@ -107,6 +107,14 @@ export class BaseController<T extends BaseEntity> {
 
     }
 
+    public async count(
+        options: QueryFields<T> = {}
+    ): Promise<number> {
+
+        return await this.model.count(options)
+
+    }
+
     public getDefaultFilters(): QueryFilter[] {
         return []
     }

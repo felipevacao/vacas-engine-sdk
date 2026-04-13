@@ -67,8 +67,35 @@ export const read = <T extends BaseEntity>(table: string) => {
 
     }
 
+    const count = async (
+        options: QueryFields<T> = {}
+    ): Promise<number> => {
+        const context = {} as ErrorContext
+        context.entity = table
+
+        try {
+            let query = db(table)
+                .count('* as count')
+                .where(options.where || {})
+                .whereNull('deletedAt')
+                .first();
+
+            if (options.filters) {
+                options.filters.forEach(filter => {
+                    query = query.where(filter.field, filter.operator, filter.value);
+                });
+            }
+
+            const result = await query;
+            return result ? parseInt(result.count as string) : 0;
+        } catch (error) {
+            throw ErrorHandler.handleDatabaseError(error, context);
+        }
+    }
+
     /**
-     * Gerador de consultas para operações de leitura, permitindo a construção dinâmica de queries com base em diversos parâmetros, 
+     * Gerador de consultas para operações de leitura
+, permitindo a construção dinâmica de queries com base em diversos parâmetros, 
      * como campos selecionados, filtros, ordenação e paginação. Essa função centraliza a lógica de consulta, 
      * facilitando a reutilização e manutenção do código, além de garantir consistência nas operações de leitura em toda a aplicação.
      */
@@ -189,6 +216,6 @@ export const read = <T extends BaseEntity>(table: string) => {
 
     }
 
-    return { findAll, findById, findBy, findByPaginated, findAllPaginated }
+    return { findAll, findById, findBy, findByPaginated, findAllPaginated, count }
 
 }

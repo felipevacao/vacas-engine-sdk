@@ -16,6 +16,7 @@ const UserSessionsModel: Model<UserSessionsEntity> = {
   update: repository.update<UserSessionsEntity>('user_sessions'),
   delete: repository.deleteById('user_sessions'),
   forceDelete: repository.forceDelete('user_sessions'),
+  count: repository.read<UserSessionsEntity>('user_sessions').count,
   selectAbleFields: ['userId', 'expiresAt', 'lastUsedAt', 'isRevoked', 'tokenHash', 'ipAddress'],
   defaultFields: ['id'],
   excludedFields: [],

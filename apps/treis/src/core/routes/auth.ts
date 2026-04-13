@@ -19,6 +19,40 @@ const userExpressAdapter = new UserExpressAdapter(userService, authWorkflow);
 
 /**
  * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Registra um novo usuário
+ *     description: Se for o primeiro usuário do sistema, ele será criado como administrador.
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - login
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               login:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuário registrado e logado com sucesso
+ */
+router.post('/register', userExpressAdapter.register.bind(userExpressAdapter));
+
+/**
+ * @swagger
  * /auth/login:
  *   post:
  *     summary: Realiza login do usuário
