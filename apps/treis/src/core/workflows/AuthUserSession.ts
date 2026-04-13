@@ -215,7 +215,6 @@ export class AuthUserSessionWorkflow {
 		try {
 			await this.userService.getUserByEmail(email)
 			const user = this.userService.getEntity()
-			console.log(`User encontrado: ${user.email}`)
 			const [match, pepper] = await this.authService.comparePassword(password, user.password, parseInt(user.pepper))
 			if (!match) {
 				throw new Error
@@ -228,7 +227,7 @@ export class AuthUserSessionWorkflow {
 			return match
 
 		} catch {
-			throw new apiError(MESSAGES.ERROR.EXPIRED_TOKEN, HttpStatus.UNAUTHORIZED, this.userService.getContext())
+			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, HttpStatus.UNAUTHORIZED, this.userService.getContext())
 		}
 	}
 

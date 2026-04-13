@@ -1,0 +1,23 @@
+import { {{tablenameCapital}}Service } from './service';
+import { {{tablenameCapital}}Controller } from './controller';
+import { {{tablenameCapital}}Entity } from './entity';
+import { BaseGrpcAdapter } from '@adapters/grpc.adapter';
+
+class {{tablenameCapital}}GrpcAdapter extends BaseGrpcAdapter<{{tablenameCapital}}Entity, {{tablenameCapital}}Controller> {
+  constructor() {
+    const controller = new {{tablenameCapital}}Controller();
+    const service = new {{tablenameCapital}}Service(controller);
+    super(service);
+  }
+}
+
+const adapter = new {{tablenameCapital}}GrpcAdapter();
+
+export default {
+  Create: adapter.create.bind(adapter),
+  Get: adapter.get.bind(adapter),
+  Update: adapter.update.bind(adapter),
+  Delete: adapter.delete.bind(adapter),
+  List: adapter.list.bind(adapter),
+  Metadata: adapter.metadata.bind(adapter),
+};

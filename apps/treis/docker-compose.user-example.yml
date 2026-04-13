@@ -1,0 +1,54 @@
+# ==============================================================================
+# EXEMPLO DE INSTALAÇÃO PARA USUÁRIO FINAL (USANDO TREIS-ENGINE)
+# Este arquivo demonstra como o cliente sobe o motor e injeta seus módulos.
+# ==============================================================================
+services:
+  # 1. BANCO DE DADOS (DNA do Core + Dados do Usuário)
+  # O usuário pode usar sua imagem de banco ou um Postgres padrão.
+  db:
+    image: postgres:18-alpine
+    container_name: user_app_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-felipe}
+      POSTGRES_PASSWORD: ${DB_PASS:-dbTreis0303}
+      POSTGRES_DB: ${DB_NAME:-apitreis}
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_pgdata:/var/lib/postgresql/data
+      # Opcional: O usuário pode injetar scripts de inicialização dele aqui
+      # - ./my-init-scripts:/docker-entrypoint-initdb.d/
+    networks:
+      - app_net
+
+  # 2. API (Motor Treis + Módulos do Usuário)
+  api:
+    build:
+      context: .
+      # O usuário criará um Dockerfile simples que faz o seguinte:
+      # FROM felipetrevenzoli/treis-engine:latest
+      # COPY ./src/dynamic-modules ./src/dynamic-modules
+      # RUN npm run build
+      # (Seguindo o modelo de multi-stage build que conversamos)
+      dockerfile: Dockerfile
+    container_name: user_app_api
+    restart: always
+    ports:
+      - "3002:3002"   # REST API
+      - "50051:50051" # gRPC
+    env_file: .env
+    environment:
+      DB_HOST: db
+      NODE_ENV: production
+    depends_on:
+      - db
+    networks:
+      - app_net
+
+volumes:
+  user_pgdata:
+
+networks:
+  app_net:
+    driver: bridge

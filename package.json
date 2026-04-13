@@ -18,7 +18,8 @@
     "treis:build": "npm run build -w apps/treis",
     "verona:dev": "npm run dev -w packages/verona",
     "verona:build": "npm run build -w packages/verona",
-    "lint": "npm run lint -w apps/treis && npm run lint -w packages/verona"
+    "lint": "npm run lint -w apps/treis && npm run lint -w packages/verona",
+    "publish:sdk": "git subtree push --prefix packages/vacas-engine-sdk sdk-public main"
   },
   "keywords": [
     "core",

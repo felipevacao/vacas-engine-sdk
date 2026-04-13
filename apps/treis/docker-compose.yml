@@ -1,0 +1,54 @@
+# ==============================================================================
+# MOTOR TREIS - AMBIENTE DE DESENVOLVIMENTO E BUILD
+# Use este arquivo para rodar o Core localmente ou buildar as imagens base.
+# ==============================================================================
+services:
+  # Banco de Dados com DNA do Core
+  postdb:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    image: apitreis_db:latest
+    container_name: treis_db_local
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: felipe
+      POSTGRES_PASSWORD: dbTreis0303
+      POSTGRES_DB: apitreis
+    ports:
+      - "5432:5432"
+    volumes:
+      - treis_pgdata:/var/lib/postgresql/data
+    networks:
+      - internal_net
+
+  # Motor API (Modo Desenvolvimento com Hot-Reload)
+  # Este serviço NÃO usa a imagem protegida, mas sim a estrutura de fontes local.
+  treisapi:
+    build:
+      context: .
+      dockerfile: Dockerfile # O Dockerfile original que faz o build completo
+    image: apitreis:latest
+    container_name: treis_api_local
+    restart: always
+    ports:
+      - "3002:3002"
+      - "50051:50051"
+    env_file: .env
+    environment:
+      DB_HOST: postdb
+      DB_USER: felipe
+      DB_PASS: dbTreis0303
+      DB_NAME: apitreis
+    depends_on:
+      postdb:
+        condition: service_healthy
+    networks:
+      - internal_net
+
+volumes:
+  treis_pgdata:
+
+networks:
+  internal_net:
+    driver: bridge
