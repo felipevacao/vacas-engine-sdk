@@ -1,5 +1,5 @@
 # STAGE 1: Build (Injeta módulos no motor e compila)
-FROM felipevacao/treis-engine:latest AS builder
+FROM felipetrevenzoli/treis-engine:latest AS builder
 COPY ./src/dynamic-modules ./src/dynamic-modules
 RUN npm run build
 
