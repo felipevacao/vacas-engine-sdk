@@ -28,6 +28,8 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         id: number | undefined
     ): { rel: string; href: string; method: string }[] {
 
+        if (!id) return [];
+
         return [
             { rel: "self", href: `/${table}/${id}`, method: "GET" },
             { rel: "update", href: `/${table}/${id}`, method: "PUT" },

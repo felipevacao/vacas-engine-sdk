@@ -25,10 +25,13 @@ export class HateoasTransformer {
         showLinks: boolean = false
     ): HateoasEntity<T>[] | T[] {
         if (showLinks) {
-            return entities.map(entity => ({
-                ...entity,
-                _links: itemLinks ? [...itemLinks(entity)] : []
-            }));
+            return entities.map(entity => {
+                const links = typeof itemLinks === 'function' ? itemLinks(entity) : [];
+                return {
+                    ...entity,
+                    _links: Array.isArray(links) ? [...links] : []
+                };
+            });
         }
         return entities
     }
