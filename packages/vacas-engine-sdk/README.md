@@ -1,6 +1,11 @@
 # 🚀 Treis SDK (Vacas-Engine)
 
-O **Treis SDK** é o kit de desenvolvimento oficial para criar aplicações modulares, escaláveis e seguras utilizando o ecossistema **Vacas-Engine**. Com ele, você constrói a lógica de negócio (Comandas, Vendas, Financeiro) enquanto o **Treis** cuida da infraestrutura, gRPC, Auth e persistência.
+![Apache-2.0 License](https://img.shields.io/badge/License-Apache--2.0-blue.svg?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Node.js-22-green?style=for-the-badge&logo=node.js)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript)
+
+O **Treis SDK** é o kit de desenvolvimento oficial para criar aplicações modulares, escaláveis e seguras utilizando o ecossistema **Vacas-Engine**. Com ele, você constrói a lógica de negócio (Comandas, Vendas, Financeiro) enquanto o **Treis** cuida de toda a infraestrutura complexa.
 
 ---
 
@@ -8,23 +13,28 @@ O **Treis SDK** é o kit de desenvolvimento oficial para criar aplicações modu
 
 Siga os passos abaixo para preparar seu ambiente local:
 
-### Pré-requisitos
-- **Docker** e **Docker Compose** instalados.
-- **Node.js 22+** (para rodar as ferramentas CLI).
+### 🛠️ Pré-requisitos
 
-### Passo a Passo
-1. **Clone o repositório do SDK:**
+- **Docker** e **Docker Compose**
+- **Node.js 22+**
+
+### 📋 Passo a Passo
+
+1. **Clone o repositório:**
+
    ```bash
    git clone https://github.com/felipevacao/vacas-engine-sdk.git
    cd vacas-engine-sdk
    ```
 
 2. **Instale as Ferramentas CLI:**
+
    ```bash
    npm install
    ```
 
 3. **Configure o Ambiente:**
+
    ```bash
    cp .env.example .env
    ```
@@ -38,40 +48,48 @@ Siga os passos abaixo para preparar seu ambiente local:
 
 ## 📱 2. Geração de Módulos (CLI)
 
-O Treis utiliza um assistente de linha de comando para garantir que seus novos módulos sigam os padrões arquiteturais do sistema.
+Utilize o assistente CLI para automatizar a criação de novas funcionalidades:
 
-### Criando um novo módulo:
 ```bash
 npm run generate:module
 ```
 
-**O que o script gera automaticamente:**
-- ✅ **Entidade:** Modelagem com Objection.js.
-- ✅ **Controller:** Endpoints Express pré-configurados.
-- ✅ **Service:** Camada de negócio com repositórios CRUD base.
-- ✅ **Proto:** Definições gRPC de alta performance.
-- ✅ **Routes:** Registro automático de rotas no motor.
+**O que o Treis gera para você:**
+
+- ✅ **Entidade:** Modelagem ![Objection](https://img.shields.io/badge/Objection.js-333333?style=flat-square) com JSON Schema.
+- ✅ **Controller:** Endpoints ![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white).
+- ✅ **Service:** Camada de negócio e Repositórios CRUD.
+- ✅ **Proto:** Contratos ![gRPC](https://img.shields.io/badge/gRPC-4285F4?style=flat-square&logo=grpc&logoColor=white).
+- ✅ **Routes:** Auto-registro no motor.
 
 ---
 
 ## ⚡ 3. Desenvolvimento e Build
 
-Sempre que você adicionar um novo módulo ou alterar a lógica em `src/dynamic-modules/`, execute o rebuild para injetar as mudanças no Treis:
+Sempre que alterar a lógica em `src/dynamic-modules/`, realize o rebuild para aplicar as mudanças:
 
 ```bash
 npm run docker:dev
 ```
 
-### Por que o Build é necessário?
-O **Treis** utiliza uma arquitetura de compilação em tempo de build que injeta seus módulos no Core e gera um binário JavaScript otimizado (`dist/`), descartando os fontes TypeScript para proteger a propriedade intelectual.
+> **Por que o Build?** O Treis utiliza arquitetura de injeção em tempo de compilação, protegendo a propriedade intelectual ao converter seu TypeScript em um binário JavaScript otimizado (`dist/`).
 
 ---
 
-## 🛡️ 4. Licença
+## 🏢 Arquitetura e Stack
 
-Este SDK é distribuído sob a **Licença Apache 2.0**. 
-
-Você é livre para usar, modificar e distribuir este SDK em seus próprios projetos. Note que o **Core (Treis API)** consumido via imagem Docker (`felipetrevenzoli/treis-engine`) é de propriedade protegida e distribuído apenas como binário executável.
+| Camada           | Tecnologias                                                                                                                                                                                                         |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Persistência** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white) ![Knex](https://img.shields.io/badge/Knex.js-E16422?style=flat-square&logo=knex.js&logoColor=white) |
+| **Comunicação**  | ![REST](https://img.shields.io/badge/REST_API-green?style=flat-square) ![gRPC](https://img.shields.io/badge/gRPC-4285F4?style=flat-square&logo=grpc&logoColor=white)                                                |
+| **Documentação** | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)                                                                                                              |
 
 ---
-*Documentação oficial mantida por @felipevacao.*
+
+## 🛡️ Licença
+
+Distribuído sob a **Licença Apache 2.0**.
+
+---
+
+_Documentação oficial mantida por @felipevacao._
