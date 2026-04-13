@@ -12,14 +12,14 @@ Antes de iniciar qualquer novo aplicativo, as imagens base do motor devem estar 
 Esta imagem contém o PostgreSQL 18 com o script `10-core-init.sql` (tabelas base de usuários, sessões e permissões).
 ```bash
 # No diretório apps/treis/
-docker build -f Dockerfile.db -t felipevacao/treis-db:latest .
+docker build -f Dockerfile.db -t felipetrevenzoli/treis-db:latest .
 ```
 
 ### B. Gerar a Imagem Base da API (Engine/Builder)
 Esta imagem contém o ambiente de build, o código-fonte do Core (`src/core`) e todas as dependências necessárias para compilar novos módulos.
 ```bash
 # No diretório apps/treis/
-docker build -f Dockerfile.engine -t felipevacao/treis-engine:latest .
+docker build -f Dockerfile.engine -t felipetrevenzoli/treis-engine:latest .
 ```
 
 ---
@@ -45,7 +45,7 @@ Para criar um novo app, o usuário não precisa do código do Treis. Ele só pre
 ### O Dockerfile do Usuário (Multi-Stage Build):
 ```dockerfile
 # STAGE 1: Build (Compilação do Core + Módulos do Usuário)
-FROM felipevacao/treis-engine:latest AS builder
+FROM felipetrevenzoli/treis-engine:latest AS builder
 
 # Copia os módulos locais do usuário para dentro do motor
 COPY ./src/dynamic-modules ./src/dynamic-modules
@@ -94,7 +94,7 @@ docker compose up --build
 ## 🛡️ 5. Benefícios da Arquitetura
 
 1. **Segurança de IP:** O código-fonte TypeScript do Core nunca é entregue ao cliente final. O container de produção contém apenas o JavaScript transpilado.
-2. **Atualização Centralizada:** Se você corrigir um bug no Core, basta atualizar a imagem `felipevacao/treis-engine:latest` e o cliente fará o rebuild.
+2. **Atualização Centralizada:** Se você corrigir um bug no Core, basta atualizar a imagem `felipetrevenzoli/treis-engine:latest` e o cliente fará o rebuild.
 3. **Plug-and-Play:** O motor resolve automaticamente rotas, gRPC, logs e erros para qualquer módulo injetado em `src/dynamic-modules`.
 
 ---

@@ -1,5 +1,11 @@
 # 🚀 Vacas-Engine SDK ( Treis API )
 
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-brightgreen)](https://nodejs.org/)
+[![Typescript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![gRPC](https://img.shields.io/badge/gRPC-Proto3-blue)](https://grpc.io/)
+[![Swagger](https://img.shields.io/badge/OpenAPI-3.0-green)](http://localhost:3000/api-docs)
+
 Este é o kit de desenvolvimento oficial para criar aplicações modulares utilizando o **Treis**. Este SDK permite que você construa sistemas complexos (Comandas, Vendas, Financeiro) injetando sua lógica de negócio em um núcleo (Core) de alta performance, sem precisar lidar com a complexidade da infraestrutura base.
 
 ---
@@ -76,5 +82,13 @@ docker compose up --build
 3. **Escalabilidade:** Cada aplicativo é independente e isolado, mas compartilha a mesma robustez e padrões do Treis principal.
 
 ---
+
+## 👨‍💻 Autor
+
+**Felipe Trevenzoli**
+
+- [GitHub](https://github.com/felipevacao)
+- [Instagram](https://www.instagram.com/felipe.trevenzoli)
+- [LinkedIn](https://www.linkedin.com/in/felipetrevenzoli/)
 
 _Documentação oficial do ecossistema Vacas-Engine._
