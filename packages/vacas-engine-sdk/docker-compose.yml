@@ -12,15 +12,40 @@ services:
       - "5432:5432"
     volumes:
       # PERSISTÊNCIA: Seus dados ficam salvos nesta pasta local
-      # Nota: No Postgres 18+, montamos em /var/lib/postgresql para suporte a subdiretórios de versão
       - ./data/postgres:/var/lib/postgresql
-      # EXTENSÃO: Coloque seus scripts .sql na pasta local ./db
-      - ./db:/docker-entrypoint-initdb.d/
+      # INIT (Única vez): Scripts de inicialização do Core
+      - ./db-core:/docker-entrypoint-initdb.d/
+    networks:
+      - treis_net
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-felipe} -d ${DB_NAME:-apitreis}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    # Executa scripts SQL da pasta ./db toda vez que o sistema sobe
+  db-migrator:
+    image: postgres:18-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./db:/scripts
+    command: >
+      sh -c "until pg_isready -h db -U ${DB_USER:-felipe}; do sleep 2; done;
+             for f in /scripts/*.sql; do 
+               [ -e \"$f\" ] && psql -h db -U ${DB_USER:-felipe} -d ${DB_NAME:-apitreis} -f \"$f\"; 
+             done"
     networks:
       - treis_net
 
   api:
     build: .
+    profiles: ["api"]
     container_name: treis_api
     restart: always
     ports:

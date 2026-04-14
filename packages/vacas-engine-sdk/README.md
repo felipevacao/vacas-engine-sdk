@@ -64,15 +64,26 @@ npm run generate:module
 
 ---
 
-## ⚡ 3. Desenvolvimento e Build
+## ⚡ 3. Fluxo de Execução
 
-Sempre que alterar a lógica em `src/dynamic-modules/`, realize o rebuild para aplicar as mudanças:
+O Treis requer que o banco de dados esteja ativo para a geração de módulos via CLI.
 
-```bash
-npm run docker:dev
-```
+1. **Inicie o Banco de Dados:**
+   ```bash
+   docker compose up -d db db-migrator
+   ```
 
-> **Por que o Build?** O Treis utiliza arquitetura de injeção em tempo de compilação, protegendo a propriedade intelectual ao converter seu TypeScript em um binário JavaScript otimizado (`dist/`).
+2. **Gere seus Módulos (CLI):**
+   Com o banco rodando, gere suas entidades e serviços:
+   ```bash
+   npm run generate:module
+   ```
+
+3. **Inicie a API:**
+   Após gerar os módulos, suba o serviço da API:
+   ```bash
+   docker compose --profile api up -d
+   ```
 
 ---
 
