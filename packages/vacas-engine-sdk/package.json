@@ -9,11 +9,10 @@
   },
   "scripts": {
     "generate:module": "node scripts/generate-entity.mjs",
-    "docker:db": "docker compose up -d db db-migrator",
+    "docker:db": "docker compose up -d db_clone db-migrator",
     "docker:api": "docker compose --profile api up -d",
     "docker:stop": "docker compose --profile api down"
   },
-
   "dependencies": {
     "@inquirer/prompts": "^7.3.3",
     "dotenv": "^16.4.7",
