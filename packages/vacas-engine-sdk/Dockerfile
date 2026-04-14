@@ -8,7 +8,8 @@ FROM node:25-alpine3.23
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
-RUN npm install --omit=dev
+RUN npm install --omit=dev && chown -R node:node /app
+USER node
 ENV NODE_ENV=production
 EXPOSE 3020 50051
 CMD ["node", "dist/core/index.js"]

@@ -5,28 +5,28 @@ services:
     container_name: treis_clone_db
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:-felipe}
-      POSTGRES_PASSWORD: ${DB_PASS:-dbTreis0303}
-      POSTGRES_DB: ${DB_NAME:-apitreis}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
-      # PERSISTÊNCIA: Seus dados ficam salvos nesta pasta local
       - ./data/postgres:/var/lib/postgresql
+      - ./db-core:/docker-entrypoint-initdb.d/
     networks:
       - treis_net
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${DB_USER:-felipe} -d ${DB_NAME:-apitreis}",
+          "pg_isready -U ${DB_USER} -d ${DB_NAME}",
         ]
       interval: 5s
       timeout: 5s
       retries: 5
 
     # Executa scripts SQL da pasta ./db toda vez que o sistema sobe
-  db-migrator:
+    db-migrator:
     image: postgres:18-alpine
     depends_on:
       db_clone:
@@ -34,15 +34,13 @@ services:
     volumes:
       - ./db:/scripts
     command: >
-      sh -c "until pg_isready -h db_clone -U ${DB_USER:-felipe}; do sleep 2; done;
-            export PGPASSWORD=${DB_PASS:-dbTreis0303};
+      sh -c "until pg_isready -h db_clone -U ${DB_USER}; do sleep 2; done;
+            export PGPASSWORD=${DB_PASS};
             for f in /scripts/*.sql; do 
-              [ -e \"$$f\" ] && psql -h db_clone -U ${DB_USER:-felipe} -d ${DB_NAME:-apitreis} -f \"$$f\"; 
+              [ -e \"$$f\" ] && psql -h db_clone -U ${DB_USER} -d ${DB_NAME} -f \"$$f\"; 
             done"
     networks:
       - treis_net
-
-  api_clone:
     build: .
     profiles: ["api"]
     container_name: treis_clone_api
