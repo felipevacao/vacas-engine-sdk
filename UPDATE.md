@@ -6,6 +6,17 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ## [1.2.1] - 2026-04-14
 
+### 🛡️ Segurança
+- **Hardening de Docker**: Remoção de senhas padrão (`dbTreis0303`) do `docker-compose.yml`, tornando o uso de um arquivo `.env` personalizado obrigatório.
+- **Princípio do Privilégio Mínimo**: Atualizado `Dockerfile` para rodar a aplicação como `USER node` (non-root), reduzindo riscos de exploração de contêiner.
+
+### 📖 Documentação
+- **Aviso Obrigatório**: Adicionado alerta no `README.md` enfatizando que a criação do arquivo `.env` é essencial para a inicialização do ambiente.
+
+---
+
+## [1.2.1] - 2026-04-14
+
 ### 🛠️ Infraestrutura & Docker
 - **Correção de Migração**: Ajustada a interpolação de variáveis no `command` do `db-migrator` no `docker-compose.yml` para evitar erros de variáveis não definidas.
 - **Automação de Ambiente**: Adicionado script `npm run docker:refresh` para automatizar a parada, atualização e reconstrução dos contêineres (`down`, `pull`, `--build --force-recreate`).
