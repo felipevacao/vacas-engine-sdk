@@ -4,6 +4,18 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ---
 
+## [1.2.1] - 2026-04-14
+
+### 🛠️ Infraestrutura & Docker
+- **Correção de Migração**: Ajustada a interpolação de variáveis no `command` do `db-migrator` no `docker-compose.yml` para evitar erros de variáveis não definidas.
+- **Automação de Ambiente**: Adicionado script `npm run docker:refresh` para automatizar a parada, atualização e reconstrução dos contêineres (`down`, `pull`, `--build --force-recreate`).
+- **Conectividade CLI**: Atualizado `generate-entity.mjs` para suportar `DB_HOST_LOCAL` (com fallback para `localhost`), permitindo a geração de módulos localmente enquanto a API aponta para o contêiner de banco.
+
+### 🐛 Correções de Erros
+- **HateoasTransformer**: Adicionado tratamento de erro robusto no método `addCollectionLinks` para evitar falhas de execução (`itemLinks is not a function...`) ao gerar links de coleções.
+
+---
+
 ## [1.2.0] - 2026-04-13
 
 ### ✨ Novidades
