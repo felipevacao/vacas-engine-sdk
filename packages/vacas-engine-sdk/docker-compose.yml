@@ -13,8 +13,6 @@ services:
     volumes:
       # PERSISTÊNCIA: Seus dados ficam salvos nesta pasta local
       - ./data/postgres:/var/lib/postgresql
-      # INIT (Única vez): Scripts de inicialização do Core
-      - ./db-core:/docker-entrypoint-initdb.d/
     networks:
       - treis_net
     healthcheck:
