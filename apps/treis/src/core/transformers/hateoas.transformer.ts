@@ -26,10 +26,17 @@ export class HateoasTransformer {
     ): HateoasEntity<T>[] | T[] {
         if (showLinks) {
             return entities.map(entity => {
-                const links = typeof itemLinks === 'function' ? itemLinks(entity) : [];
+                let links: HateoasLink[] = [];
+                try {
+                    const result = typeof itemLinks === 'function' ? itemLinks(entity) : [];
+                    links = Array.isArray(result) ? result : [];
+                } catch (e) {
+                    console.error('Erro ao gerar links para item:', e);
+                    links = [];
+                }
                 return {
                     ...entity,
-                    _links: Array.isArray(links) ? [...links] : []
+                    _links: links
                 };
             });
         }
