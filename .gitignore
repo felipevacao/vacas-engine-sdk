@@ -15,7 +15,7 @@ yarn-error.log*
 dist/
 build/
 *.tsbuildinfo
-src/dynamic-modules/*
+src/dynamic-modules/
 
 # Docker
 .docker-lock.json
@@ -37,3 +37,4 @@ temp/
 
 # Dados do Banco de Dados
 data/
+db/
