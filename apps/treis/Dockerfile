@@ -14,7 +14,7 @@ RUN npm run build
 RUN npm ci --only=production
 
 # ARGs apenas para build time (se necessário)
-ARG PORT=3015
+ARG PORT=3002
 
 # ENVs sem valores padrão - serão passadas em runtime
 ENV NODE_ENV=production

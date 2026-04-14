@@ -32,7 +32,7 @@ services:
     container_name: treis_api_local
     restart: always
     ports:
-      - "3015:3002"
+      - "3002:3002"
       - "50052:50051"
     env_file: .env.production
     environment:
