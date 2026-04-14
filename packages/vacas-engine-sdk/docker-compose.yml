@@ -23,7 +23,7 @@ services:
 
     # Executa scripts SQL da pasta ./db toda vez que o sistema sobe
   db-migrator:
-    image: postgres:18
+    image: postgres:18-alpine
     depends_on:
       db_clone:
         condition: service_healthy
