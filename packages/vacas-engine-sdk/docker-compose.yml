@@ -36,9 +36,10 @@ services:
     volumes:
       - ./db:/scripts
     command: >
-      sh -c "until pg_isready -h db -U ${DB_USER:-felipe}; do sleep 2; done;
+      sh -c "until pg_isready -h db_clone -U ${DB_USER:-felipe}; do sleep 2; done;
+            export PGPASSWORD=${DB_PASS:-dbTreis0303};
             for f in /scripts/*.sql; do 
-              [ -e \"$f\" ] && psql -h db -U ${DB_USER:-felipe} -d ${DB_NAME:-apitreis} -f \"$f\"; 
+              [ -e \"$$f\" ] && psql -h db_clone -U ${DB_USER:-felipe} -d ${DB_NAME:-apitreis} -f \"$$f\"; 
             done"
     networks:
       - treis_net
