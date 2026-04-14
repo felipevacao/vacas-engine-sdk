@@ -16,17 +16,13 @@ services:
     networks:
       - treis_net
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${DB_USER} -d ${DB_NAME}",
-        ]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
     # Executa scripts SQL da pasta ./db toda vez que o sistema sobe
-    db-migrator:
+  db-migrator:
     image: postgres:18-alpine
     depends_on:
       db_clone:
@@ -49,10 +45,10 @@ services:
       - "3020:3020"
       - "50051:50051"
     env_file: .env
-    depends_on:
-      - db_clone
-    networks:
-      - treis_net
+  depends_on:
+    - db_clone
+  networks:
+    - treis_net
 
 volumes:
   pgdata:
