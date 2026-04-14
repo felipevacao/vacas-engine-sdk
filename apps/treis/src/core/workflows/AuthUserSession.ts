@@ -213,6 +213,8 @@ export class AuthUserSessionWorkflow {
 		email: string,
 		password: string
 	): Promise<boolean> {
+		const dummyHash = "$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/zBkqquzaY8vL9x.330n0/2Z7.y";
+		const dummyPepper = 1;
 		try {
 			await this.userService.getUserByEmail(email)
 			const user = this.userService.getEntity()
@@ -228,6 +230,7 @@ export class AuthUserSessionWorkflow {
 			return match
 
 		} catch {
+			await this.authService.comparePassword(password, dummyHash, dummyPepper);
 			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, HttpStatus.UNAUTHORIZED, this.userService.getContext())
 		}
 	}
