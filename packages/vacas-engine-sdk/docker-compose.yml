@@ -23,7 +23,7 @@ services:
 
     # Executa scripts SQL da pasta ./db toda vez que o sistema sobe
   db-migrator:
-    image: postgres:18-alpine
+    image: postgres:18
     depends_on:
       db_clone:
         condition: service_healthy
@@ -37,6 +37,8 @@ services:
             done"
     networks:
       - treis_net
+
+  api_clone:
     build: .
     profiles: ["api"]
     container_name: treis_clone_api
@@ -45,10 +47,11 @@ services:
       - "3020:3020"
       - "50051:50051"
     env_file: .env
-  depends_on:
-    - db_clone
-  networks:
-    - treis_net
+    depends_on:
+      db_clone:
+        condition: service_healthy
+    networks:
+      - treis_net
 
 volumes:
   pgdata:
