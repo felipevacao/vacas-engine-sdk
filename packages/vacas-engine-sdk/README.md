@@ -38,6 +38,7 @@ Siga os passos abaixo para preparar seu ambiente local:
    ```bash
    cp .env.example .env
    ```
+   *Nota: A criação deste arquivo é **obrigatória**. O sistema depende das variáveis de ambiente definidas nele (especialmente DB_USER, DB_PASS, DB_NAME) para inicializar os contêineres.*
 
 4. **Suba o Sistema:**
    ```bash
