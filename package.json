@@ -9,8 +9,8 @@
   },
   "scripts": {
     "generate:module": "node scripts/generate-entity.mjs",
-    "docker:db": "docker compose up -d db_clone db-migrator",
-    "docker:api": "docker compose --profile api up -d",
+    "docker:db": "docker compose up -d db_clone && docker compose run --rm db-migrator",
+    "docker:api": "docker compose up -d db_clone && docker compose run --rm db-migrator && docker compose --profile api up -d",
     "docker:stop": "docker compose --profile api down",
     "docker:refresh": "docker compose --profile api down && docker compose pull && docker compose --profile api up -d --build --force-recreate"
   },
