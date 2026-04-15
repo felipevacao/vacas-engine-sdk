@@ -18,6 +18,7 @@ const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   update: repository.update<{{tablenameCapital}}Entity>('{{realTableName}}'),
   delete: repository.deleteById('{{realTableName}}'),
   forceDelete: repository.forceDelete('{{realTableName}}'),
+  count: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').count,
   selectAbleFields: [{{fields}}],
   defaultFields: ['id'],
   excludedFields: [],
