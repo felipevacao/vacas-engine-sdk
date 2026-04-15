@@ -17,6 +17,7 @@ import {
 	QueryFilter
 } from '@app-types/entity'
 import { HttpStatus } from "@constants/HttpStatus";
+import { ServiceFactory } from "./serviceFactory";
 
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 
@@ -39,6 +40,58 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		this._showErrors = env.ENABLE_RETURN_ERRORS
 		this._metadataService = new MetadataService(this.getController().getModelTable())
 	}
+
+    /**
+     * Carrega as relações solicitadas para um conjunto de dados.
+     */
+    protected async loadRelations(data: any[], includes: string[]) {
+        const model = (this.getController() as any).model as Model<T>;
+        const relations = model.relations;
+        
+        if (!relations) return;
+
+        for (const relName of includes) {
+            const relation = relations[relName];
+            if (!relation) continue;
+
+            const relatedService = ServiceFactory.get(relation.table);
+            if (!relatedService) {
+                console.warn(`[BaseServices] Service for table ${relation.table} not found in ServiceFactory.`);
+                continue;
+            }
+
+            const ids = [...new Set(data.map(item => item[relation.localKey]).filter(id => id != null))];
+            if (ids.length === 0) continue;
+
+            // Busca os dados relacionados usando o Service daquela entidade
+            // Isso garante que campos excluídos, sensíveis e lógicas de negócio sejam respeitados
+            const relatedItems = await relatedService.findEntityBy({
+                filters: [{
+                    field: relation.foreignKey,
+                    operator: 'IN' as any,
+                    value: ids as any
+                }]
+            }) as any[];
+
+            if (relation.type === 'belongsTo' || relation.type === 'hasOne') {
+                const relatedMap = new Map(relatedItems.map(item => [item[relation.foreignKey], item]));
+                data.forEach(item => {
+                    item[relName] = relatedMap.get(item[relation.localKey]) || null;
+                });
+            } else if (relation.type === 'hasMany') {
+                const relatedMap = new Map<any, any[]>();
+                relatedItems.forEach(item => {
+                    const key = item[relation.foreignKey];
+                    if (!relatedMap.has(key)) relatedMap.set(key, []);
+                    relatedMap.get(key)!.push(item);
+                });
+
+                data.forEach(item => {
+                    item[relName] = relatedMap.get(item[relation.localKey]) || [];
+                });
+            }
+        }
+    }
 
 	validateId(id: number | string): asserts id is number | string {
 		if (
@@ -154,6 +207,11 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 				this.getContext()
 			)
 		}
+
+		if (args[1]?.includes && result) {
+			await this.loadRelations([result], args[1].includes);
+		}
+
 		return result
 	}
 
@@ -165,6 +223,11 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		if (!result) {
 			return []
 		}
+
+		if (args[0]?.includes && result.length > 0) {
+			await this.loadRelations(result, args[0].includes);
+		}
+
 		return result
 
 	}
@@ -189,7 +252,13 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		...args: Parameters<BaseController<T>['findAllEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findAllEntityPaginated']>>> {
 		args[0] = this.setDefaultFilters(args[0])
-		return await this.getController().findAllEntityPaginated(args[0])
+		const result = await this.getController().findAllEntityPaginated(args[0])
+
+		if (args[0]?.includes && result.data.length > 0) {
+			await this.loadRelations(result.data, args[0].includes);
+		}
+
+		return result
 	}
 
 	async findByEntityPaginated(
@@ -204,6 +273,11 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 				this.getContext()
 			)
 		}
+
+		if (args[0]?.includes && result.data.length > 0) {
+			await this.loadRelations(result.data, args[0].includes);
+		}
+
 		return result
 	}
 

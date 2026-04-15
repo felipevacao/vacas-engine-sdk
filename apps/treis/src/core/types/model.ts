@@ -1,5 +1,13 @@
 import { BaseEntity, CreateData, UpdateData, OutputData, QueryFields, Metadata, PaginatedResult } from "@app-types/entity";
 
+export interface Relation {
+    type: 'belongsTo' | 'hasMany' | 'hasOne' | 'belongsToMany';
+    table: string;
+    localKey: string;
+    foreignKey: string;
+    pivotTable?: string; // Para belongsToMany
+}
+
 export interface Model<T extends BaseEntity> {
     table: string,
     create: (data: CreateData<T>, options: QueryFields<T>) => Promise<OutputData<T>> ,
@@ -15,5 +23,6 @@ export interface Model<T extends BaseEntity> {
     selectAbleFields: (keyof T)[],
     defaultFields: (keyof T)[],
     excludedFields: (keyof T)[],
-    metadata: () => Promise<Metadata> | null
+    metadata: () => Promise<Metadata> | null,
+    relations?: Record<string, Relation>
 }

@@ -13,6 +13,7 @@ import {
 	OutputData
 } from "@app-types/entity";
 import { BaseController } from "@controllers/baseController";
+import { ServiceFactory } from "@services/serviceFactory";
 
 export class UserSessionService
 	extends BaseServices<UserSessionsEntity, UserSessionsController> {
@@ -119,3 +120,6 @@ export class UserSessionService
 	}
 
 }
+
+// Registro automático para Eager Loading
+ServiceFactory.register('user_sessions', () => new UserSessionService());

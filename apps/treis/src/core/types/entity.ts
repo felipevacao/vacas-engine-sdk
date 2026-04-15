@@ -43,6 +43,7 @@ export type QueryFields<T extends BaseEntity> = {
   // Example: filter: { field: 'age', sign: '>', value: '18' }
   filters?: QueryFilter[];
   paginated?: boolean;
+  includes?: string[];
 }
 
 export type QueryFilter = {
@@ -93,7 +94,8 @@ export interface InputRequest<T> {
     page?: number;
     pageSize?: number;
     links?: string;
-    paginated?: string
+    paginated?: string;
+    include?: string;
   };
 }
 

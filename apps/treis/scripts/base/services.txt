@@ -1,13 +1,17 @@
 import { {{tablenameCapital}}Controller } from "./controller";
 import { BaseServices } from "@services/baseServices";
 import { {{tablenameCapital}}Entity } from "./entity";
+import { ServiceFactory } from "@services/serviceFactory";
 
 export class {{tablenameCapital}}Service extends BaseServices < {{tablenameCapital}}Entity, {{tablenameCapital}}Controller > {
 
 	constructor(
 		protected entityController: {{tablenameCapital}}Controller = new {{tablenameCapital}}Controller
 	) {
-	super(entityController)
-}
+	    super(entityController)
+    }
 
 }
+
+// Registro automático para Eager Loading
+ServiceFactory.register('{{realTableName}}', () => new {{tablenameCapital}}Service());
