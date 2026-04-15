@@ -3,7 +3,9 @@ import { MESSAGES } from '@constants/messages';
 import { {{tablenameCapital}}Entity } from './entity';
 import * as repository from '@services/repository';
 import { apiError } from '@utils/error';
-import { Model } from '@app-types/entity';
+import { Model, Relation } from '@app-types/entity';
+
+const relations: Record<string, Relation> = { {{relations}} };
 
 const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   table: '{{realTableName}}',
@@ -19,6 +21,7 @@ const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   selectAbleFields: [{{fields}}],
   defaultFields: ['id'],
   excludedFields: [],
+  relations,
   metadata: async () => {
       const result = await repository.metadata('{{realTableName}}')();
       if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);

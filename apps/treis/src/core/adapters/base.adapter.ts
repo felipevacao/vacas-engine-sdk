@@ -127,6 +127,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         const filters = Array.isArray(inputFilter) ? inputFilter.length > 0 ? inputFilter.map((filter) => this.parseFilter(filter)) : [] : [this.parseFilter(inputFilter)];
 
         const limit = input.query.limit ? parseInt(input.query.limit as unknown as string) : undefined;
+        const includes = input.query.include ? (input.query.include as string).split(',') : undefined;
 
         return {
             originalUrl: input.originalUrl as string ?? '',
@@ -139,7 +140,8 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
             orderBy: input.query.orderBy as string ?? 'id',
             order: input.query.order as string ?? 'asc',
             page: input.query.page ? parseInt(input.query.page as unknown as string) : undefined,
-            pageSize: input.query.pageSize ? parseInt(input.query.pageSize as unknown as string) : undefined
+            pageSize: input.query.pageSize ? parseInt(input.query.pageSize as unknown as string) : undefined,
+            includes
         }
 
     }

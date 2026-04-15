@@ -6,6 +6,7 @@ import { UsersEntity } from "./entity";
 import { apiError } from "@utils/error";
 import { MESSAGES } from "@constants/messages";
 import { HttpStatus } from "@constants/HttpStatus";
+import { ServiceFactory } from "@services/serviceFactory";
 
 export class UserService extends BaseServices<UsersEntity, UsersController> {
 
@@ -130,3 +131,6 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 	}
 
 }
+
+// Registro automático para Eager Loading
+ServiceFactory.register('users', () => new UserService());

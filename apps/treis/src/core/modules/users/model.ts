@@ -19,6 +19,7 @@ const UsersModel: Model<UsersEntity> = {
   selectAbleFields: ['name', 'login', 'email'],
   defaultFields: ['id'],
   excludedFields: ['password', 'pepper'],
+  relations: {},
   metadata: async () => {
     const result = await repository.metadata('users')();
     if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);
