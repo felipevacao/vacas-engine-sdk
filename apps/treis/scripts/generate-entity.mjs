@@ -9,7 +9,7 @@ import knex from 'knex';
 const db = knex({
 	client: 'pg',
 	connection: {
-		host: process.env.DB_HOST,
+		host: process.env.DB_HOST_LOCAL || 'localhost',
 		user: process.env.DB_USER,
 		password: process.env.DB_PASS,
 		database: process.env.DB_NAME,
@@ -237,7 +237,7 @@ function generateControllerFile(tableNameCamel, tablenameCapital) {
 // Função para gerar o arquivo de service
 function generateServiceFile(tableName, tableNameCamel, tablenameCapital) {
 	const controllerContent = getContent('services.txt', tableNameCamel, tablenameCapital)
-        .replaceAll('{{realTableName}}', tableName);
+		.replaceAll('{{realTableName}}', tableName);
 
 	const filePath = join(__dirname, __pathToSave, tableNameCamel, 'service.ts');
 	ensureDirectoryExistence(filePath);
