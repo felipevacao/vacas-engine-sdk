@@ -9,7 +9,7 @@ import knex from 'knex';
 const db = knex({
 	client: 'pg',
 	connection: {
-		host: process.env.DB_HOST_LOCAL || 'localhost',
+		host: process.env.DB_HOST,
 		user: process.env.DB_USER,
 		password: process.env.DB_PASS,
 		database: process.env.DB_NAME,
@@ -28,19 +28,39 @@ async function main() {
 		if (columns.length > 0) {
 			console.log('Estrutura da tabela:');
 			console.table(columns);
+
+			// Detectar relações automaticamente
+			const autoRelations = await getTableRelations(tableName);
+			if (autoRelations.length > 0) {
+				console.log('Relações detectadas automaticamente:');
+				console.table(autoRelations);
+			}
+
+			let relations = [...autoRelations];
+			while (await confirm({ message: 'Deseja adicionar mais alguma relação manualmente?' })) {
+				const name = await input({ message: 'Nome da relação (ex: itens, mesa):' });
+				const type = await input({ message: 'Tipo (belongsTo, hasMany, hasOne):', default: 'belongsTo' });
+				const table = await input({ message: 'Tabela relacionada:' });
+				const localKey = await input({ message: 'Chave local (ex: id_mesa ou id):' });
+				const foreignKey = await input({ message: 'Chave estrangeira (ex: id ou id_comanda):' });
+
+				relations.push({ name, type, table, localKey, foreignKey });
+			}
+
 			const tableNameCamel = toCamelCase(tableName);
 			const tablenameCapital = tableNameCamel.charAt(0).toUpperCase() + tableNameCamel.slice(1)
+
 			if (await confirm({ message: 'Criar a Entidade?' }) == true) {
 				generateEntityFile(columns, tableNameCamel, tablenameCapital);
 			}
 			if (await confirm({ message: 'Criar o Model?' }) == true) {
-				await generateModelFile(tableName, tableNameCamel, tablenameCapital);
+				await generateModelFile(tableName, tableNameCamel, tablenameCapital, relations);
 			}
 			if (await confirm({ message: 'Criar o Controller?' }) == true) {
 				generateControllerFile(tableNameCamel, tablenameCapital);
 			}
 			if (await confirm({ message: 'Criar as Services?' }) == true) {
-				generateServiceFile(tableNameCamel, tablenameCapital);
+				generateServiceFile(tableName, tableNameCamel, tablenameCapital);
 			}
 			if (await confirm({ message: 'Criar as Rotas?' }) == true) {
 				generateRoutesFile(tableNameCamel, tablenameCapital);
@@ -115,6 +135,33 @@ async function getTableStructure(tableName) {
 	return rows;
 }
 
+// Função para obter as relações (Foreign Keys)
+async function getTableRelations(tableName) {
+	const result = await db.raw(`
+        SELECT
+            kcu.column_name as local_column, 
+            ccu.table_name AS foreign_table,
+            ccu.column_name AS foreign_column 
+        FROM 
+            information_schema.table_constraints AS tc 
+            JOIN information_schema.key_column_usage AS kcu
+              ON tc.constraint_name = kcu.constraint_name
+              AND tc.table_schema = kcu.table_schema
+            JOIN information_schema.constraint_column_usage AS ccu
+              ON ccu.constraint_name = tc.constraint_name
+              AND ccu.table_schema = tc.table_schema
+        WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name = ?;
+    `, [tableName]);
+
+	return result.rows.map(rel => ({
+		name: rel.local_column.replace(/_id$|^id_/, ''), // Tenta dar um nome amigável
+		type: 'belongsTo',
+		table: rel.foreign_table,
+		localKey: rel.local_column,
+		foreignKey: rel.foreign_column
+	}));
+}
+
 // Função para gerar o arquivo de entidade
 function generateEntityFile(columns, tableNameCamel, tablenameCapital) {
 
@@ -151,11 +198,25 @@ ${swaggerProperties}
 }
 
 // Função para gerar o arquivo de modelo
-async function generateModelFile(tableName, tableNameCamel, tablenameCapital) {
+async function generateModelFile(tableName, tableNameCamel, tablenameCapital, relations = []) {
 	const columns = await getTableStructure(tableName);
 	const columnNames = columns.map((row) => "'" + row.column_name + "'");
 	const columnsString = columnNames.join(', ');
-	const modelContent = (getContent('model.txt', tableNameCamel, tablenameCapital)).replaceAll('{{fields}}', columnsString).replaceAll('{{realTableName}}', tableName);
+
+	const relationsString = relations.map(rel => {
+		return `
+    ${rel.name}: {
+      type: '${rel.type}',
+      table: '${rel.table}',
+      localKey: '${rel.localKey}',
+      foreignKey: '${rel.foreignKey}'
+    }`;
+	}).join(',');
+
+	const modelContent = (getContent('model.txt', tableNameCamel, tablenameCapital))
+		.replaceAll('{{fields}}', columnsString)
+		.replaceAll('{{realTableName}}', tableName)
+		.replaceAll('{{relations}}', relationsString);
 
 	const filePath = join(__dirname, __pathToSave, tableNameCamel, 'model.ts');
 	ensureDirectoryExistence(filePath);
@@ -174,8 +235,9 @@ function generateControllerFile(tableNameCamel, tablenameCapital) {
 }
 
 // Função para gerar o arquivo de service
-function generateServiceFile(tableNameCamel, tablenameCapital) {
-	const controllerContent = getContent('services.txt', tableNameCamel, tablenameCapital);
+function generateServiceFile(tableName, tableNameCamel, tablenameCapital) {
+	const controllerContent = getContent('services.txt', tableNameCamel, tablenameCapital)
+        .replaceAll('{{realTableName}}', tableName);
 
 	const filePath = join(__dirname, __pathToSave, tableNameCamel, 'service.ts');
 	ensureDirectoryExistence(filePath);
