@@ -37,4 +37,4 @@ temp/
 
 # Dados do Banco de Dados
 data/
-db/
+db/*
