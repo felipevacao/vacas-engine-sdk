@@ -18,8 +18,6 @@ import { ServiceFactory } from "@services/serviceFactory";
 export class UserSessionService
 	extends BaseServices<UserSessionsEntity, UserSessionsController> {
 
-	public id: string = ''
-
 	constructor(
 		protected entityController: UserSessionsController = new UserSessionsController()
 	) {

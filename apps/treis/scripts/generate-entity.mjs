@@ -157,8 +157,8 @@ async function getTableRelations(tableName) {
 		name: rel.local_column.replace(/_id$|^id_/, ''), // Tenta dar um nome amigável
 		type: 'belongsTo',
 		table: rel.foreign_table,
-		localKey: rel.local_column,
-		foreignKey: rel.foreign_column
+		localKey: toCamelCase(rel.local_column),
+		foreignKey: toCamelCase(rel.foreign_column)
 	}));
 }
 
@@ -393,7 +393,7 @@ function mapDataType(dataType) {
 		case 'timestamp without time zone':
 			return 'Date';
 		default:
-			return 'any';
+			return 'undefined';
 	}
 }
 

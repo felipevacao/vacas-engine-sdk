@@ -13,6 +13,7 @@ apps/treis/.env
 apps/treis/.env.production
 apps/treis/dist/
 apps/treis/src/dynamic-modules/usersessions/
+apps/treis/src/dynamic-modules/*
 apps/treis/logs/
 
 packages/verona/.env

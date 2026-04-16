@@ -4,6 +4,20 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ---
 
+## [1.2.2] - 2026-04-15
+
+### ✨ Novidades
+- **Eager Loading Dinâmico**: Implementado suporte a carregamento de recursos relacionados via parâmetro `?include=` na URL.
+- **ServiceFactory**: Novo motor de resolução dinâmica de serviços que permite o carregamento de relações respeitando as regras de negócio de cada módulo.
+- **Segurança de Persistência (SchemaGuard)**: Adicionada validação automática de campos nos repositórios (`create` e `update`) para garantir que apenas colunas permitidas sejam persistidas no banco.
+
+### 🛠️ Infraestrutura e Tipagem
+- **Hardening de Tipos**: Eliminação de todo uso de `any` e `unknown` na camada de repositório, adotando `KnexTable<T>` e `ResolveTableType` para tipagem estrita.
+- **Sincronização SDK**: O script `fix-models.mjs` agora sincroniza automaticamente os scripts de geração e templates do Core para o SDK durante o `publish`.
+- **Refatoração de Repositórios**: Centralização da lógica de filtros no utilitário `knexUtils.ts`, melhorando a manutenibilidade e segurança.
+
+---
+
 ## [1.2.1] - 2026-04-14
 
 ### 🛡️ Segurança
@@ -12,10 +26,6 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ### 📖 Documentação
 - **Aviso Obrigatório**: Adicionado alerta no `README.md` enfatizando que a criação do arquivo `.env` é essencial para a inicialização do ambiente.
-
----
-
-## [1.2.1] - 2026-04-14
 
 ### 🛠️ Infraestrutura & Docker
 - **Correção de Migração**: Ajustada a interpolação de variáveis no `command` do `db-migrator` no `docker-compose.yml` para evitar erros de variáveis não definidas.
@@ -57,7 +67,6 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 ### 📖 Documentação
 - **Refatoração do README**: Unificado com guia de instalação passo a passo, detalhamento da geração de módulos CLI e política de proteção de IP.
 - **UPDATE.md**: Implementado rastreamento de mudanças para o repositório público.
-
 
 ### 🛠️ Infraestrutura
 - **Docker Compose**: Simplificado para o usuário final, focado em "Plug-and-Play" de módulos em `src/dynamic-modules`.

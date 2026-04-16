@@ -2,6 +2,7 @@ import { db } from '@utils/db'
 import { BaseEntity, ErrorContext, OutputData, PaginatedResult, QueryFields } from '@app-types/entity'
 import { ErrorHandler } from '@utils/ErrorHandler'
 import { env } from 'process'
+import { applyFilters } from '@utils/knexUtils'
 
 /**
  * Operações de leitura para entidades, incluindo métodos para buscar todos os registros, buscar por ID, buscar por critérios específicos e realizar consultas paginadas.
@@ -29,7 +30,7 @@ export const read = <T extends BaseEntity>(table: string) => {
     ): Promise<PaginatedResult<T>> => {
 
         const result = await queryGeneratorPaginated(options)
-        return result || []
+        return result || { data: [], pagination: { page: 1, limit: 10, total: 0, totalPages: 0, hasNext: false, hasPrev: false } }
 
     }
 
@@ -74,30 +75,23 @@ export const read = <T extends BaseEntity>(table: string) => {
         context.entity = table
 
         try {
-            let query = db(table)
-                .count('* as count')
+            const query = db(table)
                 .where(options.where || {})
                 .whereNull('deletedAt')
+                .count('* as count')
                 .first();
 
-            if (options.filters) {
-                options.filters.forEach(filter => {
-                    query = query.where(filter.field, filter.operator, filter.value);
-                });
-            }
+            applyFilters(query, options);
 
-            const result = await query;
-            return result ? parseInt(result.count as string) : 0;
+            const result = await query as { count: string | number } | undefined;
+            return result ? parseInt(String(result.count)) : 0;
         } catch (error) {
             throw ErrorHandler.handleDatabaseError(error, context);
         }
     }
 
     /**
-     * Gerador de consultas para operações de leitura
-, permitindo a construção dinâmica de queries com base em diversos parâmetros, 
-     * como campos selecionados, filtros, ordenação e paginação. Essa função centraliza a lógica de consulta, 
-     * facilitando a reutilização e manutenção do código, além de garantir consistência nas operações de leitura em toda a aplicação.
+     * Gerador de consultas para operações de leitura.
      */
     const queryGenerator = async (
         options: QueryFields<T>
@@ -107,35 +101,31 @@ export const read = <T extends BaseEntity>(table: string) => {
         context.entity = table
 
         try {
-            let query = db(table)
+            const query = db<T>(table)
                 .select(options.fields || '*')
                 .where(options.where || {})
+                .whereNull('deletedAt');
 
-            if (options.filters) {
-                options.filters.forEach(filter => {
-                    query = query.where(filter.field, filter.operator, filter.value);
-                });
-            }
+            applyFilters(query, options);
 
-            query = query
+            query
                 .limit(options.limit || 10)
                 .offset(options.offset || 0)
-                .orderBy(options.orderBy || 'id', options.order || 'asc')
-                .whereNull('deletedAt')
+                .orderBy(options.orderBy || 'id', options.order || 'asc');
 
             if (env.NODE_ENV === 'development') {
                 context.details = [query.toQuery()]
             }
-            return query
+
+            const result = await query;
+            return result as unknown as OutputData<T>[];
         } catch (error) {
             throw ErrorHandler.handleDatabaseError(error, context);
         }
     }
 
     /**
-     * Gerador de consultas paginadas para operações de leitura, permitindo a construção dinâmica de queries com suporte a paginação,
-     * além de incluir informações de navegação, como URLs para as próximas e anteriores páginas. Essa função centraliza a lógica de consulta paginada,
-     * facilitando a reutilização e manutenção do código, além de garantir consistência nas operações de leitura paginada em toda a aplicação.
+     * Gerador de consultas paginadas para operações de leitura.
      */
     const queryGeneratorPaginated = async (
         options: QueryFields<T>
@@ -143,73 +133,69 @@ export const read = <T extends BaseEntity>(table: string) => {
         const context = {} as ErrorContext
         context.entity = table
         try {
-            let query = db(table)
+            const query = db<T>(table)
                 .select(options.fields || '*')
                 .where(options.where || {})
+                .whereNull('deletedAt');
 
-            if (options.filters) {
-                options.filters.forEach(filter => {
-                    query = query.where(filter.field, filter.operator, filter.value);
-                });
-            }
+            applyFilters(query, options);
 
-            query = query
-                .orderBy(options.orderBy || 'id', options.order || 'asc')
-                .whereNull('deletedAt')
+            const orderBy = options.orderBy || 'id';
+            const order = options.order || 'asc';
+
+            query.orderBy(orderBy, order);
 
             // Configurar paginação
             const currentPage = options.page || 1;
             const pageSize = options.limit || 10;
             const skipRecords = options.offset ?? (currentPage - 1) * pageSize;
 
-            query = query
+            query
                 .limit(pageSize)
                 .offset(skipRecords);
 
-            let countQuery = db(table)
+            const countQuery = db(table)
                 .where(options.where || {})
-                .count('* as count')
                 .whereNull('deletedAt')
+                .count('* as count')
                 .first();
-            if (options.filters) {
-                options.filters.forEach(filter => {
-                    countQuery = countQuery.where(filter.field, filter.operator, filter.value);
-                });
-            }
+
+            applyFilters(countQuery, options);
+
             if (env.NODE_ENV === 'development') {
                 context.details = [query.toQuery(), countQuery.toQuery()]
             }
 
             const [result, totalCount] = await Promise.all([
                 query,
-                countQuery
+                countQuery as Promise<{ count: string | number } | undefined>
             ]);
 
-            const total = totalCount ? parseInt(totalCount.count as string) : 0 as number;
+            const total = totalCount ? parseInt(String(totalCount.count)) : 0;
 
-            const newUrl = options.originalUrl?.replace(`&page=${currentPage}`, '').replace(`page=${currentPage}`, '') as string || '';
+            const newUrl = options.originalUrl?.replace(`&page=${currentPage}`, '').replace(`page=${currentPage}`, '') || '';
             let urlChar = '&';
             if (!newUrl.includes('?')) {
                 urlChar = '?';
             }
-            const nextPage = (skipRecords || 0) + (options.limit || 10) < total ? currentPage + 1 : null;
-            const prevPage = (skipRecords || 0) > 0 ? currentPage - 1 : null;
+            const nextPage = skipRecords + pageSize < total ? currentPage + 1 : null;
+            const prevPage = skipRecords > 0 ? currentPage - 1 : null;
             const nextPageUrl = nextPage ? newUrl + urlChar + `page=${nextPage}` : null;
             const prevPageUrl = prevPage ? newUrl + urlChar + `page=${prevPage}` : null;
 
             return {
-                data: result as OutputData<T>[] ?? [],
+                data: result as T[],
                 pagination: {
-                    page: Math.floor((skipRecords || 0) / (options.limit || 10)) + 1,
-                    limit: options.limit || 10,
+                    page: Math.floor(skipRecords / pageSize) + 1,
+                    limit: pageSize,
                     total: total,
-                    totalPages: Math.ceil(total / (options.limit || 10)),
-                    hasNext: (skipRecords || 0) + (options.limit || 10) < total,
-                    hasPrev: (skipRecords || 0) > 0,
+                    totalPages: Math.ceil(total / pageSize),
+                    hasNext: skipRecords + pageSize < total,
+                    hasPrev: skipRecords > 0,
                     nextPageUrl,
                     prevPageUrl,
                 }
-            } as PaginatedResult<T>;
+            };
         } catch (error) {
             throw ErrorHandler.handleDatabaseError(error, context);
         }

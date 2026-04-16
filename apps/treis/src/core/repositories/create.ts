@@ -1,13 +1,11 @@
 import { db } from '@utils/db'
-import { BaseEntity, CreateData, ErrorContext, OutputData, QueryFields } from '@app-types/entity'
+import { BaseEntity, CreateData, ErrorContext, OutputData, QueryFields, KnexTable } from '@app-types/entity'
 import { ErrorHandler } from '@utils/ErrorHandler'
+import { metadata } from '@services/metadata'
+import { validateSchema } from '@utils/schemaGuard'
 
 export const create = <T extends BaseEntity>(table: string) => {
 
-    /**
-     * Função de criação genérica para inserir um novo registro em uma tabela específica do banco de dados.
-     * Aceita os dados a serem inseridos e opções de consulta para personalizar os campos retornados.
-     */
     return async (
         data: CreateData<T>,
         options: QueryFields<T> = {}
@@ -15,10 +13,16 @@ export const create = <T extends BaseEntity>(table: string) => {
         const context = {} as ErrorContext
         context.entity = table
         try {
-            const [result] = await db(table)
-                .insert(data)
-                .returning(options.fields ? options.fields.map(String) : '*')
-            return result;
+            const tableMetadata = await metadata(table)();
+            if (tableMetadata) {
+                validateSchema(data as any, tableMetadata.fields.map(f => f.column_name), table);
+            }
+
+            const result = await db<KnexTable<T>>(table)
+                .insert(data as any)
+                .returning(options.fields ? options.fields.map(String) : '*');
+            
+            return result[0] as OutputData<T>;
         } catch (error) {
             throw ErrorHandler.handleDatabaseError(error, context);
         }

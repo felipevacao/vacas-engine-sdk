@@ -19,6 +19,10 @@ export class BaseController<T extends BaseEntity> {
         return this.model.table
     }
 
+    public getModel(): Model<T> {
+        return this.model
+    }
+
     public getDefaultFields() {
         return this.model.defaultFields
     }
