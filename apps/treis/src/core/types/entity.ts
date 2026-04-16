@@ -22,7 +22,7 @@ export type HateoasEntity<T extends BaseEntity> = T & {
 export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 
 // Layout de Update
-export type UpdateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
+export type UpdateData<T extends BaseEntity> = Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
 
 // Layout de Saída
 export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt' | 'deletedAt'>;
@@ -31,12 +31,12 @@ export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt'
 export type QueryFields<T extends BaseEntity> = {
   originalUrl?: string;
   links?: boolean,
-  fields?: (keyof Model<T>)[],
+  fields?: (string | number | symbol)[],
   where?: Partial<T>,
   limit?: number,
   offset?: number,
   orderBy?: string,
-  order?: string,
+  order?: 'asc' | 'desc',
   page?: number,
   pageSize?: number,
   // filter is used for specific conditions like 'greater than', 'less than', etc.
@@ -49,12 +49,26 @@ export type QueryFields<T extends BaseEntity> = {
 export type QueryFilter = {
   field: string
   operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
-  value: string | number | boolean | Date
+  value: string | number | boolean | Date | (string | number)[]
 }
 
 export * from "./model";
+export interface IBaseServices {
+  findEntityBy(options: QueryFields<BaseEntity>): Promise<OutputData<BaseEntity>[]>;
+  getModelTable(): string;
+  getAvailableFields(extraFields?: string[]): string[];
+}
+
 export * from "./metadata";
 // export * from './queryTypes';
+
+import { Knex } from 'knex';
+
+export type KnexTable<T extends BaseEntity> = T & Knex.CompositeTableType<
+  T,             // Select
+  Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>, // Insert
+  Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>> // Update
+>;
 
 export interface IAdapter<T, U> {
   create(input: T, output: U): Promise<void>;
@@ -88,7 +102,7 @@ export interface InputRequest<T> {
     where?: Partial<T>;
     filter?: string | [] | undefined;
     orderBy?: string;
-    order?: string;
+    order?: 'asc' | 'desc';
     limit?: number;
     offset?: number;
     page?: number;

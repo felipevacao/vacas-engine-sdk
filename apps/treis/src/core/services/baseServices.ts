@@ -14,16 +14,17 @@ import {
 	InputRequest,
 	EnhancedTableMetadata,
 	QueryFields,
-	QueryFilter
+	QueryFilter,
+	IBaseServices
 } from '@app-types/entity'
 import { HttpStatus } from "@constants/HttpStatus";
 import { ServiceFactory } from "./serviceFactory";
 
-export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
+export class BaseServices<T extends BaseEntity, C extends BaseController<T>> implements IBaseServices {
 
 	protected errorService: ErrorService
 	protected _entity!: OutputData<T>
-	public id: number | string = 0 || ''
+	public id: number | string = 0
 	protected _bodyCreateExtended: boolean
 	protected _bodyUpdateExtended: boolean
 	protected _showErrors: boolean
@@ -41,57 +42,62 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		this._metadataService = new MetadataService(this.getController().getModelTable())
 	}
 
-    /**
-     * Carrega as relações solicitadas para um conjunto de dados.
-     */
-    protected async loadRelations(data: any[], includes: string[]) {
-        const model = (this.getController() as any).model as Model<T>;
-        const relations = model.relations;
-        
-        if (!relations) return;
+	/**
+	 * Carrega as relações solicitadas para um conjunto de dados.
+	 */
+	protected async loadRelations(data: OutputData<T>[], includes: string[]): Promise<OutputData<T>[]> {
+		const model = this.getController().getModel();
+		const relations = model.relations;
 
-        for (const relName of includes) {
-            const relation = relations[relName];
-            if (!relation) continue;
+		if (!relations) return data;
 
-            const relatedService = ServiceFactory.get(relation.table);
-            if (!relatedService) {
-                console.warn(`[BaseServices] Service for table ${relation.table} not found in ServiceFactory.`);
-                continue;
-            }
+		for (const relName of includes) {
+			const relation = relations[relName];
+			if (!relation) continue;
 
-            const ids = [...new Set(data.map(item => item[relation.localKey]).filter(id => id != null))];
-            if (ids.length === 0) continue;
+			const relatedService = ServiceFactory.get(relation.table);
+			if (!relatedService) {
+				console.warn(`[BaseServices] Service for table ${relation.table} not found in ServiceFactory.`);
+				continue;
+			}
 
-            // Busca os dados relacionados usando o Service daquela entidade
-            // Isso garante que campos excluídos, sensíveis e lógicas de negócio sejam respeitados
-            const relatedItems = await relatedService.findEntityBy({
-                filters: [{
-                    field: relation.foreignKey,
-                    operator: 'IN' as any,
-                    value: ids as any
-                }]
-            }) as any[];
+			const ids = [...new Set(data.map(item => (item as unknown as Record<string, unknown>)[relation.localKey]).filter((id): id is string | number => id != null))];
+			if (ids.length === 0) continue;
 
-            if (relation.type === 'belongsTo' || relation.type === 'hasOne') {
-                const relatedMap = new Map(relatedItems.map(item => [item[relation.foreignKey], item]));
-                data.forEach(item => {
-                    item[relName] = relatedMap.get(item[relation.localKey]) || null;
-                });
-            } else if (relation.type === 'hasMany') {
-                const relatedMap = new Map<any, any[]>();
-                relatedItems.forEach(item => {
-                    const key = item[relation.foreignKey];
-                    if (!relatedMap.has(key)) relatedMap.set(key, []);
-                    relatedMap.get(key)!.push(item);
-                });
+			// Busca os dados relacionados usando o Service daquela entidade
+			// Isso garante que campos excluídos, sensíveis e lógicas de negócio sejam respeitados
+			const relatedItems = await relatedService.findEntityBy({
+				filters: [{
+					field: relation.foreignKey,
+					operator: 'IN',
+					value: ids
+				}]
+			}) as OutputData<BaseEntity>[];
 
-                data.forEach(item => {
-                    item[relName] = relatedMap.get(item[relation.localKey]) || [];
-                });
-            }
-        }
-    }
+			if (relation.type === 'belongsTo' || relation.type === 'hasOne') {
+				const relatedMap = new Map<string | number, OutputData<BaseEntity>>(
+					relatedItems.map(item => [(item as unknown as Record<string, string | number>)[relation.foreignKey], item])
+				);
+				data.forEach(item => {
+					const localKeyValue = (item as unknown as Record<string, string | number>)[relation.localKey];
+					(item as unknown as Record<string, unknown>)[relName] = relatedMap.get(localKeyValue) || null;
+				});
+			} else if (relation.type === 'hasMany') {
+				const relatedMap = new Map<string | number, OutputData<BaseEntity>[]>();
+				relatedItems.forEach(item => {
+					const key = (item as unknown as Record<string, string | number>)[relation.foreignKey];
+					if (!relatedMap.has(key)) relatedMap.set(key, []);
+					relatedMap.get(key)!.push(item);
+				});
+
+				data.forEach(item => {
+					const localKeyValue = (item as unknown as Record<string, string | number>)[relation.localKey];
+					(item as unknown as Record<string, unknown>)[relName] = relatedMap.get(localKeyValue) || [];
+				});
+			}
+		}
+		return data;
+	}
 
 	validateId(id: number | string): asserts id is number | string {
 		if (
@@ -164,6 +170,16 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return options
 	}
 
+	/**
+	 * Define os campos padrão caso nenhum tenha sido solicitado.
+	 */
+	setDefaultFields(options: QueryFields<T>): QueryFields<T> {
+		if (!options.fields || options.fields.length === 0) {
+			options.fields = this.getAvailableFields() as (keyof Model<T>)[];
+		}
+		return options;
+	}
+
 	async generateBodyCreate(
 		input: InputRequest<unknown>
 	): Promise<CreateData<T> | null> {
@@ -179,27 +195,28 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		return this._bodyUpdateExtended == false ? null : body
 	}
 
-	getAvailableFields(
-		extraFields: (keyof Model<BaseEntity>)[] = []
-	): (keyof Model<T>)[] {
+	getAvailableFields(extraFields: string[] = []): string[] {
+		const model = this.getController().getModel();
+		const extraFieldsTyped = extraFields as (keyof Model<T>)[];
 
 		return ([
 			...this.getController().getDefaultFields(),
 			...this.getController().getSelectetAbleFields(),
-			...extraFields
+			...extraFieldsTyped
 		] as (keyof Model<T>)[])
 			.filter(
 				(field) => !this.getController()
 					.getExcludedFields()
 					.includes(field as keyof BaseEntity)
-			)
+			) as string[];
 
 	}
 
 	async findByIdEntity(
 		...args: Parameters<BaseController<T>['findByIdEntity']>
 	): Promise<OutputData<T>> {
-		const result = await this.getController().findByIdEntity(args[0], args[1])
+		args[1] = this.setDefaultFields(args[1] || {});
+		let result = await this.getController().findByIdEntity(args[0], args[1])
 		if (!result) {
 			throw new apiError(
 				MESSAGES.DATABASE.ENTITY.NOT_FOUND,
@@ -209,26 +226,29 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		}
 
 		if (args[1]?.includes && result) {
-			await this.loadRelations([result], args[1].includes);
+			const [hydrated] = await this.loadRelations([result], args[1].includes);
+			result = hydrated;
 		}
 
 		return result
 	}
 
 	async findEntityBy(
-		...args: Parameters<BaseController<T>['findByEntity']>
-	): Promise<Awaited<ReturnType<BaseController<T>['findByEntity']>>> {
-		args[0] = this.setDefaultFilters(args[0])
-		const result = await this.getController().findByEntity(args[0])
+		options: QueryFields<BaseEntity>
+	): Promise<OutputData<BaseEntity>[]> {
+		let typedOptions = this.setDefaultFilters(options as unknown as QueryFields<T>)
+		typedOptions = this.setDefaultFields(typedOptions);
+
+		const result = await this.getController().findByEntity(typedOptions)
 		if (!result) {
 			return []
 		}
 
-		if (args[0]?.includes && result.length > 0) {
-			await this.loadRelations(result, args[0].includes);
+		if (typedOptions.includes && result.length > 0) {
+			return await this.loadRelations(result as unknown as OutputData<T>[], typedOptions.includes) as unknown as OutputData<BaseEntity>[];
 		}
 
-		return result
+		return result as OutputData<BaseEntity>[]
 
 	}
 
@@ -252,10 +272,11 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		...args: Parameters<BaseController<T>['findAllEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findAllEntityPaginated']>>> {
 		args[0] = this.setDefaultFilters(args[0])
+		args[0] = this.setDefaultFields(args[0]);
 		const result = await this.getController().findAllEntityPaginated(args[0])
 
 		if (args[0]?.includes && result.data.length > 0) {
-			await this.loadRelations(result.data, args[0].includes);
+			result.data = await this.loadRelations(result.data as unknown as OutputData<T>[], args[0].includes) as unknown as T[];
 		}
 
 		return result
@@ -265,6 +286,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		...args: Parameters<BaseController<T>['findByEntityPaginated']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['findByEntityPaginated']>>> {
 		args[0] = this.setDefaultFilters(args[0])
+		args[0] = this.setDefaultFields(args[0]);
 		const result = await this.getController().findByEntityPaginated(args[0])
 		if (result.data.length === 0) {
 			throw new apiError(
@@ -275,7 +297,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> {
 		}
 
 		if (args[0]?.includes && result.data.length > 0) {
-			await this.loadRelations(result.data, args[0].includes);
+			result.data = await this.loadRelations(result.data as unknown as OutputData<T>[], args[0].includes) as unknown as T[];
 		}
 
 		return result

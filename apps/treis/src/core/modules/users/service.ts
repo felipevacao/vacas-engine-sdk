@@ -11,10 +11,11 @@ import { ServiceFactory } from "@services/serviceFactory";
 export class UserService extends BaseServices<UsersEntity, UsersController> {
 
 	constructor(
-		public id: number = 0,
+		id: number = 0,
 		protected entityController: UsersController = new UsersController
 	) {
 		super(entityController)
+        this.id = id
 		if (this.id !== 0) {
 			this.validateId(this.id)
 		}

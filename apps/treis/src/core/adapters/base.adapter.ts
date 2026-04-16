@@ -138,7 +138,7 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
             limit: limit,
             offset: input.query.offset ? parseInt(input.query.offset as unknown as string) : undefined,
             orderBy: input.query.orderBy as string ?? 'id',
-            order: input.query.order as string ?? 'asc',
+            order: input.query.order as 'asc' | 'desc' ?? 'asc',
             page: input.query.page ? parseInt(input.query.page as unknown as string) : undefined,
             pageSize: input.query.pageSize ? parseInt(input.query.pageSize as unknown as string) : undefined,
             includes
