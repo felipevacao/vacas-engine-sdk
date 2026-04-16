@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS "vacas_user_sessions" (
     "deleted_at" TIMESTAMPTZ NULL DEFAULT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON "user_sessions"("user_id");
-CREATE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON "user_sessions"("token_hash");
-CREATE INDEX IF NOT EXISTS idx_user_sessions_expires_at ON "user_sessions"("expires_at");
+CREATE INDEX IF NOT EXISTS idx_vacas_user_sessions_user_id ON "vacas_user_sessions"("user_id");
+CREATE INDEX IF NOT EXISTS idx_vacas_user_sessions_token_hash ON "vacas_user_sessions"("token_hash");
+CREATE INDEX IF NOT EXISTS idx_vacas_user_sessions_expires_at ON "vacas_user_sessions"("expires_at");
 
 -- 4. Função de Manutenção (Limpeza de Sessões Antigas)
 -- Pode ser chamada por um cronjob ou worker da API
