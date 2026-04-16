@@ -37,7 +37,7 @@ async function main() {
 			}
 
 			let relations = [...autoRelations];
-			while (await confirm({ message: 'Deseja adicionar mais alguma relação manualmente?' })) {
+			while (await confirm({ message: 'Deseja adicionar mais alguma relação manualmente?', default: false }) == true) {
 				const name = await input({ message: 'Nome da relação (ex: itens, mesa):' });
 				const type = await input({ message: 'Tipo (belongsTo, hasMany, hasOne):', default: 'belongsTo' });
 				const table = await input({ message: 'Tabela relacionada:' });
