@@ -13,7 +13,7 @@ export const create = <T extends BaseEntity>(table: string) => {
         const context = {} as ErrorContext
         context.entity = table
         try {
-            const tableMetadata = await metadata(table)();
+            const tableMetadata = await metadata(table, true)();
             if (tableMetadata) {
                 validateSchema(data as any, tableMetadata.fields.map(f => f.name), table);
             }
