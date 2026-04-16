@@ -15,7 +15,6 @@ import { GrpcServer } from './grpc'
  */
 process.on('uncaughtException', (error) => {
 	Logger.error('FALHA CRÍTICA (uncaughtException)', error);
-	// Em produção, você pode querer reiniciar o processo aqui
 });
 
 process.on('unhandledRejection', (reason) => {
@@ -32,7 +31,6 @@ app.use(helmet({
 	contentSecurityPolicy: {
 		directives: {
 			...helmet.contentSecurityPolicy.getDefaultDirectives(),
-			// Necessário para o Swagger UI funcionar corretamente
 			"img-src": ["'self'", "data:", "https://validator.swagger.io"],
 			"script-src": ["'self'", "'unsafe-inline'"],
 			"style-src": ["'self'", "https:", "'unsafe-inline'"],
@@ -42,60 +40,49 @@ app.use(helmet({
 
 // Definindo o rate limit global
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutos
-	max: 100, // Limite de 100 requisições por IP
+	windowMs: 15 * 60 * 1000, 
+	max: 100, 
 	message: {
 		error: 'Muitas requisições. Tente novamente mais tarde.',
 		status: 429
 	},
-	standardHeaders: true, // Retorna headers com info do rate limit
+	standardHeaders: true,
 	legacyHeaders: false,
 });
 
-// Aplicar a todas as rotas
 app.use(limiter);
 
-/**
- * Configuração do CORS
- * Especificar a origem permitida para evitar problemas de CORS
- * Origin deve ser a URL do frontend ou cliente que irá consumir a API 
-*/
 app.use(cors({
 	origin: env.ORIGIN,
 	methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
 	allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
-/**
- * Configuração do body-parser
- * Permite que o Express entenda requisições com payload JSON e urlencoded
- * Limita o JSON recebido a 10kb (ajuste se precisar de mais, mas mantenha baixo)
- */
 app.use(express.json({ limit: '10kb' }))
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-/** 
- * Configuração das rotas
- * Todas as rotas definidas em src/routes/index.ts serão usadas a partir da raiz '/'
- */
 app.use(router)
 
 /**
- * Inicia o servidor na porta especificada em env.API_PORT
- * Exibe uma mensagem no console indicando que o servidor está rodando
+ * Inicialização Condicional
  */
-const port = env.API_PORT
-app.listen(
-	port,
-	() => {
-		console.log(`[INFO] [Express] ${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
-	}
-)
+if (env.ENABLE_REST) {
+    const port = env.API_PORT
+    app.listen(
+        port,
+        () => {
+            console.log(`[INFO] [Express] ${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
+        }
+    )
+} else {
+    console.log('[INFO] [Express] Serviço REST desabilitado.');
+}
 
-/**
- * Inicia o servidor gRPC
- */
-const grpcServer = new GrpcServer(50051);
-grpcServer.start();
+if (env.ENABLE_GRPC) {
+    const grpcServer = new GrpcServer(50051);
+    grpcServer.start();
+} else {
+    console.log('[INFO] [gRPC] Serviço gRPC desabilitado.');
+}
 
 console.log(`${getMessage(MESSAGES.API.START)}`)

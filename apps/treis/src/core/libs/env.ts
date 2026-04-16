@@ -59,6 +59,8 @@ const env = cleanEnv(
         ENABLE_HATEOAS: bool({ default: true }),
         ENABLE_RETURN_ERRORS: bool({ default: false }),
         ENABLE_CONSOLE_LOG: bool({ default: true }),
+        ENABLE_REST: bool({ default: true }),
+        ENABLE_GRPC: bool({ default: true }),
     }
 )
 
