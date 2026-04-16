@@ -116,13 +116,14 @@ export interface InputRequest<T> {
 export interface Metadata {
   table: string;
   fields: {
-    column_name: string;
-    data_type: string;
-    character_maximum_length?: number;
+    name: string;
+    type: string;
+    maxLength: number;
     formType?: string;
     label?: string;
     required?: boolean;
   }[];
+
   // relationships?: unknown[]; // Placeholder for future relationships
   // constraints?: unknown[]; // Placeholder for future constraints
 }

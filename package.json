@@ -1,6 +1,6 @@
 {
   "name": "vacas-engine",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": true,
   "author": {
     "name": "Felipe Trevenzoli",
@@ -20,7 +20,8 @@
     "verona:build": "npm run build -w packages/verona",
     "lint": "npm run lint -w apps/treis && npm run lint -w packages/verona",
     "publish:treis": "npm run publish:treis -w apps/treis",
-    "publish:sdk": "node packages/vacas-engine-sdk/scripts/fix-models.mjs && git subtree push --prefix packages/vacas-engine-sdk sdk-public main"
+    "prepare:sdk": "node apps/treis/scripts/prepare-sdk.mjs && git subtree push --prefix packages/vacas-engine-sdk sdk-public main",
+    "publish:sdk": "git subtree push --prefix packages/vacas-engine-sdk sdk-public main"
   },
   "keywords": [
     "core",

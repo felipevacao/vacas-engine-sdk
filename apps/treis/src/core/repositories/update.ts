@@ -22,10 +22,11 @@ export const update = <T extends BaseEntity>(table: string) => {
 		context.id = id
 
 		try {
-            const tableMetadata = await metadata(table)();
-            if (tableMetadata) {
-                validateSchema(data as any, tableMetadata.fields.map(f => f.column_name), table);
-            }
+			const tableMetadata = await metadata(table, true)();
+			console.log(tableMetadata);
+			if (tableMetadata) {
+				validateSchema(data as any, tableMetadata.fields.map(f => f.name), table);
+			}
 
 			const updateData: Partial<T> = {
 				...data,
@@ -43,7 +44,7 @@ export const update = <T extends BaseEntity>(table: string) => {
 				context.details = [query.toQuery()]
 			}
 			const result = await query as unknown as OutputData<T>[];
-			
+
 			if (!result || result.length === 0) {
 				throw new apiError(
 					MESSAGES.DATABASE.ENTITY.NOT_FOUND,

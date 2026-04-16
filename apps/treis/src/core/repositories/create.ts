@@ -15,13 +15,13 @@ export const create = <T extends BaseEntity>(table: string) => {
         try {
             const tableMetadata = await metadata(table)();
             if (tableMetadata) {
-                validateSchema(data as any, tableMetadata.fields.map(f => f.column_name), table);
+                validateSchema(data as any, tableMetadata.fields.map(f => f.name), table);
             }
 
             const result = await db<KnexTable<T>>(table)
                 .insert(data as any)
                 .returning(options.fields ? options.fields.map(String) : '*');
-            
+
             return result[0] as OutputData<T>;
         } catch (error) {
             throw ErrorHandler.handleDatabaseError(error, context);
