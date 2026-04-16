@@ -23,7 +23,6 @@ export const update = <T extends BaseEntity>(table: string) => {
 
 		try {
 			const tableMetadata = await metadata(table, true)();
-			console.log(tableMetadata);
 			if (tableMetadata) {
 				validateSchema(data as any, tableMetadata.fields.map(f => f.name), table);
 			}

@@ -9,12 +9,13 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 ### ✨ Novidades
 - **Eager Loading Dinâmico**: Implementado suporte a carregamento de recursos relacionados via parâmetro `?include=` na URL.
 - **ServiceFactory**: Novo motor de resolução dinâmica de serviços que permite o carregamento de relações respeitando as regras de negócio de cada módulo.
-- **Segurança de Persistência (SchemaGuard)**: Adicionada validação automática de campos nos repositórios (`create` e `update`) para garantir que apenas colunas permitidas sejam persistidas no banco.
+- **Segurança de Persistência (SchemaGuard)**: Adicionada validação automática de campos nos repositórios (`create` e `update`) para garantir que apenas colunas permitidas sejam persistidas no banco, com conversão automática de `camelCase` (JSON) para `snake_case` (banco).
 
 ### 🛠️ Infraestrutura e Tipagem
-- **Hardening de Tipos**: Eliminação de todo uso de `any` e `unknown` na camada de repositório, adotando `KnexTable<T>` e `ResolveTableType` para tipagem estrita.
-- **Sincronização SDK**: O script `fix-models.mjs` agora sincroniza automaticamente os scripts de geração e templates do Core para o SDK durante o `publish`.
-- **Refatoração de Repositórios**: Centralização da lógica de filtros no utilitário `knexUtils.ts`, melhorando a manutenibilidade e segurança.
+- **Hardening de Tipos**: Eliminação completa de qualquer uso de `any` e `unknown` na camada de repositório, adotando `KnexTable<T>` e `ResolveTableType` para tipagem estrita e segurança total em tempo de compilação.
+- **Sincronização SDK**: O script `prepare-sdk.mjs` agora garante que os geradores de entidade e templates estejam sempre sincronizados com a versão mais recente do Core durante o `publish`.
+- **Refatoração de Repositórios**: Centralização da lógica de filtros no utilitário `knexUtils.ts`, garantindo consistência e performance estável.
+- **Gestão de Serviços**: Inicialização condicional de serviços (`ENABLE_REST`/`ENABLE_GRPC`) via variáveis de ambiente.
 
 ---
 

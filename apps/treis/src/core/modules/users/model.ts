@@ -5,23 +5,23 @@ import { apiError } from '@utils/error';
 import { Model } from '@app-types/entity';
 
 const UsersModel: Model<UsersEntity> = {
-  table: 'users',
-  create: repository.create<UsersEntity>('users'),
-  findAll: repository.read<UsersEntity>('users').findAll,
-  findAllPaginated: repository.read<UsersEntity>('users').findAllPaginated,
-  findById: repository.read<UsersEntity>('users').findById,
-  findBy: repository.read<UsersEntity>('users').findBy,
-  findByPaginated: repository.read<UsersEntity>('users').findByPaginated,
-  update: repository.update<UsersEntity>('users'),
-  delete: repository.deleteById('users'),
-  forceDelete: repository.forceDelete('users'),
-  count: repository.read<UsersEntity>('users').count,
+  table: 'vacas_users',
+  create: repository.create<UsersEntity>('vacas_users'),
+  findAll: repository.read<UsersEntity>('vacas_users').findAll,
+  findAllPaginated: repository.read<UsersEntity>('vacas_users').findAllPaginated,
+  findById: repository.read<UsersEntity>('vacas_users').findById,
+  findBy: repository.read<UsersEntity>('vacas_users').findBy,
+  findByPaginated: repository.read<UsersEntity>('vacas_users').findByPaginated,
+  update: repository.update<UsersEntity>('vacas_users'),
+  delete: repository.deleteById('vacas_users'),
+  forceDelete: repository.forceDelete('vacas_users'),
+  count: repository.read<UsersEntity>('vacas_users').count,
   selectAbleFields: ['name', 'login', 'email'],
   defaultFields: ['id'],
   excludedFields: ['password', 'pepper'],
   relations: {},
   metadata: async () => {
-    const result = await repository.metadata('users')();
+    const result = await repository.metadata('vacas_users')();
     if (!result) throw new apiError(MESSAGES.DATABASE.ENTITY.METADATA_NOT_FOUND);
     return result;
   },

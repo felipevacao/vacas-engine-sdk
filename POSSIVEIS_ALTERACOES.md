@@ -15,6 +15,8 @@ Este documento lista funcionalidades de infraestrutura de alto nível para trans
 ## 3. Integração e Extensibilidade
 *   **Webhooks Nativos por Evento:** Sistema de disparo de notificações HTTP (POST) para URLs externas sempre que ocorrer um evento de ciclo de vida (Created, Updated, Deleted) em entidades específicas.
 *   **Bulk Operations (Transação Única):** Endpoint especializado para processar milhares de registros em um único lote (Batch), garantindo atomicidade total via transação de banco.
+*   **Inclusão em Lote:** Implementar suporte para inserção massiva de dados (Bulk Insert) otimizada para alto volume, com validação de esquema unificada.
+*   **Ajuste do Metadata:** Refatorar a camada de Metadata para suportar metadados contextuais, dinâmicos e cache otimizado para reduzir carga no banco.
 *   **Exportação Polimórfica:** Gerador de arquivos integrado que permite converter o resultado de qualquer consulta CRUD para formatos como CSV, Excel, PDF ou JSON.
 
 ## 4. Performance e UX da API
