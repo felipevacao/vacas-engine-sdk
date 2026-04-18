@@ -16,6 +16,10 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.3",
+    "express": "^4.21.2",
+    "express-list-endpoints": "^7.1.1",
+    "express-rate-limit": "^8.3.1",
+    "express-validator": "^7.2.1",
     "@inquirer/prompts": "^7.3.3",
     "dotenv": "^16.4.7",
     "knex": "^3.1.0",

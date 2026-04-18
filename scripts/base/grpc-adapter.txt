@@ -1,7 +1,7 @@
 import { {{tablenameCapital}}Service } from './service';
 import { {{tablenameCapital}}Controller } from './controller';
 import { {{tablenameCapital}}Entity } from './entity';
-import { BaseGrpcAdapter } from '@adapters/grpc.adapter';
+import { BaseGrpcAdapter } from '@adapters';
 
 class {{tablenameCapital}}GrpcAdapter extends BaseGrpcAdapter<{{tablenameCapital}}Entity, {{tablenameCapital}}Controller> {
   constructor() {
