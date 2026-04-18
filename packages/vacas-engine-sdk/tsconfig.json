@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": ["ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    // "baseUrl": ".",
+    "paths": {
+      "@core/*": ["./src/core/*"],
+      "@controllers": ["./src/core/controllers"],
+      "@services": ["./src/core/services"],
+      "@app-types": ["./src/core/types"],
+      "@utils": ["./src/core/utils"],
+      "@constants": ["./src/core/constants"],
+      "@dynamic-modules/*": ["./src/dynamic-modules"],
+      "@interfaces": ["./src/core/interfaces"],
+      "@adapters": ["./src/core/adapters"],
+      "@middlewares": ["./src/core/middlewares"]
+    }
+  },
+  "include": ["./src/**/*"]
+}
