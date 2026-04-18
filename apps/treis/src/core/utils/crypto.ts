@@ -2,8 +2,8 @@ import crypto from 'crypto'
 import env from '@libs/env'
 import { Request, Response } from 'express'
 import { apiError } from './error'
-import { MESSAGES } from '@constants/messages'
-import { ResponseHandler } from '@utils/responseHandler'
+import { MESSAGES } from '@constants'
+import { ResponseHandler } from './responseHandler'
 
 interface TokenConfig {
     tokenBytes?: number      // Padrão: 32

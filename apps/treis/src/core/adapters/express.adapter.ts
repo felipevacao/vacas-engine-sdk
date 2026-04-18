@@ -1,13 +1,13 @@
 import env from '@libs/env'
 import { Request, Response } from 'express'
 import { BaseAdapter } from './base.adapter'
-import { BaseEntity } from '@app-types/entity'
-import { BaseController } from '@controllers/baseController'
-import { HateoasTransformer } from '@transformers/hateoas.transformer'
-import { ResponseHandler } from '@utils/responseHandler'
-import { MESSAGES } from '@constants/messages'
-import { UsersRolesService } from '@core-modules/users/roles.service'
-import { BaseServices } from '@services/baseServices'
+import { BaseEntity } from '@interfaces'
+import { BaseController } from '@controllers'
+import { HateoasTransformer } from '@transformers'
+import { ResponseHandler } from '@utils'
+import { MESSAGES } from '@constants'
+import { UsersRolesService } from '@core-modules/users'
+import { BaseServices } from '@services'
 
 export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
 

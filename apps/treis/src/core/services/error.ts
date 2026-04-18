@@ -1,5 +1,5 @@
-import { ErrorContext } from "@app-types/entity"
-import env from "@core/libs/env"
+import { ErrorContext } from "@app-types"
+import env from "@libs/env"
 
 export class ErrorService {
 

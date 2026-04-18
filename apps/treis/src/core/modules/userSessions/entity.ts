@@ -1,5 +1,5 @@
 // Gerado automáticamente
-import { BaseEntity } from '@app-types/entity';
+import { BaseEntity } from '@interfaces';
 
 export interface UserSessionsEntity extends BaseEntity {
   id: string;

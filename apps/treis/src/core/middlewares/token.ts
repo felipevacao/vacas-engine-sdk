@@ -1,13 +1,11 @@
-import { apiError } from '@utils/error'
-import { getClientIP } from '@utils/ip'
-import { ResponseHandler } from '@utils/responseHandler'
+import { AuthUserSessionWorkflow } from '@workflows'
+import { apiError, cryptoUtils, stringUtils, ResponseHandler, getClientIP } from '@utils'
 import { Request, Response, NextFunction } from 'express'
-import { cryptoUtils } from '@utils/crypto'
-import { stringUtils } from '@utils/string'
-import { SessionType, UserStatusType } from '@app-types/entity'
-import { AuthUserSessionWorkflow } from '@workflows/AuthUserSession'
+import { SessionType, UserStatusType } from '@app-types'
+import { UserService } from '@core-modules/users';
 
-const authUserSessionWorkflow = new AuthUserSessionWorkflow()
+const userService = new UserService()
+const authUserSessionWorkflow = new AuthUserSessionWorkflow(userService)
 
 export const tokenMiddleware = async (
 	req: Request,

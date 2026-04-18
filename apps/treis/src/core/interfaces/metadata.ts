@@ -19,7 +19,7 @@ export interface EnhancedFieldMetadata {
 
   enum_values?: string[];
   udt_name?: string;
-  
+
   // 1. VALIDAÇÕES AVANÇADAS
   validation?: {
     minLength?: number;
@@ -29,19 +29,19 @@ export interface EnhancedFieldMetadata {
     pattern?: string;    // Regex pattern
     custom?: string[];   // Regras customizadas
   };
-  
+
   // 2. TIPOS DE CAMPO MAIS RICOS
-  formType?: 'text' | 'email' | 'password' | 'number' | 'date' | 'datetime' | 
-           'select' | 'multiselect' | 'radio' | 'checkbox' | 'textarea' | 
-           'file' | 'image' | 'color' | 'range' | 'url' | 'tel';
-  
+  formType?: 'text' | 'email' | 'password' | 'number' | 'date' | 'datetime' |
+  'select' | 'multiselect' | 'radio' | 'checkbox' | 'textarea' |
+  'file' | 'image' | 'color' | 'range' | 'url' | 'tel';
+
   // 3. OPÇÕES PARA SELECTS/RADIOS
   options?: Array<{
     value: string | number;
     label: string;
     disabled?: boolean;
   }>;
-  
+
   // 4. RELACIONAMENTOS (FK)
   relationship?: {
     table: string;        // Tabela relacionada
@@ -50,7 +50,7 @@ export interface EnhancedFieldMetadata {
     endpoint?: string;    // Endpoint customizado
     searchable?: boolean; // Se permite busca
   };
-  
+
   // 5. CONFIGURAÇÕES DE EXIBIÇÃO
   display?: {
     placeholder?: string;
@@ -65,7 +65,7 @@ export interface EnhancedFieldMetadata {
       operator: '=' | '!=' | '>' | '<' | 'in' | 'contains';
     };
   };
-  
+
   // 6. FORMATAÇÃO E MÁSCARA
   format?: {
     mask?: string;        // Máscara de entrada (ex: "(##) #####-####")
@@ -75,7 +75,7 @@ export interface EnhancedFieldMetadata {
     uppercase?: boolean;  // Converter para maiúscula
     lowercase?: boolean;  // Converter para minúscula
   };
-  
+
   // 7. COMPORTAMENTO NO CRUD
   crud?: {
     creatable?: boolean;  // Aparece no create
@@ -85,7 +85,7 @@ export interface EnhancedFieldMetadata {
     sortable?: boolean;   // Permite ordenação
     filterable?: boolean; // Permite filtros
   };
-  
+
   // 8. CONFIGURAÇÕES ESPECÍFICAS
   config?: {
     multiple?: boolean;   // Para files/selects múltiplos
@@ -95,10 +95,10 @@ export interface EnhancedFieldMetadata {
     readonly?: boolean;   // Campo somente leitura
     hidden?: boolean;     // Campo oculto
   };
-  
+
   // 9. VALORES PADRÃO
   defaultValue?: unknown;
-  
+
   // 10. METADADOS EXTRAS
   meta?: {
     description?: string;
@@ -113,10 +113,10 @@ export interface EnhancedTableMetadata {
   table: string;
   displayName: string;
   description?: string;
-  
+
   // Campos
   fields: EnhancedFieldMetadata[];
-  
+
   // Configurações da tabela
   config?: {
     // Paginação
@@ -124,20 +124,20 @@ export interface EnhancedTableMetadata {
       defaultLimit: number;
       maxLimit: number;
     };
-    
+
     // Ordenação padrão
     defaultSort?: {
       field: string;
       direction: 'asc' | 'desc';
     };
-    
+
     // Filtros disponíveis
     filters?: Array<{
       field: string;
       type: 'text' | 'select' | 'date' | 'number';
       options?: Array<{ value: unknown; label: string }>;
     }>;
-    
+
     // Ações disponíveis
     actions?: {
       create?: boolean;
@@ -147,14 +147,14 @@ export interface EnhancedTableMetadata {
       export?: boolean;
       import?: boolean;
     };
-    
+
     // Permissões
     permissions?: {
       role: string;
       actions: string[];
     }[];
   };
-  
+
   // Relacionamentos da tabela
   relationships?: Array<{
     name: string;
@@ -163,7 +163,7 @@ export interface EnhancedTableMetadata {
     foreignKey?: string;
     localKey?: string;
   }>;
-  
+
   // Validações no nível da tabela
   tableValidations?: Array<{
     rule: string;
@@ -171,7 +171,7 @@ export interface EnhancedTableMetadata {
     fields: string[];
   }>
   // Exemplo de objeto a ser enviado na requisição
-  requestRaw?: object; 
+  requestRaw?: object;
 }
 
 export interface EnumInfo {

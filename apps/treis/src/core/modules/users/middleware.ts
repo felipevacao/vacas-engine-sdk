@@ -1,8 +1,7 @@
-import { HttpStatus } from '@constants/HttpStatus';
-import { MESSAGES } from '@constants/messages';
+import { HttpStatus, MESSAGES } from '@constants';
 import { UsersRolesService } from './roles.service';
 import { Request, Response, NextFunction } from 'express'
-import { ResponseHandler } from '@utils/responseHandler'
+import { ResponseHandler } from '@utils'
 
 
 export const verifyAdmin = async (

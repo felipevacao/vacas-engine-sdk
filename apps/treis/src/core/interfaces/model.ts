@@ -1,4 +1,6 @@
-import { BaseEntity, CreateData, UpdateData, OutputData, QueryFields, Metadata, PaginatedResult } from "@app-types/entity";
+import { CreateData, UpdateData, OutputData, QueryFields } from "@app-types";
+import { BaseEntity } from "./entity";
+import { Metadata, PaginatedResult } from '.';
 
 export interface Relation {
     type: 'belongsTo' | 'hasMany' | 'hasOne' | 'belongsToMany';
@@ -10,9 +12,9 @@ export interface Relation {
 
 export interface Model<T extends BaseEntity> {
     table: string,
-    create: (data: CreateData<T>, options: QueryFields<T>) => Promise<OutputData<T>> ,
-    findAll: ( options: QueryFields<T> ) => Promise<OutputData<T>[]>,
-    findAllPaginated: ( options: QueryFields<T> ) => Promise<PaginatedResult<T>>,
+    create: (data: CreateData<T>, options: QueryFields<T>) => Promise<OutputData<T>>,
+    findAll: (options: QueryFields<T>) => Promise<OutputData<T>[]>,
+    findAllPaginated: (options: QueryFields<T>) => Promise<PaginatedResult<T>>,
     findById: (id: number | string, options: QueryFields<T>) => Promise<OutputData<T> | undefined>,
     findBy: (options: QueryFields<T>) => Promise<OutputData<T>[] | undefined>,
     findByPaginated: (options: QueryFields<T>) => Promise<PaginatedResult<T>>,

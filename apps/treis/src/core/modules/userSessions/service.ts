@@ -1,19 +1,18 @@
-import { BaseServices } from "@services/baseServices";
-import { UserSessionsEntity } from "@core-modules/userSessions/entity";
-import { UserSessionsController } from "@core-modules/userSessions/controller";
-import { cryptoUtils } from "@utils/crypto"
-import { TokenType, TokenSessionType } from "@app-types/token"
-import { apiError } from "@utils/error";
-import { MESSAGES } from "@constants/messages";
+import { BaseServices, ServiceFactory } from "@services";
+import { UserSessionsEntity } from "./entity";
+import { UserSessionsController } from "./controller";
+import { cryptoUtils, apiError } from "@utils"
+import { TokenType, TokenSessionType } from "@app-types"
+import { MESSAGES } from "@constants";
 import {
 	CreateData,
 	QueryFields,
 	UserStatus,
 	UpdateData,
 	OutputData
-} from "@app-types/entity";
-import { BaseController } from "@controllers/baseController";
-import { ServiceFactory } from "@services/serviceFactory";
+} from "@app-types";
+import { BaseController } from "@controllers";
+
 
 export class UserSessionService
 	extends BaseServices<UserSessionsEntity, UserSessionsController> {
@@ -119,5 +118,4 @@ export class UserSessionService
 
 }
 
-// Registro automático para Eager Loading
 ServiceFactory.register('user_sessions', () => new UserSessionService());

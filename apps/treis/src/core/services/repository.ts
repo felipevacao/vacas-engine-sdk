@@ -1,5 +1,2 @@
-export { create } from '@repositories/create';
-export { read } from '@repositories/read';
-export { update } from '@repositories/update';
-export { deleteById, forceDelete } from '@repositories/delete';
+export { create, read, update, deleteById, forceDelete } from '@repositories';
 export { metadata } from './metadata'

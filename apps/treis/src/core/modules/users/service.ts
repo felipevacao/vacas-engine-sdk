@@ -1,12 +1,10 @@
 import { UsersController } from "./controller";
-import { CreateData, InputRequest, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from '@app-types/entity';
-import { hashUtils } from '@utils/hash';
-import { BaseServices } from "@services/baseServices";
+import { CreateData, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from '@app-types';
+import { InputRequest } from "@interfaces";
+import { BaseServices, ServiceFactory } from "@services";
 import { UsersEntity } from "./entity";
-import { apiError } from "@utils/error";
-import { MESSAGES } from "@constants/messages";
-import { HttpStatus } from "@constants/HttpStatus";
-import { ServiceFactory } from "@services/serviceFactory";
+import { apiError, hashUtils } from "@utils";
+import { HttpStatus, MESSAGES } from "@constants";
 
 export class UserService extends BaseServices<UsersEntity, UsersController> {
 
@@ -15,7 +13,7 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 		protected entityController: UsersController = new UsersController
 	) {
 		super(entityController)
-        this.id = id
+		this.id = id
 		if (this.id !== 0) {
 			this.validateId(this.id)
 		}
@@ -104,7 +102,6 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 				value: "active",
 			}]
 		} as QueryFields<UsersEntity>
-
 		const userData = await this.entityController.findByEntity(options);
 		if (!userData) {
 			this.contextDetail(`not_found: ${email}`)
@@ -133,5 +130,4 @@ export class UserService extends BaseServices<UsersEntity, UsersController> {
 
 }
 
-// Registro automático para Eager Loading
 ServiceFactory.register('users', () => new UserService());

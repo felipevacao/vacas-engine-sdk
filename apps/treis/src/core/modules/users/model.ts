@@ -1,8 +1,8 @@
-import { MESSAGES } from '@constants/messages';
+import { MESSAGES } from '@constants';
 import { UsersEntity } from './entity';
-import * as repository from '@services/repository';
-import { apiError } from '@utils/error';
-import { Model } from '@app-types/entity';
+import * as repository from '@services';
+import { apiError } from '@utils';
+import { Model } from "@interfaces";
 
 const UsersModel: Model<UsersEntity> = {
   table: 'vacas_users',
@@ -16,7 +16,7 @@ const UsersModel: Model<UsersEntity> = {
   delete: repository.deleteById('vacas_users'),
   forceDelete: repository.forceDelete('vacas_users'),
   count: repository.read<UsersEntity>('vacas_users').count,
-  selectAbleFields: ['name', 'login', 'email'],
+  selectAbleFields: ['name', 'login', 'email', 'role'],
   defaultFields: ['id'],
   excludedFields: ['password', 'pepper'],
   relations: {},

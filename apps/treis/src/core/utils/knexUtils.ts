@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
-import { BaseEntity, QueryFields } from '@app-types/entity';
+import { QueryFields } from '@app-types';
+import { BaseEntity } from '@interfaces';
 
 /**
  * Aplica filtros dinâmicos a uma query do Knex de forma tipada e segura.

@@ -1,25 +1,9 @@
 import { ServerUnaryCall, sendUnaryData, status, Metadata as GrpcMetadata } from '@grpc/grpc-js';
-import { BaseServices } from '../services/baseServices';
-import { HttpStatus } from '../constants/HttpStatus';
-import { BaseEntity, CreateData, EnhancedTableMetadata, UpdateData } from '@app-types/entity';
-import { BaseController } from '@controllers/baseController';
-
-/**
- * Interfaces para representar o google.protobuf.Struct de forma tipada
- */
-interface ProtobufValue {
-  kind?: 'stringValue' | 'numberValue' | 'boolValue' | 'structValue' | 'listValue' | 'nullValue';
-  stringValue?: string;
-  numberValue?: number;
-  boolValue?: boolean;
-  structValue?: ProtobufStruct;
-  listValue?: { values: ProtobufValue[] };
-  nullValue?: 0;
-}
-
-interface ProtobufStruct {
-  fields: Record<string, ProtobufValue>;
-}
+import { BaseServices } from '@services';
+import { HttpStatus } from '@constants';
+import { CreateData, UpdateData } from '@app-types';
+import { BaseEntity, EnhancedTableMetadata, ProtobufStruct, ProtobufValue } from '@interfaces';
+import { BaseController } from '@controllers';
 
 export abstract class BaseGrpcAdapter<T extends BaseEntity, C extends BaseController<T>> {
   constructor(protected service: BaseServices<T, C>) { }

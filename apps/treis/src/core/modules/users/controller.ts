@@ -1,7 +1,7 @@
-import { BaseController } from '@controllers/baseController';
+import { BaseController } from '@controllers';
 import UsersModel from './model';
 import { UsersEntity } from './entity';
-import { QueryFilter, UserRolesType, UserStatusType } from '@app-types/entity';
+import { QueryFilter, UserRolesType, UserStatusType } from '@app-types';
 export class UsersController extends BaseController<UsersEntity> {
 	constructor() {
 		super(UsersModel);

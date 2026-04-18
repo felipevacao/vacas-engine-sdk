@@ -1,8 +1,7 @@
-import { db } from '@utils/db'
-import { BaseEntity, ErrorContext, OutputData, PaginatedResult, QueryFields } from '@app-types/entity'
-import { ErrorHandler } from '@utils/ErrorHandler'
-import { env } from 'process'
-import { applyFilters } from '@utils/knexUtils'
+import { ErrorContext, OutputData, QueryFields } from '@app-types'
+import { BaseEntity, PaginatedResult } from '@interfaces'
+import { db, ErrorHandler, applyFilters } from '@utils'
+import env from '@libs/env'
 
 /**
  * Operações de leitura para entidades, incluindo métodos para buscar todos os registros, buscar por ID, buscar por critérios específicos e realizar consultas paginadas.

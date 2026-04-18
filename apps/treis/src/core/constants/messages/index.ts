@@ -2,15 +2,6 @@ import { DATABASE } from './database';
 import { ERROR } from './errorCodes';
 import env from '@libs/env';
 
-export type sMessage = {
-	name: string
-	message: string
-}
-
-export function getMessage(text: sMessage) {
-	return text.message
-}
-
 const rawMessages = {
 	API: {
 		START: {

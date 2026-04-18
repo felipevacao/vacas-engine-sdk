@@ -1,24 +1,25 @@
 import env from "@libs/env"
-import { MESSAGES } from "@constants/messages";
-import { BaseController } from "@controllers/baseController";
-import { MetadataService } from "@services/metadataServices"
-import { apiError } from "@utils/error";
+import { MESSAGES, HttpStatus } from "@constants";
+import { BaseController } from "@controllers";
+import { apiError } from "@utils";
 import { ErrorService } from "./error";
+import { ServiceFactory } from "./serviceFactory";
+import { MetadataService } from "./metadataServices"
 import {
-	BaseEntity,
 	OutputData,
 	ErrorContext,
 	CreateData,
-	Model,
 	UpdateData,
-	InputRequest,
-	EnhancedTableMetadata,
 	QueryFields,
-	QueryFilter,
-	IBaseServices
-} from '@app-types/entity'
-import { HttpStatus } from "@constants/HttpStatus";
-import { ServiceFactory } from "./serviceFactory";
+	QueryFilter
+} from '@app-types'
+import {
+	IBaseServices,
+	EnhancedTableMetadata,
+	Model,
+	BaseEntity,
+	InputRequest
+} from "@interfaces";
 
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> implements IBaseServices {
 

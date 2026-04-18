@@ -1,8 +1,15 @@
-import { db } from '@utils/db'
+import { db } from '@utils'
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { DatabaseFieldInfo, EnhancedFieldMetadata, EnhancedTableMetadata, EnumInfo, ManifestFieldConfig, TableManifest } from '@app-types/metadata';
-import { METADATA_EXCLUDED_FIELDS } from '../constants/sensitiveFields';
+import {
+  DatabaseFieldInfo,
+  EnhancedFieldMetadata,
+  EnhancedTableMetadata,
+  EnumInfo,
+  ManifestFieldConfig,
+  TableManifest
+} from '@interfaces';
+import { METADATA_EXCLUDED_FIELDS } from '@constants';
 
 export class MetadataService {
   private db: typeof db;

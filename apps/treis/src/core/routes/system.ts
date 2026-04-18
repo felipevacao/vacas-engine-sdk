@@ -1,7 +1,7 @@
 import express from 'express';
-import { SystemAdapter } from '@adapters/system.adapter';
-import { tokenMiddleware } from '@middlewares/token';
-import { verifyAdmin } from '@core-modules/users/middleware';
+import { SystemAdapter } from '@adapters';
+import { tokenMiddleware } from '@middlewares';
+import { verifyAdmin } from '@core-modules/users';
 
 const router = express.Router();
 const adapter = new SystemAdapter();

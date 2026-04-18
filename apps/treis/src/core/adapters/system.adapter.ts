@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { SystemService } from '@services/system';
-import { ResponseHandler } from '@utils/responseHandler';
-import { asyncHandler } from '@utils/asyncHandler';
+import { SystemService } from '@services';
+import { ResponseHandler, asyncHandler } from '@utils';
 
 export class SystemAdapter {
     private service = new SystemService();

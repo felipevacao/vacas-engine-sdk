@@ -1,7 +1,6 @@
-import { HttpStatus } from '@constants/HttpStatus';
+import { HttpStatus, MESSAGES } from '@constants';
 import { apiError } from './error'
-import { MESSAGES } from '@constants/messages'
-import { ErrorContext } from '@app-types/entity';
+import { ErrorContext } from '@app-types';
 
 /**
  * Interface para representar a estrutura de erros vindo do Banco de Dados (Knex/Postgres/MySQL)

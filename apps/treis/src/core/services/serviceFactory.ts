@@ -1,4 +1,4 @@
-import { IBaseServices } from "@app-types/entity";
+import { IBaseServices } from "@interfaces";
 
 /**
  * Factory para gerenciar e resolver instâncias de serviços dinamicamente.
@@ -11,7 +11,7 @@ export class ServiceFactory {
      * Registra um construtor de serviço associado a uma tabela.
      */
     public static register(
-        table: string, 
+        table: string,
         serviceConstructor: () => IBaseServices
     ): void {
         this.services[table] = serviceConstructor;

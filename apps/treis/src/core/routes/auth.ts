@@ -1,8 +1,8 @@
 import express from 'express';
-import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares/token';
-import { UserExpressAdapter } from '@core-modules/users/express.adapter';
-import { AuthUserSessionWorkflow } from '@workflows/AuthUserSession';
-import { UserService } from '@core-modules/users/service';
+import { AuthUserSessionWorkflow } from '@workflows';
+import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares';
+import { UserExpressAdapter, UserService } from '@core-modules/users';
+
 
 /**
  * @swagger

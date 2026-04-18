@@ -1,9 +1,9 @@
 // Gerado automáticamente
-import { MESSAGES } from '@constants/messages';
-import { UserSessionsEntity } from '@core-modules/userSessions/entity';
-import * as repository from '@services/repository';
-import { apiError } from '@utils/error';
-import { Model, Relation } from '@app-types/entity';
+import { MESSAGES } from '@constants';
+import { UserSessionsEntity } from './entity';
+import * as repository from '@services';
+import { apiError } from '@utils';
+import { Model, Relation } from "@interfaces";
 
 const relations: Record<string, Relation> = {};
 

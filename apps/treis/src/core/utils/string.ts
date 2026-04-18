@@ -1,3 +1,5 @@
+import { sMessage } from '@app-types';
+
 export const stringUtils = {
 
 	maskEmail(email: string): string {
@@ -15,4 +17,8 @@ export const stringUtils = {
 	logSeparator(): string {
 		return '\n___________________\n'
 	}
+}
+
+export function getMessage(text: sMessage) {
+	return text.message
 }

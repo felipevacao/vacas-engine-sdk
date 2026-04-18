@@ -1,6 +1,6 @@
-import { apiError } from '@utils/error';
-import { HttpStatus } from '@constants/HttpStatus';
-import { sMessage } from '@core/constants/messages';
+import { apiError } from './error';
+import { HttpStatus } from '@constants';
+import { sMessage } from '@app-types';
 
 /**
  * Converte string snake_case para camelCase.

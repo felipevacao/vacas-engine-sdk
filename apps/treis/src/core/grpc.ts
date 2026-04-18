@@ -1,7 +1,7 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { join } from 'path';
-import { Logger } from '@utils/log';
+import { Logger } from '@utils';
 import { readdirSync, existsSync } from 'fs';
 
 import env from './libs/env';
@@ -83,9 +83,9 @@ export class GrpcServer {
       });
 
       const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as unknown as Record<string, GrpcPackage>;
-      
+
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const adapterModule = require(adapterFile) as { default?: grpc.UntypedServiceImplementation; [key: string]: unknown };
+      const adapterModule = require(adapterFile) as { default?: grpc.UntypedServiceImplementation;[key: string]: unknown };
       const serviceName = `${entityName.charAt(0).toUpperCase() + entityName.slice(1)}Service`;
 
       const pkg = protoDescriptor[entityName];
@@ -106,7 +106,7 @@ export class GrpcServer {
 
   private async loadDynamicModules(): Promise<void> {
     const isDist = __dirname.includes('dist');
-    
+
     const commonIncludeDirs = [
       isDist ? join(__dirname, 'proto') : join(__dirname, 'proto') // Ajustado para refletir a estrutura real
     ];
@@ -133,7 +133,7 @@ export class GrpcServer {
         if (item.isDirectory()) {
           const moduleName = item.name;
           const modulePath = join(dynamicModulesDir, moduleName);
-          
+
           // Procura por [modulo].proto e grpc.adapter.ts dentro da pasta do módulo
           const protoPath = join(modulePath, `${moduleName}.proto`);
           const adapterPath = join(modulePath, `grpc.adapter.${isDist ? 'js' : 'ts'}`);

@@ -1,8 +1,7 @@
-import { db } from '@utils/db'
-import { BaseEntity, CreateData, ErrorContext, OutputData, QueryFields, KnexTable } from '@app-types/entity'
-import { ErrorHandler } from '@utils/ErrorHandler'
-import { metadata } from '@services/metadata'
-import { validateSchema } from '@utils/schemaGuard'
+import { CreateData, ErrorContext, OutputData, QueryFields, KnexTable } from '@app-types'
+import { db, ErrorHandler, validateSchema } from '@utils'
+import { BaseEntity } from '@interfaces'
+import { metadata } from '@services'
 
 export const create = <T extends BaseEntity>(table: string) => {
 
@@ -15,7 +14,7 @@ export const create = <T extends BaseEntity>(table: string) => {
         try {
             const tableMetadata = await metadata(table, true)();
             if (tableMetadata) {
-                validateSchema(data as any, tableMetadata.fields.map(f => f.name), table);
+                validateSchema(data as any, tableMetadata.fields.map((f: { name: any }) => f.name), table);
             }
 
             const result = await db<KnexTable<T>>(table)

@@ -1,12 +1,11 @@
 import './alias'
 import env from "@libs/env"
 import express from 'express'
-import "./types/express"
 import router from "./routes/index"
 import cors from 'cors'
-import { MESSAGES, getMessage } from '@constants/messages/index';
+import { MESSAGES } from '@constants';
 import rateLimit from 'express-rate-limit';
-import { Logger } from '@utils/log';
+import { Logger, getMessage } from '@utils';
 import helmet from 'helmet'
 import { GrpcServer } from './grpc'
 
@@ -40,8 +39,8 @@ app.use(helmet({
 
 // Definindo o rate limit global
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, 
-	max: 100, 
+	windowMs: 15 * 60 * 1000,
+	max: 100,
 	message: {
 		error: 'Muitas requisições. Tente novamente mais tarde.',
 		status: 429
@@ -67,22 +66,22 @@ app.use(router)
  * Inicialização Condicional
  */
 if (env.ENABLE_REST) {
-    const port = env.API_PORT
-    app.listen(
-        port,
-        () => {
-            console.log(`[INFO] [Express] ${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
-        }
-    )
+	const port = env.API_PORT
+	app.listen(
+		port,
+		() => {
+			console.log(`[INFO] [Express] ${getMessage(MESSAGES.API.INIT_PORT)} ${port}`)
+		}
+	)
 } else {
-    console.log('[INFO] [Express] Serviço REST desabilitado.');
+	console.log('[INFO] [Express] Serviço REST desabilitado.');
 }
 
 if (env.ENABLE_GRPC) {
-    const grpcServer = new GrpcServer(50051);
-    grpcServer.start();
+	const grpcServer = new GrpcServer(50051);
+	grpcServer.start();
 } else {
-    console.log('[INFO] [gRPC] Serviço gRPC desabilitado.');
+	console.log('[INFO] [gRPC] Serviço gRPC desabilitado.');
 }
 
 console.log(`${getMessage(MESSAGES.API.START)}`)

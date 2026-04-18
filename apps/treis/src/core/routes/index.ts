@@ -1,15 +1,14 @@
+import { routeNotFound, errorHandler, logging } from '@middlewares'
 import express, { Request, Response } from 'express'
 import eg from "./eg"
-import { logging } from '@middlewares/logging'
-import { routeNotFound, errorHandler } from '@middlewares/errorHandlers'
 import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
 import authRoutes from './auth';
 import env from '@libs/env';
-import { MESSAGES } from '@constants/messages/index';
+import { MESSAGES } from '@constants';
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from '@utils/swagger';
+import { swaggerSpec } from '@utils';
 
 // Route → Adapter → Service (workflow) → Service (entidade) → Controller → Model → Entity → Banco
 

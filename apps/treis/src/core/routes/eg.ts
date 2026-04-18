@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { tokenMiddleware } from '@middlewares/token';
+import { tokenMiddleware } from '@middlewares';
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getClientIP } from '@utils/ip';
+import { getClientIP } from '@utils';
 
 /**
  * Middleware para logar as requisições recebidas.

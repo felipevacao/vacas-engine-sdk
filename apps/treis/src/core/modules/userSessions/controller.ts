@@ -1,8 +1,8 @@
 // Gerado automáticamente
-import { BaseController } from '@controllers/baseController';
-import UserSessionsModel from '@core-modules/userSessions/model';
-import { UserSessionsEntity } from '@core-modules/userSessions/entity';
-import { QueryFilter, SessionType } from '@app-types/entity';
+import { BaseController } from '@controllers';
+import UserSessionsModel from './model';
+import { UserSessionsEntity } from './entity';
+import { QueryFilter, SessionType } from '@app-types';
 
 export class UserSessionsController extends BaseController<UserSessionsEntity> {
   constructor() {

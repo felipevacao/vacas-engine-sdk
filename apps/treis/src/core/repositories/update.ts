@@ -1,13 +1,9 @@
-import { db } from '@utils/db'
-import { BaseEntity, UpdateData, OutputData, QueryFields, ErrorContext, KnexTable } from '@app-types/entity'
-import { ErrorHandler } from '@utils/ErrorHandler'
-import { apiError } from '@utils/error'
-import { MESSAGES } from '@constants/messages'
-import { HttpStatus } from '@constants/HttpStatus'
+import { db, apiError, ErrorHandler, validateSchema, applyFilters } from '@utils'
+import { UpdateData, OutputData, QueryFields, ErrorContext, KnexTable } from '@app-types'
+import { MESSAGES, HttpStatus } from '@constants'
+import { BaseEntity } from '@interfaces'
 import { env } from 'process'
-import { applyFilters } from '@utils/knexUtils'
-import { metadata } from '@services/metadata'
-import { validateSchema } from '@utils/schemaGuard'
+import { metadata } from '@services'
 
 export const update = <T extends BaseEntity>(table: string) => {
 
@@ -24,7 +20,7 @@ export const update = <T extends BaseEntity>(table: string) => {
 		try {
 			const tableMetadata = await metadata(table, true)();
 			if (tableMetadata) {
-				validateSchema(data as any, tableMetadata.fields.map(f => f.name), table);
+				validateSchema(data as any, tableMetadata.fields.map((f: { name: any }) => f.name), table);
 			}
 
 			const updateData: Partial<T> = {

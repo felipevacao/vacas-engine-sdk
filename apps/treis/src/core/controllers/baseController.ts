@@ -1,15 +1,19 @@
 import {
-    BaseEntity,
     CreateData,
-    Model,
     UpdateData,
     QueryFields,
     OutputData,
-    PaginatedResult,
     QueryFilter
-} from '@app-types/entity'
+} from '@app-types'
 
-export class BaseController<T extends BaseEntity> {
+import {
+    IController,
+    Model,
+    BaseEntity,
+    PaginatedResult
+} from '@interfaces'
+
+export abstract class BaseController<T extends BaseEntity> implements IController<T> {
 
     constructor(
         protected model: Model<T>
@@ -23,15 +27,15 @@ export class BaseController<T extends BaseEntity> {
         return this.model
     }
 
-    public getDefaultFields() {
+    public getDefaultFields(): (keyof T)[] {
         return this.model.defaultFields
     }
 
-    public getSelectetAbleFields() {
+    public getSelectetAbleFields(): (keyof T)[] {
         return this.model.selectAbleFields
     }
 
-    public getExcludedFields() {
+    public getExcludedFields(): (keyof T)[] {
         return this.model.excludedFields
     }
 
@@ -39,50 +43,38 @@ export class BaseController<T extends BaseEntity> {
         data: CreateData<T>,
         options: QueryFields<T> = {}
     ): Promise<OutputData<T>> {
-
         return await this.model.create(data, options)
-
     }
 
     public async findAllEntity(
         options: QueryFields<T>
     ): Promise<OutputData<T>[]> {
-
         return await this.model.findAll(options)
-
     }
 
     public async findAllEntityPaginated(
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> {
-
         return await this.model.findAllPaginated(options)
-
     }
 
     public async findByIdEntity(
         id: number | string,
         options: QueryFields<T> = {}
     ): Promise<OutputData<T> | undefined> {
-
         return await this.model.findById(id, options)
-
     }
 
     public async findByEntity(
         options: QueryFields<T>
     ): Promise<OutputData<T>[] | undefined> {
-
         return await this.model.findBy(options)
-
     }
 
     public async findByEntityPaginated(
         options: QueryFields<T>
     ): Promise<PaginatedResult<T>> {
-
         return await this.model.findByPaginated(options)
-
     }
 
     public async updateEntity(
@@ -90,33 +82,25 @@ export class BaseController<T extends BaseEntity> {
         data: UpdateData<T>,
         options: QueryFields<T> = {}
     ): Promise<OutputData<T>> {
-
         return await this.model.update(id, data, options)
-
     }
 
     public async deleteEntity(
         id: number
     ): Promise<boolean> {
-
         return await this.model.delete(id)
-
     }
 
     public async forceDeleteEntity(
         id: number
     ): Promise<boolean> {
-
         return await this.model.forceDelete(id)
-
     }
 
     public async count(
         options: QueryFields<T> = {}
     ): Promise<number> {
-
         return await this.model.count(options)
-
     }
 
     public getDefaultFilters(): QueryFilter[] {

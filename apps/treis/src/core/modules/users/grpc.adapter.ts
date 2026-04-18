@@ -1,7 +1,7 @@
 import { UserService } from './service';
 import { UsersController } from './controller';
 import { UsersEntity } from './entity';
-import { BaseGrpcAdapter } from '@adapters/grpc.adapter';
+import { BaseGrpcAdapter } from '@adapters';
 
 class UsersGrpcAdapter extends BaseGrpcAdapter<UsersEntity, UsersController> {
   constructor() {

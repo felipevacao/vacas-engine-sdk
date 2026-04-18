@@ -1,6 +1,6 @@
-import { db } from '@utils/db'
-import { Metadata } from '@app-types/entity';
-import { METADATA_EXCLUDED_FIELDS } from '../constants/sensitiveFields';
+import { db } from '@utils'
+import { Metadata } from '@interfaces';
+import { METADATA_EXCLUDED_FIELDS } from '@constants';
 
 export const metadata = (table: string, local: boolean = false) => {
     return async ()

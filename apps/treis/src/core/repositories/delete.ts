@@ -1,10 +1,7 @@
-import { db } from "@utils/db";
-import { ErrorHandler } from "@utils/ErrorHandler";
-import { apiError } from "@utils/error";
-import { MESSAGES } from "@constants/messages";
-import { BaseEntity, ErrorContext, QueryFields, KnexTable } from "@app-types/entity";
-import { HttpStatus } from "@constants/HttpStatus";
-import { applyFilters } from "@utils/knexUtils";
+import { ErrorContext, QueryFields, KnexTable } from "@app-types";
+import { db, apiError, ErrorHandler, applyFilters } from "@utils";
+import { MESSAGES, HttpStatus } from "@constants";
+import { BaseEntity } from "@interfaces";
 
 export const deleteById = <T extends BaseEntity>(table: string) => {
 	return async (id: number | string, options: QueryFields<T> = {}): Promise<boolean> => {

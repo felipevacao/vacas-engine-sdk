@@ -1,7 +1,7 @@
 import express from 'express';
-import { tokenMiddleware } from '@middlewares/token';
+import { AuthUserSessionWorkflow } from '@workflows';
+import { tokenMiddleware } from '@middlewares';
 import { UserService } from './service';
-import { AuthUserSessionWorkflow } from '@workflows/AuthUserSession';
 import { UserExpressAdapter } from './express.adapter';
 import { verifyAdmin, verifySameUser } from './middleware';
 

@@ -1,25 +1,21 @@
-import { UserSessionsEntity } from "@core-modules/userSessions/entity";
-import { UserSessionService } from "@core-modules/userSessions/service";
-import { UserService } from "@core-modules/users/service";
-import { apiError } from "@utils/error";
-import { MESSAGES } from "@constants/messages";
-import { AuthService } from "@services/auth";
-import { TokenSessionType } from "@app-types/token";
-import session from "express-session";
+import { UserSessionsEntity, UserSessionService } from "@core-modules/userSessions";
+import { UserService, UsersEntity, UsersRolesService } from "@core-modules/users";
+import { MESSAGES, HttpStatus } from "@constants";
+import { InputRequest } from "@interfaces";
+import { AuthService } from "@services";
+import { apiError } from "@utils";
 import {
-	InputRequest,
 	LoginRequest,
 	OutputData,
 	QueryFields,
 	SessionType,
 	UpdateData,
 	UserStatus,
-	UserStatusType
-} from "@app-types/entity";
-import { HttpStatus } from "@constants/HttpStatus";
-import { UsersEntity } from "@core-modules/users/entity";
-import { UsersRolesService } from "@core-modules/users/roles.service";
+	UserStatusType,
+	TokenSessionType
+} from "@app-types";
 import env from "@libs/env";
+import session from "express-session";
 
 export class AuthUserSessionWorkflow {
 
@@ -175,7 +171,7 @@ export class AuthUserSessionWorkflow {
 		if (!session) {
 			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 403)
 		}
-
+		console.log(session.userId)
 		const user = await this.userService.findByIdEntity(session.userId, { filters: [this.userService.getFilterUserStatus(userType)] })
 		if (!user) {
 			await this.userSessionService.revokeSession(session.id)

@@ -1,5 +1,5 @@
 import session from 'express-session'
-import { UserStatus } from './entity'
+import { UserStatus } from '@app-types'
 
 declare module 'express-session' {
   interface SessionData {
