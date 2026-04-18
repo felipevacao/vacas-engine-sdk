@@ -1,8 +1,8 @@
 // Gerado automáticamente
-import { BaseController } from '@controllers/baseController';
+import { BaseController } from '@controllers';
 import {{tablenameCapital}}Model from './model';
 import { {{tablenameCapital}}Entity } from './entity';
-import { QueryFilter } from '@app-types/entity';
+import { QueryFilter } from '@app-types';
 
 export class {{tablenameCapital}}Controller extends BaseController<{{tablenameCapital}}Entity> {
   constructor() {
