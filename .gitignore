@@ -8,6 +8,7 @@ data/
 logs/
 GEMINI.md
 RELATORIO_*
+BACKLOG.md
 
 apps/treis/.env
 apps/treis/.env.production

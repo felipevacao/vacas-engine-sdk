@@ -171,7 +171,7 @@ export class AuthUserSessionWorkflow {
 		if (!session) {
 			throw new apiError(MESSAGES.ERROR.INVALID_SESSION, 403)
 		}
-		console.log(session.userId)
+
 		const user = await this.userService.findByIdEntity(session.userId, { filters: [this.userService.getFilterUserStatus(userType)] })
 		if (!user) {
 			await this.userSessionService.revokeSession(session.id)

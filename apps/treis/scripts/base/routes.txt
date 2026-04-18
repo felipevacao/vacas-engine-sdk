@@ -1,8 +1,8 @@
 // Gerado automáticamente
 import express from 'express';
 import { {{tablenameCapital}}Service } from './service';
-import { ExpressAdapter } from '@adapters/express.adapter';
-import { tokenMiddleware } from '@middlewares/token';
+import { ExpressAdapter } from '@adapters';
+import { tokenMiddleware } from '@middlewares';
 
 const router = express.Router();
 const {{tableNameCamel}}Service = new {{tablenameCapital}}Service();

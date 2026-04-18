@@ -1,6 +1,6 @@
 import env from '@libs/env'
-import { Request, Response } from 'express'
 import { BaseAdapter } from './base.adapter'
+import { Request, Response } from 'express'
 import { BaseEntity } from '@interfaces'
 import { BaseController } from '@controllers'
 import { HateoasTransformer } from '@transformers'

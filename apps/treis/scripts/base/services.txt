@@ -1,7 +1,6 @@
 import { {{tablenameCapital}}Controller } from "./controller";
-import { BaseServices } from "@services/baseServices";
+import { BaseServices, ServiceFactory } from "@services";
 import { {{tablenameCapital}}Entity } from "./entity";
-import { ServiceFactory } from "@services/serviceFactory";
 
 export class {{tablenameCapital}}Service extends BaseServices < {{tablenameCapital}}Entity, {{tablenameCapital}}Controller > {
 
