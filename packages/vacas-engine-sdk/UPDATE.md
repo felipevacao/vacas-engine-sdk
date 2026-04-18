@@ -4,6 +4,16 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ---
 
+## [1.2.3] - 2026-04-17
+
+### 🏗️ Arquitetura e Contratos
+- **Sdk Hardening**: Transformação das classes de infraestrutura (`BaseController`, `ExpressAdapter`) em classes `abstract` com métodos `abstract` obrigatórios, garantindo que o SDK funcione estritamente como uma camada de definição de contratos (Interfaces e Contratos Puros).
+- **Remoção de Skeleton Logic**: Eliminada a implementação vazia ("Skeleton") que retornava `{} as T` ou lançava `Error("SDK Skeleton")` em métodos de controller e adaptadores. Agora, a validação é feita via compilador TypeScript, aumentando a segurança.
+- **Relacionamento de Tabelas**: Documentada a estratégia de Eager Loading via `ServiceFactory` e a configuração de relações nas definições de `Model` dentro dos módulos dinâmicos.
+- **Segurança no Boot**: Refatorado o carregamento de instâncias em `routes.ts` para evitar dependências circulares de tempo de execução (runtime), melhorando a resiliência do boot da aplicação.
+
+---
+
 ## [1.2.2] - 2026-04-15
 
 ### ✨ Novidades
