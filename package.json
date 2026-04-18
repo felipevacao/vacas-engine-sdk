@@ -15,6 +15,7 @@
     "docker:refresh": "docker compose --profile api down && docker compose pull && docker compose --profile api up -d --build --force-recreate"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.14.3",
     "@inquirer/prompts": "^7.3.3",
     "dotenv": "^16.4.7",
     "knex": "^3.1.0",
