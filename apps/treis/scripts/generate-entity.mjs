@@ -154,7 +154,7 @@ async function getTableRelations(tableName) {
     `, [tableName]);
 
 	return result.rows.map(rel => ({
-		name: rel.local_column.replace(/_id$|^id_/, ''), // Tenta dar um nome amigável
+		name: rel.foreign_table, // rel.local_column.replace(/_id$|^id_/, ''), // Tenta dar um nome amigável
 		type: 'belongsTo',
 		table: rel.foreign_table,
 		localKey: toCamelCase(rel.local_column),
