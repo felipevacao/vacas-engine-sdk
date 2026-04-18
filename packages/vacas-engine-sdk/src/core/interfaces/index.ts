@@ -9,7 +9,6 @@ export * from "./services"
 export * from "./metadata"
 export * from "./response"
 export * from "./hash"
-export * from "./express"
 export * from "./grpc"
 
 export interface InputRequest<T> {
