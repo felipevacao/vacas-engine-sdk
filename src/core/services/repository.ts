@@ -24,3 +24,12 @@ export const forceDelete = <T extends BaseEntity>(table: string) =>
 
 export const metadata = (table: string) =>
     async (): Promise<any> => { throw new Error("SDK Skeleton"); };
+
+export const createBulk = <T extends BaseEntity>(table: string) =>
+    async (data: UpdateData<T>[], options?: QueryFields<T>): Promise<OutputData<T>[]> => { throw new Error("SDK Skeleton"); };
+
+export const updateBulk = <T extends BaseEntity>(table: string) =>
+    async (ids: (number | string)[], data: UpdateData<T>, options: QueryFields<T> = {}): Promise<OutputData<T>[]> => { throw new Error("SDK Skeleton"); };
+
+export const deleteBulk = <T extends BaseEntity>(table: string) =>
+    async (ids: (number | string)[], options: QueryFields<T> = {}): Promise<boolean> => { throw new Error("SDK Skeleton"); };
