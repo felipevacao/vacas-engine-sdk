@@ -13,7 +13,8 @@
     "start": "node --trace-deprecation -r ts-node/register src/core/index.ts",
     "dev": "nodemon --exec ts-node src/core/index.ts",
     "generate:entity": "node scripts/generate-entity.mjs",
-    "publish:treis": "node scripts/publish-treis.mjs"
+    "publish:treis": "node scripts/publish-treis.mjs",
+    "test": "npx vitest"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.3",
@@ -58,7 +59,9 @@
     "ts-proto": "^2.7.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1"
+    "typescript-eslint": "^8.26.1",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.4"
   },
   "_moduleAliases": {
     "@core": "./dist/core",
