@@ -10,6 +10,7 @@ export * from './knexUtils'
 export * from './log'
 export * from './pepper'
 export * from './responseHandler'
-export * from './schemaGuard'
+export * from './schemaGuard';
+export * from './validateSchemaBulk';
 export * from './string'
 export * from './swagger'

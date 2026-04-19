@@ -12,4 +12,7 @@ export class ExpressAdapter<T extends BaseEntity, C extends BaseController<T>> {
 	findAll(req: any, res: any): Promise<void> { return Promise.resolve() };
 	findBy(req: any, res: any): Promise<void> { return Promise.resolve() };
 	metadata(req: any, res: any): Promise<void> { return Promise.resolve() };
+	bulkCreate(req: any, res: any): Promise<void> { return Promise.resolve() };
+	bulkUpdate(req: any, res: any): Promise<void> { return Promise.resolve() };
+	bulkDelete(req: any, res: any): Promise<void> { return Promise.resolve() };
 }

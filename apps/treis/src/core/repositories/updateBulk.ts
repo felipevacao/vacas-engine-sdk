@@ -16,7 +16,7 @@ export const updateBulk = <T extends BaseEntity>(table: string) => {
         return await db.transaction(async (trx) => {
             try {
                 const tableMetadata = await metadata(table, true)();
-                
+
                 // Validação para os dados de atualização (aplica ao conjunto ou item-a-item)
                 if (tableMetadata) {
                     validateSchema(data as any, tableMetadata.fields.map((f: { name: any }) => f.name), table);
