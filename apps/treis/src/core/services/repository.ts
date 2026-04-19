@@ -1,2 +1,2 @@
-export { create, read, update, deleteById, forceDelete } from '@repositories';
+export * from '@repositories';
 export { metadata } from './metadata'

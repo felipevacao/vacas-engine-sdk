@@ -295,6 +295,60 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
 
     }
 
+    /**
+     * Cria múltiplas entidades.
+     */
+    async bulkCreate(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        const options = this.generateQueryFields(req);
+        const data = req.body as T[];
+
+        const result = await this.service.createMany(data, options);
+
+        ResponseHandler.success(
+            res,
+            result,
+            MESSAGES.DATABASE.ENTITY.CREATED,
+            201
+        );
+    }
+
+    /**
+     * Atualiza múltiplas entidades.
+     */
+    async bulkUpdate(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        const { ids, data } = req.body as { ids: (number | string)[], data: T };
+        const options = this.generateQueryFields(req);
+
+        const result = await this.service.updateMany(ids, data, options);
+
+        ResponseHandler.success(res, result);
+    }
+
+    /**
+     * Deleta múltiplas entidades.
+     */
+    async bulkDelete(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        const { ids } = req.body as { ids: (number | string)[] };
+        
+        const success = await this.service.deleteMany(ids);
+        
+        ResponseHandler.success(
+            res,
+            { deleted: success },
+            MESSAGES.DATABASE.ENTITY.DELETED,
+            204
+        );
+    }
+
     async metadata(
         req: Request,
         res: Response

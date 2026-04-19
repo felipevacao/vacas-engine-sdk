@@ -24,6 +24,9 @@ export interface IController<T extends BaseEntity> {
 	findByEntity(options: QueryFields<T>): Promise<OutputData<T>[] | undefined>;
 	findByEntityPaginated(options: QueryFields<T>): Promise<PaginatedResult<T>>;
 	updateEntity(id: number | string, data: UpdateData<T>, options: QueryFields<T>): Promise<OutputData<T>>;
+	createBulkEntity(data: CreateData<T>[], options: QueryFields<T>): Promise<OutputData<T>[]>;
+	updateBulkEntity(ids: (number | string)[], data: UpdateData<T>, options: QueryFields<T>): Promise<OutputData<T>[]>;
+	deleteBulkEntity(ids: (number | string)[]): Promise<boolean>;
 	deleteEntity(id: number): Promise<boolean>;
 	forceDeleteEntity(id: number): Promise<boolean>;
 	count(options: QueryFields<T>): Promise<number>;

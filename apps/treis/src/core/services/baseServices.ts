@@ -1,7 +1,7 @@
 import env from "@libs/env"
 import { MESSAGES, HttpStatus } from "@constants";
 import { BaseController } from "@controllers";
-import { apiError } from "@utils";
+import { apiError, ErrorHandler, validateSchemaBulk } from "@utils";
 import { ErrorService } from "./error";
 import { ServiceFactory } from "./serviceFactory";
 import { MetadataService } from "./metadataServices"
@@ -21,7 +21,7 @@ import {
 	InputRequest
 } from "@interfaces";
 
-export class BaseServices<T extends BaseEntity, C extends BaseController<T>> implements IBaseServices {
+export class BaseServices<T extends BaseEntity, C extends BaseController<T>> implements IBaseServices<T> {
 
 	protected errorService: ErrorService
 	protected _entity!: OutputData<T>
@@ -342,6 +342,50 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		options: QueryFields<T> = {}
 	): Promise<number> {
 		return await this.getController().count(options)
+	}
+
+	async createMany(
+		data: CreateData<T>[],
+		options: QueryFields<T> = {}
+	): Promise<OutputData<T>[]> {
+		const context = this.getContext();
+		try {
+			const tableMetadata = await this.getMetadata();
+			if (tableMetadata) {
+				validateSchemaBulk(data, tableMetadata.fields.map((f: { name: string }) => f.name), this.getModelTable());
+			}
+			return await this.getController().createBulkEntity(data, options);
+		} catch (error: unknown) {
+			throw ErrorHandler.handleDatabaseError(error, context);
+		}
+	}
+
+	async updateMany(
+		ids: (number | string)[],
+		data: UpdateData<T>,
+		options: QueryFields<T> = {}
+	): Promise<OutputData<T>[]> {
+		const context = this.getContext();
+		try {
+			const tableMetadata = await this.getMetadata();
+			if (tableMetadata) {
+				validateSchemaBulk([data], tableMetadata.fields.map((f: { name: string }) => f.name), this.getModelTable());
+			}
+			return await this.getController().updateBulkEntity(ids, data, options);
+		} catch (error: unknown) {
+			throw ErrorHandler.handleDatabaseError(error, context);
+		}
+	}
+
+	async deleteMany(
+		ids: (number | string)[]
+	): Promise<boolean> {
+		const context = this.getContext();
+		try {
+			return await this.getController().deleteBulkEntity(ids);
+		} catch (error: unknown) {
+			throw ErrorHandler.handleDatabaseError(error, context);
+		}
 	}
 
 }	

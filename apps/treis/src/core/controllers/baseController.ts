@@ -85,6 +85,27 @@ export abstract class BaseController<T extends BaseEntity> implements IControlle
         return await this.model.update(id, data, options)
     }
 
+    public async createBulkEntity(
+        data: CreateData<T>[],
+        options: QueryFields<T> = {}
+    ): Promise<OutputData<T>[]> {
+        return await this.model.createBulk(data, options)
+    }
+
+    public async updateBulkEntity(
+        ids: (number | string)[],
+        data: UpdateData<T>,
+        options: QueryFields<T> = {}
+    ): Promise<OutputData<T>[]> {
+        return await this.model.updateBulk(ids, data, options)
+    }
+
+    public async deleteBulkEntity(
+        ids: (number | string)[]
+    ): Promise<boolean> {
+        return await this.model.deleteBulk(ids)
+    }
+
     public async deleteEntity(
         id: number
     ): Promise<boolean> {

@@ -50,6 +50,23 @@ router.post('/', verifyAdmin, expressAdapter.create.bind(expressAdapter));
 
 /**
  * @swagger
+ * /users/bulk:
+ *   post:
+ *     summary: Cria múltiplos usuários
+ *     tags: [Users]
+ *   patch:
+ *     summary: Atualiza múltiplos usuários
+ *     tags: [Users]
+ *   delete:
+ *     summary: Remove múltiplos usuários
+ *     tags: [Users]
+ */
+router.post('/bulk', verifyAdmin, expressAdapter.bulkCreate.bind(expressAdapter));
+router.patch('/bulk', verifyAdmin, expressAdapter.bulkUpdate.bind(expressAdapter));
+router.delete('/bulk', verifyAdmin, expressAdapter.bulkDelete.bind(expressAdapter));
+
+/**
+ * @swagger
  * /users/metadata:
  *   get:
  *     summary: Obtém metadados da entidade usuários

@@ -16,7 +16,7 @@ import {
 export abstract class BaseController<T extends BaseEntity> implements IController<T> {
 
     constructor(model: Model<T>) { }
-    
+
     getModelTable(): string { return '' }
     getModel(): Model<T> { return {} as Model<T> }
     getDefaultFields(): (keyof T)[] { return [] }
@@ -30,6 +30,9 @@ export abstract class BaseController<T extends BaseEntity> implements IControlle
     async findByEntityPaginated(options: QueryFields<T>): Promise<PaginatedResult<T>> { return {} as PaginatedResult<T> }
     async updateEntity(id: number | string, data: UpdateData<T>, options?: QueryFields<T>): Promise<OutputData<T>> { return {} as OutputData<T> }
     async deleteEntity(id: number): Promise<boolean> { return false }
+    async createBulkEntity(data: CreateData<T>[], options: QueryFields<T>): Promise<OutputData<T>[]> { return [] as OutputData<T>[] }
+    async updateBulkEntity(ids: (number | string)[], data: UpdateData<T>, options: QueryFields<T>): Promise<OutputData<T>[]> { return [] as OutputData<T>[] }
+    async deleteBulkEntity(ids: (number | string)[]): Promise<boolean> { return false }
     async forceDeleteEntity(id: number): Promise<boolean> { return false }
     async count(options?: QueryFields<T>): Promise<number> { return 0 }
     getDefaultFilters(): QueryFilter[] { return [] }

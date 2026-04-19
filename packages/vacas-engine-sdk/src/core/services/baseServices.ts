@@ -53,4 +53,7 @@ export abstract class BaseServices<T extends BaseEntity, C extends BaseControlle
     protected contextDetail(detail: string): this { return {} as this }
     protected async generateBodyCreate(input: any): Promise<CreateData<T> | null> { return null }
     protected async generateBodyUpdate(input: any): Promise<UpdateData<T> | null> { return null }
+    async createMany(data: CreateData<T>[], options: QueryFields<T> = {}): Promise<OutputData<T>[]> { return [] as OutputData<T>[] }
+    async updateMany(ids: (number | string)[], data: UpdateData<T>, options: QueryFields<T> = {}): Promise<OutputData<T>[]> { return [] as OutputData<T>[] }
+    async deleteMany(ids: (number | string)[]): Promise<boolean> { return false }
 }

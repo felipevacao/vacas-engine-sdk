@@ -24,5 +24,10 @@ router.put('/:id', expressAdapter.update.bind(expressAdapter));
 router.delete('/:id', expressAdapter.delete.bind(expressAdapter));
 router.delete('/force/:id', expressAdapter.forceDelete.bind(expressAdapter));
 
+// Bulk
+router.post('/bulk', expressAdapter.bulkCreate.bind(expressAdapter));
+router.patch('/bulk', expressAdapter.bulkUpdate.bind(expressAdapter));
+router.delete('/bulk', expressAdapter.bulkDelete.bind(expressAdapter));
+
 export const middleware = [tokenMiddleware];
 export default router;
