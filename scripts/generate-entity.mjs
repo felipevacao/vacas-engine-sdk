@@ -59,7 +59,7 @@ async function main() {
 			if (await confirm({ message: 'Criar o Controller?' }) == true) {
 				generateControllerFile(tableNameCamel, tablenameCapital);
 			}
-			
+
 			const createVirtuals = await confirm({ message: 'Criar os Virtuals?', default: true });
 			if (createVirtuals) {
 				generateVirtualsFile(tableNameCamel, tablenameCapital);
@@ -246,8 +246,8 @@ function generateControllerFile(tableNameCamel, tablenameCapital) {
 
 // Função para gerar o arquivo de service
 function generateServiceFile(tableName, tableNameCamel, tablenameCapital, hasVirtuals = false) {
-	const virtualsImport = hasVirtuals ? `import { ${tablenameCapital}Virtuals } from "./virtuals";` : '';
-	const virtualsDefault = hasVirtuals ? ` = ${tablenameCapital}Virtuals` : '';
+	const virtualsImport = hasVirtuals ? `import { ${tableNameCamel}Virtuals } from "./virtuals";` : '';
+	const virtualsDefault = hasVirtuals ? ` = ${tableNameCamel}Virtuals` : '';
 
 	const controllerContent = getContent('services.txt', tableNameCamel, tablenameCapital)
 		.replaceAll('{{realTableName}}', tableName)

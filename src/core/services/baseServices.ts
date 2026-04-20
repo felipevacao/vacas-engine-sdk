@@ -12,7 +12,8 @@ import {
     Model,
     BaseEntity,
     InputRequest,
-    PaginatedResult
+    PaginatedResult,
+    IVirtualFieldDefinition
 } from "@interfaces";
 import { BaseController } from '@controllers';
 import { ErrorService } from './error';
@@ -32,7 +33,7 @@ export abstract class BaseServices<T extends BaseEntity, C extends BaseControlle
     protected _metadataService: MetadataService;
     protected defaultFilters: QueryFilter[] = [];
 
-    constructor(protected entityController: C) {
+    constructor(entityController: C, virtualFields?: IVirtualFieldDefinition<T>) {
         this.errorService = new ErrorService();
         this._metadataService = new MetadataService(this.entityController.getModelTable());
         this.defaultFilters = this.entityController.getDefaultFilters();
