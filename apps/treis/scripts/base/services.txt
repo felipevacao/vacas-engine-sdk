@@ -1,13 +1,15 @@
 import { {{tablenameCapital}}Controller } from "./controller";
 import { BaseServices, ServiceFactory } from "@services";
 import { {{tablenameCapital}}Entity } from "./entity";
+import { IVirtualFieldDefinition } from "@interfaces";
 
 export class {{tablenameCapital}}Service extends BaseServices < {{tablenameCapital}}Entity, {{tablenameCapital}}Controller > {
 
 	constructor(
-		protected entityController: {{tablenameCapital}}Controller = new {{tablenameCapital}}Controller
+		protected entityController: {{tablenameCapital}}Controller = new {{tablenameCapital}}Controller,
+		protected virtualFields?: IVirtualFieldDefinition<{{tablenameCapital}}Entity>
 	) {
-	    super(entityController)
+	    super(entityController, virtualFields)
     }
 
 }

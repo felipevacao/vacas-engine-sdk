@@ -18,7 +18,8 @@ import {
 	EnhancedTableMetadata,
 	Model,
 	BaseEntity,
-	InputRequest
+	InputRequest,
+	IVirtualFieldDefinition
 } from "@interfaces";
 
 export class BaseServices<T extends BaseEntity, C extends BaseController<T>> implements IBaseServices<T> {
@@ -33,7 +34,8 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 	protected defaultFilters: QueryFilter[] = this.entityController.getDefaultFilters()
 
 	constructor(
-		protected entityController: C
+		protected entityController: C,
+		protected virtualFields?: IVirtualFieldDefinition<T>
 	) {
 		this.errorService = new ErrorService()
 		this.context({ entity: this.getController().getModelTable() })
@@ -41,6 +43,29 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		this._bodyUpdateExtended = false
 		this._showErrors = env.ENABLE_RETURN_ERRORS
 		this._metadataService = new MetadataService(this.getController().getModelTable())
+	}
+
+	/**
+	 * Aplica os campos virtuais definidos no módulo aos dados de saída.
+	 */
+	protected applyVirtualFields(data: OutputData<T>): OutputData<T>;
+	protected applyVirtualFields(data: OutputData<T>[]): OutputData<T>[];
+	protected applyVirtualFields(data: OutputData<T> | OutputData<T>[]): OutputData<T> | OutputData<T>[] {
+		if (!this.virtualFields) return data;
+
+		const applyToRow = (row: OutputData<T>) => {
+			const virtuals = this.virtualFields!;
+			for (const field in virtuals) {
+				(row as Record<string, unknown>)[field] = virtuals[field](row as unknown as T);
+			}
+			return row;
+		};
+
+		if (Array.isArray(data)) {
+			return data.map(applyToRow);
+		}
+
+		return applyToRow(data);
 	}
 
 	/**
@@ -231,7 +256,7 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 			result = hydrated;
 		}
 
-		return result
+		return this.applyVirtualFields(result);
 	}
 
 	async findEntityBy(
@@ -240,16 +265,16 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		let typedOptions = this.setDefaultFilters(options as unknown as QueryFields<T>)
 		typedOptions = this.setDefaultFields(typedOptions);
 
-		const result = await this.getController().findByEntity(typedOptions)
+		let result = await this.getController().findByEntity(typedOptions) as OutputData<T>[] | undefined
 		if (!result) {
 			return []
 		}
 
 		if (typedOptions.includes && result.length > 0) {
-			return await this.loadRelations(result as unknown as OutputData<T>[], typedOptions.includes) as unknown as OutputData<BaseEntity>[];
+			result = await this.loadRelations(result, typedOptions.includes);
 		}
 
-		return result as OutputData<BaseEntity>[]
+		return this.applyVirtualFields(result) as unknown as OutputData<BaseEntity>[];
 
 	}
 
@@ -257,13 +282,13 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		return await this._metadataService.getTableMetadata()
 	}
 
-	async createEntity(
-		...args: Parameters<BaseController<T>['createEntity']>
-	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['createEntity']>>> {
+	// async createEntity(
+	// 	...args: Parameters<BaseController<T>['createEntity']>
+	// ): Promise<Awaited<ReturnType<BaseController<BaseEntity>['createEntity']>>> {
 
-		return await this.getController().createEntity(args[0], args[1])
+	// 	return await this.getController().createEntity(args[0], args[1])
 
-	}
+	// }
 
 	getModelTable(): ReturnType<BaseController<BaseEntity>['getModelTable']> {
 		return this.getController().getModelTable()
@@ -279,6 +304,8 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		if (args[0]?.includes && result.data.length > 0) {
 			result.data = await this.loadRelations(result.data as unknown as OutputData<T>[], args[0].includes) as unknown as T[];
 		}
+
+		result.data = this.applyVirtualFields(result.data as unknown as OutputData<T>[]) as unknown as T[];
 
 		return result
 	}
@@ -301,13 +328,25 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 			result.data = await this.loadRelations(result.data as unknown as OutputData<T>[], args[0].includes) as unknown as T[];
 		}
 
+		result.data = this.applyVirtualFields(result.data as unknown as OutputData<T>[]) as unknown as T[];
+
 		return result
+	}
+
+	async createEntity(
+		...args: Parameters<BaseController<T>['createEntity']>
+	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['createEntity']>>> {
+
+		const result = await this.getController().createEntity(args[0], args[1])
+		return this.applyVirtualFields(result as unknown as OutputData<T>);
+
 	}
 
 	async updateEntity(
 		...args: Parameters<BaseController<T>['updateEntity']>
 	): Promise<Awaited<ReturnType<BaseController<BaseEntity>['updateEntity']>>> {
-		return await this.getController().updateEntity(args[0], args[1], args[2])
+		const result = await this.getController().updateEntity(args[0], args[1], args[2])
+		return this.applyVirtualFields(result as unknown as OutputData<T>);
 	}
 
 	async deleteEntity(
@@ -354,7 +393,8 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 			if (tableMetadata) {
 				validateSchemaBulk(data, tableMetadata.fields.map((f: { name: string }) => f.name), this.getModelTable());
 			}
-			return await this.getController().createBulkEntity(data, options);
+			const result = await this.getController().createBulkEntity(data, options);
+			return this.applyVirtualFields(result);
 		} catch (error: unknown) {
 			throw ErrorHandler.handleDatabaseError(error, context);
 		}
@@ -371,7 +411,8 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 			if (tableMetadata) {
 				validateSchemaBulk([data], tableMetadata.fields.map((f: { name: string }) => f.name), this.getModelTable());
 			}
-			return await this.getController().updateBulkEntity(ids, data, options);
+			const result = await this.getController().updateBulkEntity(ids, data, options);
+			return this.applyVirtualFields(result);
 		} catch (error: unknown) {
 			throw ErrorHandler.handleDatabaseError(error, context);
 		}

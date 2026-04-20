@@ -1,5 +1,5 @@
 // scripts/generate-entity.js
-import { writeFileSync, readFileSync, mkdirSync } from 'fs';
+import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { input, confirm } from '@inquirer/prompts';
@@ -62,6 +62,9 @@ async function main() {
 			if (await confirm({ message: 'Criar as Services?' }) == true) {
 				generateServiceFile(tableName, tableNameCamel, tablenameCapital);
 			}
+			if (await confirm({ message: 'Criar os Virtuals?' }) == true) {
+				generateVirtualsFile(tableNameCamel, tablenameCapital);
+			}
 			if (await confirm({ message: 'Criar as Rotas?' }) == true) {
 				generateRoutesFile(tableNameCamel, tablenameCapital);
 			}
@@ -71,6 +74,9 @@ async function main() {
 			if (await confirm({ message: 'Criar o Grpc Adapter?' }) == true) {
 				generateGrpcAdapterFile(tableNameCamel, tablenameCapital);
 			}
+
+			// Gerar o index.ts automaticamente para facilitar exportações
+			generateIndexFile(tableNameCamel);
 		} else {
 			console.log('Tabela não existe ou não permitida!');
 		}
@@ -245,6 +251,16 @@ function generateServiceFile(tableName, tableNameCamel, tablenameCapital) {
 	console.log(`Arquivo de Services criado em: ${filePath}`);
 }
 
+// Função para gerar o arquivo de campos virtuais
+function generateVirtualsFile(tableNameCamel, tablenameCapital) {
+	const virtualsContent = getContent('virtuals.txt', tableNameCamel, tablenameCapital);
+
+	const filePath = join(__dirname, __pathToSave, tableNameCamel, 'virtuals.ts');
+	ensureDirectoryExistence(filePath);
+	writeFileSync(filePath, virtualsContent);
+	console.log(`Arquivo de Virtuals criado em: ${filePath}`);
+}
+
 // Função para gerar o arquivo proto
 function generateProtoFile(tableNameCamel, tablenameCapital) {
 	const protoContent = getContent('proto.txt', tableNameCamel, tablenameCapital);
@@ -263,6 +279,32 @@ function generateGrpcAdapterFile(tableNameCamel, tablenameCapital) {
 	ensureDirectoryExistence(filePath);
 	writeFileSync(filePath, adapterContent);
 	console.log(`Arquivo de gRPC Adapter criado em: ${filePath}`);
+}
+
+// Função para gerar o arquivo index.ts (exportador central)
+function generateIndexFile(tableNameCamel) {
+	const moduleDir = join(__dirname, __pathToSave, tableNameCamel);
+	const filesToExport = [
+		{ file: 'controller.ts', export: './controller' },
+		{ file: 'entity.ts', export: './entity' },
+		{ file: 'model.ts', export: './model' },
+		{ file: 'service.ts', export: './service' },
+		{ file: 'virtuals.ts', export: './virtuals' },
+		{ file: 'grpc.adapter.ts', export: './grpc.adapter' },
+	];
+
+	let content = `// não incluir o arquivo de rotas\n`;
+
+	filesToExport.forEach(item => {
+		if (existsSync(join(moduleDir, item.file))) {
+			content += `export * from '${item.export}';\n`;
+		}
+	});
+
+	const filePath = join(moduleDir, 'index.ts');
+	ensureDirectoryExistence(filePath);
+	writeFileSync(filePath, content);
+	console.log(`Arquivo index.ts criado dinamicamente em: ${filePath}`);
 }
 
 
