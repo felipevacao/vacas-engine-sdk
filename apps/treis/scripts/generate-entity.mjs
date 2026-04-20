@@ -59,12 +59,16 @@ async function main() {
 			if (await confirm({ message: 'Criar o Controller?' }) == true) {
 				generateControllerFile(tableNameCamel, tablenameCapital);
 			}
-			if (await confirm({ message: 'Criar as Services?' }) == true) {
-				generateServiceFile(tableName, tableNameCamel, tablenameCapital);
-			}
-			if (await confirm({ message: 'Criar os Virtuals?' }) == true) {
+			
+			const createVirtuals = await confirm({ message: 'Criar os Virtuals?', default: true });
+			if (createVirtuals) {
 				generateVirtualsFile(tableNameCamel, tablenameCapital);
 			}
+
+			if (await confirm({ message: 'Criar as Services?' }) == true) {
+				generateServiceFile(tableName, tableNameCamel, tablenameCapital, createVirtuals);
+			}
+
 			if (await confirm({ message: 'Criar as Rotas?' }) == true) {
 				generateRoutesFile(tableNameCamel, tablenameCapital);
 			}
@@ -241,9 +245,14 @@ function generateControllerFile(tableNameCamel, tablenameCapital) {
 }
 
 // Função para gerar o arquivo de service
-function generateServiceFile(tableName, tableNameCamel, tablenameCapital) {
+function generateServiceFile(tableName, tableNameCamel, tablenameCapital, hasVirtuals = false) {
+	const virtualsImport = hasVirtuals ? `import { ${tablenameCapital}Virtuals } from "./virtuals";` : '';
+	const virtualsDefault = hasVirtuals ? ` = ${tablenameCapital}Virtuals` : '';
+
 	const controllerContent = getContent('services.txt', tableNameCamel, tablenameCapital)
-		.replaceAll('{{realTableName}}', tableName);
+		.replaceAll('{{realTableName}}', tableName)
+		.replaceAll('{{virtualsImport}}', virtualsImport)
+		.replaceAll('{{virtualsDefault}}', virtualsDefault);
 
 	const filePath = join(__dirname, __pathToSave, tableNameCamel, 'service.ts');
 	ensureDirectoryExistence(filePath);
