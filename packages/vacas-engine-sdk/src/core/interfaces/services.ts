@@ -6,3 +6,9 @@ export interface IBaseServices {
 	getModelTable(): string;
 	getAvailableFields(extraFields?: string[]): string[];
 }
+
+export type VirtualFieldResolver<T extends BaseEntity> = (row: T) => unknown;
+
+export interface IVirtualFieldDefinition<T extends BaseEntity> {
+	[fieldName: string]: VirtualFieldResolver<T>;
+}
