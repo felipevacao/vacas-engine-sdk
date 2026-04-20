@@ -1,0 +1,10 @@
+import { IVirtualFieldDefinition } from "@interfaces";
+import { {{tablenameCapital}}Entity } from "./entity";
+
+export const {{tablenameCapital}}Virtuals: IVirtualFieldDefinition<{{tablenameCapital}}Entity> = {
+    /* 
+    exemplo_campo: (row: {{tablenameCapital}}Entity) => {
+        return `Calculado: ${row.id}`;
+    }
+    */
+};
