@@ -1,18 +1,20 @@
 import { UsersController } from "./controller";
 import { CreateData, QueryFields, UpdateData, QueryFilter, UserStatus, OutputData } from '@app-types';
-import { InputRequest } from "@interfaces";
+import { InputRequest, IVirtualFieldDefinition } from "@interfaces";
 import { BaseServices, ServiceFactory } from "@services";
 import { UsersEntity } from "./entity";
 import { apiError, hashUtils } from "@utils";
 import { HttpStatus, MESSAGES } from "@constants";
+import { UserVirtuals } from "./virtuals";
 
 export class UserService extends BaseServices<UsersEntity, UsersController> {
 
 	constructor(
 		id: number = 0,
-		protected entityController: UsersController = new UsersController
+		protected entityController: UsersController = new UsersController,
+		virtualFields: IVirtualFieldDefinition<UsersEntity> = UserVirtuals
 	) {
-		super(entityController)
+		super(entityController, virtualFields)
 		this.id = id
 		if (this.id !== 0) {
 			this.validateId(this.id)
