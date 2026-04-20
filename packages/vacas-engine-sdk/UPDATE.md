@@ -4,6 +4,23 @@ Este arquivo registra todas as melhorias, correções e novos recursos adicionad
 
 ---
 
+## [1.3.4] - 2026-04-20
+
+### ✨ Novidades: Campos Calculados Virtuais
+
+- **Runtime Calculation Engine**: Implementado suporte a campos virtuais no Core (**Treis**). Agora é possível definir campos que não existem no banco de dados, mas são calculados e entregues dinamicamente pela API.
+- **Processamento Automático**: O motor `applyVirtualFields` (em `BaseServices`) intercepta automaticamente os resultados de todas as operações de leitura (`read`, `list`, `paginated`) e escrita (`create`, `update`, `bulk`), injetando os valores calculados antes da resposta final.
+- **Tipagem Segura**: Atualizado o tipo `OutputData<T>` para suportar extensões dinâmicas de campos calculados mantendo a segurança do TypeScript.
+- **Módulo de Exemplo**: Adicionado o campo virtual `initials` ao módulo `users` como prova de conceito.
+
+### 🛠️ Melhorias no Gerador de Módulos (CLI)
+
+- **Injeção Automática de Virtuais**: O script `generate:entity` agora pergunta se o usuário deseja criar campos virtuais. Se confirmado, ele cria o arquivo `virtuals.ts` e o injeta automaticamente no construtor do `service.ts`.
+- **Geração Dinâmica de Index**: Agora o gerador cria um arquivo `index.ts` por módulo que detecta automaticamente quais arquivos foram gerados (Controller, Entity, Service, Virtuals, Grpc Adapter) e os exporta de forma centralizada.
+- **Templates Atualizados**: Novos templates para `virtuals.txt` e atualização do `services.txt` para suportar a injeção de dependência dos campos calculados.
+
+---
+
 ## [1.3.3] - 2026-04-18
 
 ### ✨ Novidades: Operações Bulk (Massa)
