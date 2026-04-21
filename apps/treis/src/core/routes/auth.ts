@@ -1,7 +1,7 @@
 import express from 'express';
 import { AuthUserSessionWorkflow } from '@workflows';
 import { tokenMiddleware, checkExistingResetToken, resetTokenMiddleware } from '@middlewares';
-import { UserExpressAdapter, UserService } from '@core-modules/users';
+import { UserExpressAdapter, UserService } from '@core/modules/users';
 
 
 /**

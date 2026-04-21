@@ -1,20 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2021",
     "module": "CommonJS",
-    "lib": ["ES2020", "DOM"],
     "declaration": true,
-    "outDir": "dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "baseUrl": "./",
+    // "moduleResolution": "node",
     "paths": {
-      "@core/*": ["src/*"]
+      "@core/*": ["./src/*"],
+      "@libs/*": ["./src/libs/*"],
+      "@types": ["./src/types"],
+      "@metadata": ["./src/metadata"],
+      "@interfaces": ["./src/interfaces"],
+      "@forms": ["./src/forms"],
+      "@api": ["./src/api"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

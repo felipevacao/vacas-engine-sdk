@@ -22,6 +22,7 @@ export class MetadataService {
 
   async getTableMetadata(): Promise<EnhancedTableMetadata> {
     const tableName = this.tableName
+
     // 1. Extrair informações do banco
     const dbFields = await this.extractDatabaseFields(tableName);
     const relationships = await this.extractRelationships(tableName);
@@ -37,7 +38,7 @@ export class MetadataService {
     const requestRaw = this.getTableObject(fields);
 
     return {
-      table: tableName,
+      table: manifest.tableName || tableName,
       displayName: manifest.displayName || this.formatTableName(tableName),
       description: manifest.description,
       fields,
@@ -180,16 +181,18 @@ export class MetadataService {
     return await this.db.raw(query, [tableName]).then(result => result.rows);
   }
 
-  private loadTableManifest(tableName: string): TableManifest {
+  private loadTableManifest(tableName: string, path: string = '/src/dynamic-modules'): TableManifest {
     try {
-      const manifestPath = join(process.cwd(), 'src/dynamic-modules/manifests', `${tableName}.json`);
+      console.log(process.cwd() + path)
+      const manifestPath = join(process.cwd(), `${path}/${tableName}/manifest.json`);
       const manifestContent = readFileSync(manifestPath, 'utf-8');
 
       return JSON.parse(manifestContent)[tableName];
 
     } catch {
       // Se não existir manifest, retorna configuração padrão
-      return {};
+      console.log(`Manifest para tabela "${tableName}" não encontrado. Usando configurações padrão.`);
+      return this.loadTableManifest(tableName, '/src/core/modules') || {};
     }
   }
 

@@ -1,5 +1,5 @@
 import { UserSessionsEntity, UserSessionService } from "@core-modules/userSessions";
-import { UserService, UsersEntity, UsersRolesService } from "@core-modules/users";
+import { UserService, UsersEntity, UsersRolesService } from "@core/modules/users";
 import { MESSAGES, HttpStatus } from "@constants";
 import { InputRequest } from "@interfaces";
 import { AuthService } from "@services";

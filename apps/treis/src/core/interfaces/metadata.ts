@@ -246,6 +246,7 @@ export interface ManifestFieldConfig {
 }
 
 export interface TableManifest {
+  tableName?: string;
   displayName?: string;
   description?: string;
   fields?: Record<string, ManifestFieldConfig>;
