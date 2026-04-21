@@ -2,7 +2,7 @@ import { AuthUserSessionWorkflow } from '@workflows'
 import { apiError, cryptoUtils, stringUtils, ResponseHandler, getClientIP } from '@utils'
 import { Request, Response, NextFunction } from 'express'
 import { SessionType, UserStatusType } from '@app-types'
-import { UserService } from '@core-modules/users';
+import { UserService } from '@core/modules/users';
 
 const userService = new UserService()
 const authUserSessionWorkflow = new AuthUserSessionWorkflow(userService)

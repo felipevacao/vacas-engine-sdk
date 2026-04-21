@@ -45,6 +45,21 @@ services:
     networks:
       - internal_vacas_net
 
+  # Verona SDK (Headless Logic Service)
+  verona:
+    build:
+      context: ./packages/verona
+      dockerfile: Dockerfile
+    container_name: verona
+    restart: always
+    environment:
+      TREIS_API_URL: http://treisapi:3002
+      TREIS_API_KEY: ${TREIS_API_KEY:-default_secret_key}
+    depends_on:
+      - treisapi
+    networks:
+      - internal_vacas_net
+
 volumes:
   postgres_data:
 

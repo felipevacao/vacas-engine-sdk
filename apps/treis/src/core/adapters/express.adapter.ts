@@ -6,7 +6,7 @@ import { BaseController } from '@controllers'
 import { HateoasTransformer } from '@transformers'
 import { ResponseHandler } from '@utils'
 import { MESSAGES } from '@constants'
-import { UsersRolesService } from '@core-modules/users'
+import { UsersRolesService } from '@core/modules/users'
 import { BaseServices } from '@services'
 
 export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request, Response> {
@@ -338,9 +338,9 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         res: Response
     ): Promise<void> {
         const { ids } = req.body as { ids: (number | string)[] };
-        
+
         const success = await this.service.deleteMany(ids);
-        
+
         ResponseHandler.success(
             res,
             { deleted: success },

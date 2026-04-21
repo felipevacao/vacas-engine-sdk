@@ -282,14 +282,6 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		return await this._metadataService.getTableMetadata()
 	}
 
-	// async createEntity(
-	// 	...args: Parameters<BaseController<T>['createEntity']>
-	// ): Promise<Awaited<ReturnType<BaseController<BaseEntity>['createEntity']>>> {
-
-	// 	return await this.getController().createEntity(args[0], args[1])
-
-	// }
-
 	getModelTable(): ReturnType<BaseController<BaseEntity>['getModelTable']> {
 		return this.getController().getModelTable()
 	}

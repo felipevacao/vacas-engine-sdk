@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "vacas_users": {
+    "tableName": "users",
+    "displayName": "Usuários",
+    "description": "Gerenciamento de usuários"
+  }
+}
