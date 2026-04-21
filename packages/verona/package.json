@@ -1,6 +1,6 @@
 {
   "name": "@verona/sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Verona SDK - Orquestrador de Lógica e Inteligência de Aplicação",
   "author": {
     "name": "Felipe Trevenzoli",
