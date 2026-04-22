@@ -1,9 +1,12 @@
-import apiClient from '@api';
-import { TableMetadata } from '@interfaces';
+import { ApiClientInterface, TableMetadata } from '../interfaces';
+import apiClient from '../api/index';
+
 
 export class MetadataService {
+  constructor(private client: ApiClientInterface = apiClient) { }
+
   async getMetadata(entity: string): Promise<TableMetadata> {
-    return apiClient.get<TableMetadata>(`/${entity}/metadata`);
+    return this.client.get<TableMetadata>(`/${entity}/metadata`);
   }
 }
 

@@ -21,3 +21,8 @@ packages/verona/.env
 packages/verona/.env.production
 packages/verona/logs/
 packages/verona/dist/
+
+apps/mock-consumer/.env
+apps/mock-consumer/.env.production
+apps/mock-consumer/dist/
+apps/mock-consumer/node_modules

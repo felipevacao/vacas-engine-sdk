@@ -191,7 +191,6 @@ export class MetadataService {
 
     } catch {
       // Se não existir manifest, retorna configuração padrão
-      console.log(`Manifest para tabela "${tableName}" não encontrado. Usando configurações padrão.`);
       return this.loadTableManifest(tableName, '/src/core/modules') || {};
     }
   }

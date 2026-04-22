@@ -1,18 +1,14 @@
 import { UserSession } from "./auth"
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
   data: T;
-  meta?: {
-    timestamp: string;
-    requestId?: string;
-    [key: string]: any;
-  };
+  meta?: Record<string, unknown>;
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
 }
 
@@ -23,5 +19,6 @@ export interface ApiClientInterface {
 	get<T>(url: string, params?: unknown): Promise<T>
 	post<T>(url: string, data?: unknown): Promise<T>
 	put<T>(url: string, data?: unknown): Promise<T>
+	patch<T>(url: string, data?: unknown): Promise<T>
 	delete<T>(url: string): Promise<T>
 }
