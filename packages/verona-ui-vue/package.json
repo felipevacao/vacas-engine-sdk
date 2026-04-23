@@ -1,0 +1,24 @@
+{
+  "name": "@verona/ui-vue",
+  "version": "0.0.1",
+  "description": "Verona UI Kit para Vue 3 - Componentes dinâmicos baseados em metadados",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "vue-tsc && vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@verona/sdk": "file:../verona-sdk",
+    "maska": "^3.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "vue": "^3.0.0",
+    "typescript": "^5.0.0",
+    "vue-tsc": "^2.0.0",
+    "vite": "^5.0.0"
+  }
+}
