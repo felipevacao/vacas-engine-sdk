@@ -1,11 +1,8 @@
 {
-  "extends": "../../packages/verona/tsconfig.json",
+  "extends": "../../packages/verona-sdk/tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./",
-    // "baseUrl": "./",
-    "paths": {
-      "@verona/sdk": ["../../../packages/verona/src/index.ts"]
-    }
+    "rootDir": "./"
+    // "baseUrl": "."
   },
   "include": ["./src/**/*"]
 }

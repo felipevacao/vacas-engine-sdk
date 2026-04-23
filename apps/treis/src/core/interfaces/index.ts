@@ -1,5 +1,6 @@
-import { LoginRequest } from "@app-types"
+import { LoginRequest, QueryFilter } from "@app-types"
 import { BaseEntity } from "./entity"
+import { BaseView } from "./view"
 
 export * from "./adapter"
 export * from "./controller"
@@ -11,11 +12,15 @@ export * from "./response"
 export * from "./hash"
 export * from "./express"
 export * from "./grpc"
+export * from "./audit"
+export * from "./report"
+export * from "./view"
 
 export interface InputRequest<T> {
+	method: string
 	originalUrl?: string
-	body?: object | LoginRequest,
-	params?: object,
+	body?: object | LoginRequest | ReportFilters
+	params?: object
 	query: {
 		fields?: string
 		where?: Partial<T>
@@ -47,7 +52,7 @@ export interface Metadata {
 	// constraints?: unknown[] // Placeholder for future constraints
 }
 
-export interface PaginatedResult<T extends BaseEntity> {
+export interface PaginatedResult<T extends BaseEntity | BaseView> {
 	data: T[]
 	pagination: {
 		page: number
@@ -59,4 +64,8 @@ export interface PaginatedResult<T extends BaseEntity> {
 		nextPageUrl?: string | null
 		prevPageUrl?: string | null
 	}
+}
+
+export interface ReportFilters {
+	filters: QueryFilter[]
 }

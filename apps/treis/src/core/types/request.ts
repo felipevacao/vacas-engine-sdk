@@ -1,6 +1,6 @@
-import { BaseEntity } from "@interfaces";
+import { BaseEntity, BaseView } from "@interfaces";
 // Layout de Query
-export type QueryFields<T extends BaseEntity> = {
+export type QueryFields<T extends BaseEntity | BaseView> = {
 	originalUrl?: string;
 	links?: boolean,
 	fields?: (string | number | symbol)[],

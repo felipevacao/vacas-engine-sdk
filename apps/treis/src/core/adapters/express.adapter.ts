@@ -364,4 +364,46 @@ export class ExpressAdapter<T extends BaseEntity> extends BaseAdapter<T, Request
         }
         ResponseHandler.success(res, metadata);
     }
+
+    /**
+     * Restores an entity by its ID.
+     * @param req The request object containing the entity ID.
+     * @param res The response object to send the result.
+     */
+    async restore(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+
+        // Valida Input
+        const id = parseInt(req.params.id as string)
+        if (isNaN(id)) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.DATABASE.ENTITY.INVALID_ID,
+                400
+            )
+            return
+        }
+        // Valida usuário guest
+        const user = await new UsersRolesService(req.session.userId as number).setEntity()
+        if (!user.isAdmin()) {
+            ResponseHandler.error(
+                res,
+                MESSAGES.DATABASE.ENTITY.RESTORE_ERROR,
+                401
+            )
+            return
+        }
+        // Restaura entidade
+        const success = await this.service.restoreEntity(id)
+        // Resposta de sucesso
+        ResponseHandler.success(
+            res,
+            { restored: success },
+            MESSAGES.DATABASE.ENTITY.RESTORED,
+            204
+        )
+
+    }
 }

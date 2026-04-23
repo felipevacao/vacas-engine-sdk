@@ -369,6 +369,20 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		return result
 	}
 
+	async restoreEntity(
+		...args: Parameters<BaseController<T>['restoreEntity']>
+	): Promise<boolean> {
+		const result = await this.withId(args[0]).getController().restoreEntity(args[0])
+		if (!result) {
+			throw new apiError(
+				MESSAGES.ERROR.NOT_FOUND,
+				HttpStatus.NOT_FOUND,
+				this.getContext()
+			)
+		}
+		return result
+	}
+
 	async countAll(
 		options: QueryFields<T> = {}
 	): Promise<number> {

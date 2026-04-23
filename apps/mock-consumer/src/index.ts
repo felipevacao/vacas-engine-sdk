@@ -18,7 +18,7 @@ async function mockFrontendRendering(): Promise<void> {
     console.log(`Login realizado! Usuário logado: ${session.token.substring(0, 5)}...`);
 
     // 2. O App pede a configuração de um formulário
-    const formState = await orchestrator.getFormConfig('testes');
+    const formState = await orchestrator.getFormConfig('users');
 
     if (formState.error) {
       console.error('App UI: Ops! Não foi possível carregar o formulário:', formState.error);

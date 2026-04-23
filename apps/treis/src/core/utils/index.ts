@@ -14,3 +14,4 @@ export * from './schemaGuard';
 export * from './validateSchemaBulk';
 export * from './string'
 export * from './swagger'
+export * from './genericModel'

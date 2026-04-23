@@ -3,7 +3,7 @@ import { UpdateData, OutputData, QueryFields, ErrorContext, KnexTable } from '@a
 import { MESSAGES, HttpStatus } from '@constants'
 import { BaseEntity } from '@interfaces'
 import { env } from 'process'
-import { metadata } from '@services'
+import { metadata, AuditService } from '@services'
 
 export const update = <T extends BaseEntity>(table: string) => {
 
@@ -22,6 +22,9 @@ export const update = <T extends BaseEntity>(table: string) => {
 			if (tableMetadata) {
 				validateSchema(data as any, tableMetadata.fields.map((f: { name: any }) => f.name), table);
 			}
+
+			// 1. Busca estado anterior para o snapshot (Snapshotting)
+			const oldData = await db(table).where('id', id).first();
 
 			const updateData: Partial<T> = {
 				...data,
@@ -47,6 +50,16 @@ export const update = <T extends BaseEntity>(table: string) => {
 					context
 				);
 			}
+
+			// 2. Grava o log de auditoria com o snapshot
+			await AuditService.log({
+				tableName: table,
+				entityId: id,
+				action: 'UPDATE',
+				oldData: oldData,
+				newData: result[0]
+			});
+
 			return result[0];
 		} catch (error) {
 			if (error instanceof apiError) throw error;

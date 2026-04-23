@@ -209,7 +209,12 @@ export class MetadataService {
     return dbFields.map(dbField => {
       const manifestField = manifestFields[dbField.column_name] || {};
 
+      // Padroniza valores de ENUM para { value, label }
       const enumValues = dbField.udt_name ? enumsByName[dbField.udt_name] : [];
+      const standardizedOptions = manifestField.options || enumValues.map(val => ({
+        value: val,
+        label: this.formatFieldName(val)
+      }));
 
       return {
         // Informações do banco
@@ -225,13 +230,16 @@ export class MetadataService {
         formType: (manifestField.formType as EnhancedFieldMetadata['formType']) || this.inferFormType(dbField),
         label: manifestField.label || this.formatFieldName(dbField.column_name),
 
-        // Validações combinadas
+        // 1. Validações combinadas
         validation: {
           ...this.extractDatabaseValidations(dbField),
           ...manifestField.validation
         },
 
-        // Relacionamentos
+        // 2. Opções (ENUM ou Estáticas do Manifest)
+        options: standardizedOptions.length > 0 ? standardizedOptions : undefined,
+
+        // 3. Relacionamentos (FK)
         ...(dbField.foreign_table && {
           relationship: {
             table: dbField.foreign_table,
@@ -241,20 +249,44 @@ export class MetadataService {
           }
         }),
 
-        // Configurações do manifest
-        display: manifestField.display,
-        format: manifestField.format,
-        // crud: {
-        //   creatable: true,
-        //   editable: true,
-        //   listable: true,
-        //   searchable: !dbField.column_name.includes('password'),
-        //   sortable: true,
-        //   filterable: false,
-        //   ...manifestField.crud
-        // },
-        config: manifestField.config,
-        options: manifestField.options
+        // 4. Configurações de Exibição (Novo)
+        display: {
+          placeholder: manifestField.display?.placeholder || `Digite o ${manifestField.label || this.formatFieldName(dbField.column_name)}`,
+          helpText: manifestField.display?.helpText,
+          icon: manifestField.display?.icon,
+          width: manifestField.display?.width || 'full',
+          order: manifestField.display?.order,
+          group: manifestField.display?.group,
+          conditional: manifestField.display?.conditional
+        },
+
+        // 5. Formatação e Máscara (Novo)
+        format: {
+          mask: manifestField.format?.mask,
+          currency: manifestField.format?.currency,
+          percentage: manifestField.format?.percentage,
+          decimal: manifestField.format?.decimal,
+          uppercase: manifestField.format?.uppercase,
+          lowercase: manifestField.format?.lowercase
+        },
+
+        // 6. Configurações de CRUD
+        crud: {
+          creatable: true,
+          editable: true,
+          listable: true,
+          searchable: !dbField.column_name.includes('password'),
+          sortable: true,
+          filterable: false,
+          ...manifestField.crud
+        },
+
+        // 7. Configurações extras
+        config: {
+          ...manifestField.config,
+          readonly: manifestField.config?.readonly || false,
+          hidden: manifestField.config?.hidden || false
+        }
       };
     });
   }

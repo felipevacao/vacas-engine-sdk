@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import listEndpoints from 'express-list-endpoints';
 import authRoutes from './auth';
+import reportRoutes from './report'; // Adicionado
 import env from '@libs/env';
 import { MESSAGES } from '@constants';
 import swaggerUi from 'swagger-ui-express';
@@ -100,6 +101,7 @@ const loadRoutes = async () => {
     })
 
     router.use('/auth', authRoutes)
+    router.use('/api/reports', reportRoutes); // Adicionado
 
     // Importa rotas de sistema
     const systemRoutes = await import('./system');

@@ -1,6 +1,6 @@
 import { MESSAGES } from "@constants";
 import { BaseController } from "@controllers";
-import { IAdapter, Model, BaseEntity, InputRequest } from "@interfaces";
+import { IAdapter, Model, BaseEntity, InputRequest, ReportFilters } from "@interfaces";
 import { BaseServices } from "@services";
 import { CreateData, QueryFields, UpdateData } from "@app-types";
 import { apiError, asyncHandler, ResponseHandler } from "@utils";
@@ -94,12 +94,16 @@ export abstract class BaseAdapter<T extends BaseEntity, V, U> implements IAdapte
         const fields = this.service.getAvailableFields(extraFields) as (keyof Model<T>)[];
         const where = input.query.where as Partial<T> ?? {};
 
-        const inputFilter = input.query.filter ?? [];
-        const filters = Array.isArray(inputFilter) ? inputFilter.length > 0 ? inputFilter.map((filter) => this.parseFilter(filter)) : [] : [this.parseFilter(inputFilter)];
+        const inputFilter = input.query.filter ?? []
+
+        const filters = input.method === 'GET' ?
+            Array.isArray(inputFilter) ?
+                inputFilter.length > 0 ? inputFilter.map((filter) => this.parseFilter(filter)) : []
+                : [this.parseFilter(inputFilter)]
+            : (input.body as ReportFilters).filters ?? []
 
         const limit = input.query.limit ? parseInt(input.query.limit as unknown as string) : undefined;
         const includes = input.query.include ? (input.query.include as string).split(',') : undefined;
-
         return {
             originalUrl: input.originalUrl as string ?? '',
             links: input.query.links == 'true' ? true : false,

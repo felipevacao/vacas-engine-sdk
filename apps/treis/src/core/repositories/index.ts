@@ -5,3 +5,4 @@ export * from './updateBulk';
 export * from './delete';
 export * from './deleteBulk';
 export * from './read';
+export * from './restore';

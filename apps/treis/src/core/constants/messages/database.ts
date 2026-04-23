@@ -1,69 +1,77 @@
 export const DATABASE = {
 	// Conexão
 	CONNECTION: {
-		SUCCESS: { 
-			name: 'SUCCESS', 
-			message: 'Conexão com o banco de dados estabelecida com sucesso!' 
+		SUCCESS: {
+			name: 'SUCCESS',
+			message: 'Conexão com o banco de dados estabelecida com sucesso!'
 		},
-		ERROR: { 
-			name: 'ERROR', 
-			message: 'Erro ao conectar ao banco de dados!' 
+		ERROR: {
+			name: 'ERROR',
+			message: 'Erro ao conectar ao banco de dados!'
 		},
 	},
 	ENTITY: {
-		CREATED: { 
-			name: 'CREATED', 
-			message: 'Entidade criada com sucesso!' 
+		CREATED: {
+			name: 'CREATED',
+			message: 'Entidade criada com sucesso!'
 		},
-		CREATED_ERROR: { 
-			name: 'CREATED_ERROR', 
-			message: 'Erro ao criar entidade!' 
+		CREATED_ERROR: {
+			name: 'CREATED_ERROR',
+			message: 'Erro ao criar entidade!'
 		},
-		READ_ERROR: { 
-			name: 'READ_ERROR', 
-			message: 'Erro ao buscar entidade!' 
+		READ_ERROR: {
+			name: 'READ_ERROR',
+			message: 'Erro ao buscar entidade!'
 		},
-		UPDATED: { 
-			name: 'UPDATED', 
-			message: 'Entidade atualizada com sucesso!' 
+		UPDATED: {
+			name: 'UPDATED',
+			message: 'Entidade atualizada com sucesso!'
 		},
-		UPDATE_ERROR: { 
-			name: 'UPDATE_ERROR', 
-			message: 'Erro ao atualizar entidade!' 
+		UPDATE_ERROR: {
+			name: 'UPDATE_ERROR',
+			message: 'Erro ao atualizar entidade!'
 		},
-		DELETED: { 
-			name: 'DELETED', 
-			message: 'Entidade deletada com sucesso!' 
+		DELETED: {
+			name: 'DELETED',
+			message: 'Entidade deletada com sucesso!'
 		},
-		DELETE_ERROR: { 
-			name: 'DELETE_ERROR', 
-			message: 'Erro ao deletar entidade!' 
+		DELETE_ERROR: {
+			name: 'DELETE_ERROR',
+			message: 'Erro ao deletar entidade!'
 		},
-		NOT_FOUND: { 
-			name: 'NOT_FOUND', 
-			message: 'Entidade não encontrada!' 
+		RESTORED: {
+			name: 'RESTORED',
+			message: 'Entidade restaurada com sucesso!'
 		},
-		METADATA_NOT_FOUND: { 
-			name: 'METADATA_NOT_FOUND', 
-			message: 'Metadata não encontrada!' 
+		RESTORE_ERROR: {
+			name: 'RESTORE_ERROR',
+			message: 'Erro ao restaurar entidade!'
 		},
-		INVALID_ID: { 
-			name: 'INVALID_ID', 
-			message: 'Formato inválido no ID' 
+		NOT_FOUND: {
+			name: 'NOT_FOUND',
+			message: 'Entidade não encontrada!'
+		},
+		METADATA_NOT_FOUND: {
+			name: 'METADATA_NOT_FOUND',
+			message: 'Metadata não encontrada!'
+		},
+		INVALID_ID: {
+			name: 'INVALID_ID',
+			message: 'Formato inválido no ID'
 		},
 	},
 	LOGIN: {
-		SUCCESS: { 
-			name: 'SUCCESS', 
-			message: 'Login realizado com sucesso' 
+		SUCCESS: {
+			name: 'SUCCESS',
+			message: 'Login realizado com sucesso'
 		},
-		ACTIVE_SESSION: { 
-			name: 'ACTIVE_SESSION', 
-			message: 'Sessão ativa!' 
+		ACTIVE_SESSION: {
+			name: 'ACTIVE_SESSION',
+			message: 'Sessão ativa!'
 		},
-		INVALID_SESSION: { 
-			name: 'INVALID_SESSION', 
-			message: 'Sessão inválida!' 
+		INVALID_SESSION: {
+			name: 'INVALID_SESSION',
+			message: 'Sessão inválida!'
 		},
 	}
 

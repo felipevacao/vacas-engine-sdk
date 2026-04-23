@@ -13,9 +13,14 @@ vi.mock('@utils', async (importOriginal) => {
   };
 });
 
-vi.mock('@services', () => ({
-  metadata: vi.fn(() => vi.fn().mockResolvedValue({ fields: [] })),
-}));
+vi.mock('@services', async (importOriginal) => {
+  const actual = await importOriginal<typeof services>();
+  return {
+    ...actual,
+    metadata: vi.fn(() => vi.fn().mockResolvedValue({ fields: [] })),
+    AuditService: { log: vi.fn() },
+  };
+});
 
 describe('Repository: update', () => {
   beforeEach(() => {
@@ -30,6 +35,7 @@ describe('Repository: update', () => {
     (utils.db as any).mockImplementation(mockDb);
     mockDb.mockReturnValue({
       where: vi.fn().mockReturnThis(),
+      first: vi.fn().mockResolvedValue({ id: 1, name: 'Old' }),
       update: vi.fn().mockReturnThis(),
       returning: vi.fn().mockResolvedValue([mockData]),
     });

@@ -20,6 +20,7 @@ const {{tablenameCapital}}Model: Model<{{tablenameCapital}}Entity> = {
   updateBulk: repository.updateBulk<{{tablenameCapital}}Entity>('{{realTableName}}'),
   deleteBulk: repository.deleteBulk<{{tablenameCapital}}Entity>('{{realTableName}}'),
   delete: repository.deleteById('{{realTableName}}'),
+  restore: repository.restoreById('{{realTableName}}'),
   forceDelete: repository.forceDelete('{{realTableName}}'),
   count: repository.read<{{tablenameCapital}}Entity>('{{realTableName}}').count,
   selectAbleFields: [{{fields}}],

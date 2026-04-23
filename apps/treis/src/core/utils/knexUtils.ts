@@ -1,12 +1,12 @@
 import { Knex } from 'knex';
 import { QueryFields } from '@app-types';
-import { BaseEntity } from '@interfaces';
+import { BaseEntity, BaseView } from '@interfaces';
 
 /**
  * Aplica filtros dinâmicos a uma query do Knex de forma tipada e segura.
  * Resolve problemas de tipos com operadores que esperam arrays (IN, BETWEEN).
  */
-export const applyFilters = <T extends BaseEntity, TRecord extends {}, TResult>(
+export const applyFilters = <T extends BaseEntity | BaseView, TRecord extends {}, TResult>(
     query: Knex.QueryBuilder<TRecord, TResult>,
     options: QueryFields<T>
 ): Knex.QueryBuilder<TRecord, TResult> => {

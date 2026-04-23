@@ -112,6 +112,13 @@ export abstract class BaseController<T extends BaseEntity> implements IControlle
         return await this.model.delete(id)
     }
 
+    public async restoreEntity(
+        id: number
+    ): Promise<boolean> {
+        // @ts-ignore - Garantindo compatibilidade com repositórios que possuem restore
+        return await this.model.restore(id)
+    }
+
     public async forceDeleteEntity(
         id: number
     ): Promise<boolean> {

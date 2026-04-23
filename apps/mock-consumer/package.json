@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@verona/sdk": "file:../../packages/verona/src",
+    "@verona/sdk": "file:../../packages/verona-sdk",
     "axios": "^1.15.1",
-    "dotenv": "^16.6.1"
+    "dotenv": "^16.6.1",
+    "envalid": "^8.1.1"
   },
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register src/index.ts"

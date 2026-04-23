@@ -16,11 +16,12 @@ const UserSessionsModel: Model<UserSessionsEntity> = {
   findBy: repository.read<UserSessionsEntity>('vacas_user_sessions').findBy,
   findByPaginated: repository.read<UserSessionsEntity>('vacas_user_sessions').findByPaginated,
   update: repository.update<UserSessionsEntity>('vacas_user_sessions'),
-  createBulk: repository.createBulk<UserSessionsEntity>('vacas_user_sessions'),
-  updateBulk: repository.updateBulk<UserSessionsEntity>('vacas_user_sessions'),
-  deleteBulk: repository.deleteBulk<UserSessionsEntity>('vacas_user_sessions'),
-  delete: repository.deleteById('vacas_user_sessions'),
-  forceDelete: repository.forceDelete('vacas_user_sessions'),
+  createBulk: () => Promise.resolve([]), // Não implementado,
+  updateBulk: () => Promise.resolve([]), // Não implementado,,
+  deleteBulk: () => Promise.resolve<boolean>(false), // Não implementado,,
+  delete: () => Promise.resolve<boolean>(false), // Não implementado
+  forceDelete: () => Promise.resolve<boolean>(false), // Não implementado,
+  restore: () => Promise.resolve<boolean>(false), // Não implementado
   count: repository.read<UserSessionsEntity>('vacas_user_sessions').count,
   selectAbleFields: ['userId', 'expiresAt', 'lastUsedAt', 'isRevoked', 'tokenHash', 'ipAddress'],
   defaultFields: ['id'],

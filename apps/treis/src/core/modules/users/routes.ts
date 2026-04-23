@@ -48,22 +48,22 @@ const expressAdapter = new UserExpressAdapter(userService, authWorkflow);
  */
 router.post('/', verifyAdmin, expressAdapter.create.bind(expressAdapter));
 
-/**
- * @swagger
- * /users/bulk:
- *   post:
- *     summary: Cria múltiplos usuários
- *     tags: [Users]
- *   patch:
- *     summary: Atualiza múltiplos usuários
- *     tags: [Users]
- *   delete:
- *     summary: Remove múltiplos usuários
- *     tags: [Users]
- */
-router.post('/bulk', verifyAdmin, expressAdapter.bulkCreate.bind(expressAdapter));
-router.patch('/bulk', verifyAdmin, expressAdapter.bulkUpdate.bind(expressAdapter));
-router.delete('/bulk', verifyAdmin, expressAdapter.bulkDelete.bind(expressAdapter));
+// /**
+//  * @swagger
+//  * /users/bulk:
+//  *   post:
+//  *     summary: Cria múltiplos usuários
+//  *     tags: [Users]
+//  *   patch:
+//  *     summary: Atualiza múltiplos usuários
+//  *     tags: [Users]
+//  *   delete:
+//  *     summary: Remove múltiplos usuários
+//  *     tags: [Users]
+//  */
+// router.post('/bulk', verifyAdmin, expressAdapter.bulkCreate.bind(expressAdapter));
+// router.patch('/bulk', verifyAdmin, expressAdapter.bulkUpdate.bind(expressAdapter));
+// router.delete('/bulk', verifyAdmin, expressAdapter.bulkDelete.bind(expressAdapter));
 
 /**
  * @swagger
@@ -159,23 +159,23 @@ router.patch('/update/:id', verifyAdmin, expressAdapter.updateUser.bind(expressA
 // D
 router.delete('/:id', verifyAdmin, expressAdapter.delete.bind(expressAdapter));
 
-/**
- * @swagger
- * /users/force/{id}:
- *   delete:
- *     summary: Remove permanentemente um usuário (Admin)
- *     tags: [Users]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Usuário removido permanentemente
- */
-router.delete('/force/:id', verifyAdmin, expressAdapter.forceDelete.bind(expressAdapter));
+// /**
+//  * @swagger
+//  * /users/force/{id}:
+//  *   delete:
+//  *     summary: Remove permanentemente um usuário (Admin)
+//  *     tags: [Users]
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *     responses:
+//  *       200:
+//  *         description: Usuário removido permanentemente
+//  */
+// router.delete('/force/:id', verifyAdmin, expressAdapter.forceDelete.bind(expressAdapter));
 
 export const middleware = [tokenMiddleware];
 export default router;

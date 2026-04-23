@@ -17,7 +17,8 @@ const UsersModel: Model<UsersEntity> = {
   updateBulk: repository.updateBulk<UsersEntity>('vacas_users'),
   deleteBulk: repository.deleteBulk<UsersEntity>('vacas_users'),
   delete: repository.deleteById('vacas_users'),
-  forceDelete: repository.forceDelete('vacas_users'),
+  restore: () => Promise.resolve<boolean>(false), // Não implementado
+  forceDelete: () => Promise.resolve<boolean>(false), // Não implementado
   count: repository.read<UsersEntity>('vacas_users').count,
   selectAbleFields: ['name', 'login', 'email', 'role'],
   defaultFields: ['id'],
