@@ -5,7 +5,7 @@ const packages = [
     { name: 'Root', path: 'package.json' },
     { name: 'Treis', path: 'apps/treis/package.json', env: 'apps/treis/.env' },
     { name: 'Vacas SDK', path: 'packages/vacas-engine-sdk/package.json' },
-    { name: 'Verona', path: 'packages/verona/package.json' }
+    { name: 'Verona', path: 'packages/verona-sdk/package.json' }
 ];
 
 async function main() {
@@ -13,13 +13,13 @@ async function main() {
         if (!fs.existsSync(pkg.path)) continue;
 
         const currentVersion = JSON.parse(fs.readFileSync(pkg.path, 'utf8')).version;
-        
-        const shouldUpdate = await confirm({ 
-            message: `Deseja atualizar a versão do ${pkg.name}? (Atual: ${currentVersion})` 
+
+        const shouldUpdate = await confirm({
+            message: `Deseja atualizar a versão do ${pkg.name}? (Atual: ${currentVersion})`
         });
 
         if (shouldUpdate) {
-            const newVersion = await input({ 
+            const newVersion = await input({
                 message: `Para qual versão deseja atualizar o ${pkg.name}?`,
                 validate: (val) => /^\d+\.\d+\.\d+$/.test(val) || 'Formato de versão inválido (use x.x.x)'
             });
