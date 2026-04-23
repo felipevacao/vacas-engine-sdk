@@ -67,5 +67,12 @@ export interface PaginatedResult<T extends BaseEntity | BaseView> {
 }
 
 export interface ReportFilters {
-	filters: QueryFilter[]
+	filters: QueryFilter[],
+	limit: number,
+	offset: number,
+	orderBy: string,
+	order: 'asc' | 'desc',
+	page: number,
+	pageSize: number
+
 }
