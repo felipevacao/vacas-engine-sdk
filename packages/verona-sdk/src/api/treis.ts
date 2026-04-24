@@ -2,6 +2,7 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosE
 import env from '../libs/env';
 import { authService } from '../libs/auth';
 import { ApiClientInterface, UserSession, ApiResponse } from '@interfaces';
+import { VeronaError } from '../libs/errors';
 
 export class TreisClient implements ApiClientInterface {
   private client: AxiosInstance;
@@ -24,31 +25,29 @@ export class TreisClient implements ApiClientInterface {
 
     this.client.interceptors.response.use(
       (response: AxiosResponse) => response,
-      async (error: AxiosError<{ message?: string }>) => {
-        const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-        if (error.response?.status === 401 && config && !config._retry) {
-          config._retry = true;
-          try {
-            await authService.refresh();
-            return this.client(config);
-          } catch {
-            authService.setSession(null);
-          }
-        }
-        return Promise.reject(error);
+      (error: AxiosError<ApiResponse<unknown>>) => {
+        const message = error.response?.data?.error?.message || error.message;
+        const code = error.response?.data?.error?.code;
+        return Promise.reject(new VeronaError(message, code, error.response?.data));
       }
     );
   }
 
+  // ... (rest of methods remain the same, wrapped in try/catch or just promise rejection)
   async login(email: string, password: string): Promise<UserSession> {
-    const response = await this.client.post<ApiResponse<UserSession>>('/auth/login', { email, password });
-    const data = response.data;
-    if (data.success) {
-      const session = data.data;
-      authService.setSession(session);
-      return session;
+    try {
+      const response = await this.client.post<ApiResponse<UserSession>>('/auth/login', { email, password });
+      const data = response.data;
+      if (data.success) {
+        const session = data.data as UserSession;
+        authService.setSession(session);
+        return session;
+      }
+      throw new VeronaError(data.message);
+    } catch (e: any) {
+      if (e instanceof VeronaError) throw e;
+      throw new VeronaError(e.message);
     }
-    throw new Error(data.message || 'Falha na autenticação');
   }
 
   getSession(): UserSession | null { return authService.getSession(); }

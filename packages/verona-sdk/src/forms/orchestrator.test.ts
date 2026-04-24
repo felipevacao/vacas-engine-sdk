@@ -18,10 +18,10 @@ describe('FormOrchestrator', () => {
   it('deve buscar configuração de formulário sem dados (modo criação)', async () => {
     const mockMetadata = {
       table: 'users',
-      fields: [{ name: 'name', type: 'varchar', label: 'Nome', required: true }]
+      displayName: 'Users',
+      fields: [{ name: 'name', type: 'varchar', label: 'Nome', required: true, formType: 'text' }]
     };
 
-    // Mock do MetadataService (que usa o client internamente)
     mockClient.get.mockResolvedValueOnce(mockMetadata);
 
     const result = await orchestrator.getFormConfig('users');
@@ -29,10 +29,11 @@ describe('FormOrchestrator', () => {
     expect(result.metadata.table).toBe('users');
     expect(result.data).toBeNull();
     expect(result.loading).toBe(false);
+    expect(result.error).toBeNull();
   });
 
   it('deve buscar configuração com dados (modo edição)', async () => {
-    const mockMetadata = { table: 'users', fields: [] };
+    const mockMetadata = { table: 'users', displayName: 'Users', fields: [] };
     const mockData = { id: 1, name: 'Felipe' };
 
     mockClient.get.mockResolvedValueOnce(mockMetadata); // Chamada do metadata
@@ -41,6 +42,8 @@ describe('FormOrchestrator', () => {
     const result = await orchestrator.getFormConfig('users', 1);
 
     expect(result.data).toEqual(mockData);
+    expect(result.metadata.table).toBe('users');
+    expect(result.error).toBeNull();
     expect(mockClient.get).toHaveBeenCalledTimes(2);
   });
 
@@ -50,6 +53,6 @@ describe('FormOrchestrator', () => {
     const result = await orchestrator.getFormConfig('users');
 
     expect(result.error).toBe('Falha na API');
-    expect(result.metadata.fields).toHaveLength(0);
+    expect(result.metadata.table).toBe('users');
   });
 });

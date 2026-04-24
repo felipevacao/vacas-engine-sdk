@@ -19,11 +19,12 @@ export class FormOrchestrator {
 
       return { metadata, data, loading: false, error: null };
     } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro ao carregar';
       return {
         metadata: { table: entity, displayName: entity, fields: [] },
         data: null,
         loading: false,
-        error: error instanceof Error ? error.message : 'Erro ao carregar',
+        error: message,
       };
     }
   }
