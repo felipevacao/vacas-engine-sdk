@@ -8,6 +8,14 @@ export interface BasicFieldMetadata {
   required: boolean;
 }
 
+export interface RelationshipsTable {
+  name: string;
+  type: 'hasOne' | 'hasMany' | 'belongsTo' | 'manyToMany';
+  table: string;
+  foreignKey?: string;
+  localKey?: string;
+}
+
 // Estrutura aprimorada (completa)
 export interface EnhancedFieldMetadata {
   // Básico (já existente)
@@ -117,8 +125,12 @@ export interface EnhancedTableMetadata {
   // Campos
   fields: EnhancedFieldMetadata[];
 
+  // Metadados de tabelas relacionadas (Prefetching)
+  relatedMetadata?: Record<string, EnhancedTableMetadata>;
+
   // Configurações da tabela
   config?: {
+
     // Paginação
     pagination?: {
       defaultLimit: number;
@@ -156,13 +168,7 @@ export interface EnhancedTableMetadata {
   };
 
   // Relacionamentos da tabela
-  relationships?: Array<{
-    name: string;
-    type: 'hasOne' | 'hasMany' | 'belongsTo' | 'manyToMany';
-    table: string;
-    foreignKey?: string;
-    localKey?: string;
-  }>;
+  relationships?: Array<RelationshipsTable>;
 
   // Validações no nível da tabela
   tableValidations?: Array<{

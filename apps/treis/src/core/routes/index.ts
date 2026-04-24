@@ -10,6 +10,7 @@ import env from '@libs/env';
 import { MESSAGES } from '@constants';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from '@utils';
+import { apiKeyMiddleware } from '@middlewares';
 
 // Route → Adapter → Service (workflow) → Service (entidade) → Controller → Model → Entity → Banco
 
@@ -18,6 +19,8 @@ import { swaggerSpec } from '@utils';
  * Configuração do roteador principal do Express
  */
 const router = express.Router()
+
+router.use(apiKeyMiddleware)
 
 if (env.NODE_ENV === 'development') {
     router.use(logging)

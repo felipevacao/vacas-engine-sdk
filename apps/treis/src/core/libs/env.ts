@@ -52,6 +52,7 @@ const env = cleanEnv(
         TOKEN_ALGOR: str({ default: 'sha256' }),
         TOKEN_PEPPER: str({ desc: 'Pepper para geração de tokens de sessão' }),
         INTERNAL_API_KEY: str({ desc: 'Chave secreta para comunicação gRPC interna' }),
+        VERONA_API_KEY: str({ desc: 'Chave secreta para comunicação interna com o Verona' }),
 
         // Flags de Funcionalidade
         ENABLE_TEST_ROUTES: bool({ default: false }),

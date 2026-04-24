@@ -1,4 +1,4 @@
-import { db } from '@utils'
+import { db, Cache } from '@utils'
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import {
@@ -7,7 +7,8 @@ import {
   EnhancedTableMetadata,
   EnumInfo,
   ManifestFieldConfig,
-  TableManifest
+  TableManifest,
+  RelationshipsTable
 } from '@interfaces';
 import { METADATA_EXCLUDED_FIELDS } from '@constants';
 
@@ -20,7 +21,14 @@ export class MetadataService {
     this.db = db;
   }
 
-  async getTableMetadata(): Promise<EnhancedTableMetadata> {
+  async getTableMetadata(depth: number = 1): Promise<EnhancedTableMetadata> {
+    const cacheKey = `metadata:${this.tableName}:d${depth}`;
+    const cached = Cache.get<EnhancedTableMetadata>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
     const tableName = this.tableName
 
     // 1. Extrair informações do banco
@@ -37,16 +45,33 @@ export class MetadataService {
 
     const requestRaw = this.getTableObject(fields);
 
-    return {
+    // 4. Prefetching: carregar metadados das relações
+    const relatedMetadata: Record<string, EnhancedTableMetadata> = {};
+    if (depth > 0) {
+      for (const rel of relationships) {
+        try {
+          const relatedService = new MetadataService(rel.table);
+          relatedMetadata[rel.name] = await relatedService.getTableMetadata(depth - 1);
+        } catch (e) {
+          console.error(`Falha ao carregar prefetch para ${rel.table}`, e);
+        }
+      }
+    }
+
+    const metadata: EnhancedTableMetadata = {
       table: manifest.tableName || tableName,
       displayName: manifest.displayName || this.formatTableName(tableName),
       description: manifest.description,
       fields,
       relationships,
+      relatedMetadata: Object.keys(relatedMetadata).length > 0 ? relatedMetadata : undefined,
       config: manifest.config,
       tableValidations: this.extractTableValidations(constraints),
       requestRaw
     };
+
+    Cache.set(cacheKey, metadata);
+    return metadata;
   }
 
   private transformarComRegex(input: string): string {
@@ -136,7 +161,7 @@ export class MetadataService {
     return await this.db.raw(query, [tableName]).then(result => result.rows);
   }
 
-  private async extractRelationships(tableName: string): Promise<[]> {
+  private async extractRelationships(tableName: string): Promise<RelationshipsTable[]> {
     const query = `
       SELECT 
         kcu.column_name,

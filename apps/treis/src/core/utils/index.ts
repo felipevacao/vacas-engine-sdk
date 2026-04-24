@@ -1,4 +1,5 @@
 export * from './asyncHandler'
+export * from './cache'
 export * from './crypto'
 export * from './db'
 export * from './error'

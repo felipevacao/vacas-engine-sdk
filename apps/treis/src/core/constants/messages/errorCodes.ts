@@ -40,6 +40,10 @@ export const CODES = {
     name: 'ERROR_LOGIN',
     message: 'Erro ao verificar Login ou senha'
   },
+  ERROR_API_KEY: {
+    name: 'ERROR_API_KEY',
+    message: 'Erro ao verificar chave de API'
+  },
 
 
   // Autorização  
