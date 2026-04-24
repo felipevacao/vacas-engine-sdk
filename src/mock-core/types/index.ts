@@ -1,5 +1,13 @@
-import { BaseEntity } from "@interfaces";
-// Layout de Query
+import { BaseEntity } from "../interfaces";
+export type CreateData<T extends BaseEntity> = Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
+export type UpdateData<T extends BaseEntity> = Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+export type OutputData<T extends BaseEntity> = Omit<T, "createdAt" | 'updatedAt' | 'deletedAt'>;
+export type errorDetails = string[]
+export type ErrorContext = {
+	entity?: string,
+	id?: number | string,
+	details?: errorDetails
+}
 export type QueryFields<T extends BaseEntity> = {
 	originalUrl?: string;
 	links?: boolean,
@@ -11,31 +19,12 @@ export type QueryFields<T extends BaseEntity> = {
 	order?: 'asc' | 'desc',
 	page?: number,
 	pageSize?: number,
-	// filter is used for specific conditions like 'greater than', 'less than', etc.
-	// Example: filter: { field: 'age', sign: '>', value: '18' }
 	filters?: QueryFilter[];
 	paginated?: boolean;
 	includes?: string[];
 }
-
 export type QueryFilter = {
 	field: string
 	operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'BETWEEN'
 	value: string | number | boolean | Date | (string | number)[]
 }
-
-
-export type LoginRequest = {
-	email: string;
-	password: string;
-};
-
-export type PasswordResetRequest = {
-	email?: string;
-	newPassword?: string;
-};
-
-export type PasswordChangeRequest = {
-	currentPassword: string;
-	newPassword: string;
-};
