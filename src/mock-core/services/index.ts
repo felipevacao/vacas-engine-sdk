@@ -9,9 +9,7 @@ import {
 import {
 	IBaseServices,
 	EnhancedTableMetadata,
-	Model,
 	BaseEntity,
-	InputRequest,
 	PaginatedResult,
 	IVirtualFieldDefinition
 } from "../interfaces";
@@ -96,6 +94,9 @@ export const update = <T extends BaseEntity>(table: string) =>
 	async (id: number | string, data: UpdateData<T>, options?: QueryFields<T>): Promise<OutputData<T>> => { throw new Error("SDK Skeleton"); };
 
 export const deleteById = <T extends BaseEntity>(table: string) =>
+	async (id: number | string, options: QueryFields<T> = {}): Promise<boolean> => { throw new Error("SDK Skeleton"); };
+
+export const restoreById = <T extends BaseEntity>(table: string) =>
 	async (id: number | string, options: QueryFields<T> = {}): Promise<boolean> => { throw new Error("SDK Skeleton"); };
 
 export const forceDelete = <T extends BaseEntity>(table: string) =>
