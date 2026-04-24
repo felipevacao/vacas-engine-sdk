@@ -13,6 +13,8 @@ vi.mock('@utils', async (importOriginal) => {
   };
 });
 
+import * as services from '@services';
+
 vi.mock('@services', async (importOriginal) => {
   const actual = await importOriginal<typeof services>();
   return {
