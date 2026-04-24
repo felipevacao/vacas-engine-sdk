@@ -9,16 +9,16 @@
     "forceConsistentCasingInFileNames": true,
     // "baseUrl": ".",
     "paths": {
-      "@core/*": ["./src/core/*"],
-      "@controllers": ["./src/core/controllers"],
-      "@services": ["./src/core/services"],
-      "@app-types": ["./src/core/types"],
-      "@utils": ["./src/core/utils"],
-      "@constants": ["./src/core/constants"],
+      "@core/*": ["./src/mock-core/*"],
+      "@controllers": ["./src/mock-core/controllers"],
+      "@services": ["./src/mock-core/services"],
+      "@app-types": ["./src/mock-core/types"],
+      "@utils": ["./src/mock-core/utils"],
+      "@constants": ["./src/mock-core/constants"],
       "@dynamic-modules/*": ["./src/dynamic-modules"],
-      "@interfaces": ["./src/core/interfaces"],
-      "@adapters": ["./src/core/adapters"],
-      "@middlewares": ["./src/core/middlewares"]
+      "@interfaces": ["./src/mock-core/interfaces"],
+      "@adapters": ["./src/mock-core/adapters"],
+      "@middlewares": ["./src/mock-core/middlewares"]
     }
   },
   "include": ["./src/**/*"]
