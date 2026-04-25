@@ -208,7 +208,6 @@ export class MetadataService {
 
   private loadTableManifest(tableName: string, path: string = '/src/dynamic-modules'): TableManifest {
     try {
-      console.log(process.cwd() + path)
       const manifestPath = join(process.cwd(), `${path}/${tableName}/manifest.json`);
       const manifestContent = readFileSync(manifestPath, 'utf-8');
 

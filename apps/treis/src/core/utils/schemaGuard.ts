@@ -17,8 +17,9 @@ export const validateSchema = (data: Record<string, unknown>, allowedFields: str
     // Converte as colunas do banco para camelCase para comparar com o objeto de dados
     const allowedFieldsCamel = allowedFields.map(toCamelCase);
 
-    const invalidFields = Object.keys(data).filter(key => !allowedFieldsCamel.includes(key));
-
+    const invalidFields = Object.keys(data).filter(key => {
+        !allowedFieldsCamel.includes(key)
+    });
     if (invalidFields.length > 0) {
         throw new apiError(
             { message: `Campos inválidos para persistência em ${entityName}: ${invalidFields.join(', ')}` } as sMessage,
