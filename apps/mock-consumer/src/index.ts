@@ -14,7 +14,7 @@ async function mockFrontendRendering(): Promise<void> {
 
   try {
     // 1. O App faz login usando o cliente configurado
-    const session: UserSession = await verona.login('felipe.trevenzoli@gmail.com', '1234');
+    const session: UserSession = await verona.login('felipe.trevenzoli@gmail.com', '2112');
     console.log(`Login realizado! Usuário logado: ${session.token.substring(0, 5)}...`);
 
     // 2. O App pede a configuração de um formulário

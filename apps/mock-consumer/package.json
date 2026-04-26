@@ -1,26 +1,26 @@
 {
   "name": "mock-consumer",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "@verona/sdk": "file:../../packages/verona-sdk",
-    "axios": "^1.15.1",
-    "dotenv": "^16.6.1",
-    "envalid": "^8.1.1"
-  },
+  "description": "Mock frontend consumer for Verona SDK and Verona UI Vue",
+  "private": true,
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register src/index.ts"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
+  "dependencies": {
+    "@verona/sdk": "file:../../packages/verona-sdk",
+    "@verona/verona-ui-vue": "file:../../packages/verona-ui-vue",
+    "vue": "^3.4.31"
+  },
   "devDependencies": {
-    "@types/axios": "^0.9.36",
-    "@types/node": "^22.19.17",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
+    "@vitejs/plugin-vue": "^5.0.5",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3",
+    "vue-tsc": "^2.0.26"
   }
 }

@@ -32,27 +32,27 @@ const env = cleanEnv(
         NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
 
         // Banco de Dados (OBRIGATÓRIOS para o Motor)
-        DB_USER: str(),
-        DB_PASS: str(),
-        DB_NAME: str(),
-        DB_HOST: str(),
-        DB_PORT: port({ default: 5432 }),
+        DB_USER: str({ default: process.env.NODE_ENV === 'test' ? 'testuser' : undefined }),
+        DB_PASS: str({ default: process.env.NODE_ENV === 'test' ? 'testpass' : undefined }),
+        DB_NAME: str({ default: process.env.NODE_ENV === 'test' ? 'testdb' : undefined }),
+        DB_HOST: str({ default: process.env.NODE_ENV === 'test' ? 'localhost' : undefined }),
+        DB_PORT: port({ default: process.env.NODE_ENV === 'test' ? 5432 : 5432 }),
 
         // Servidor
         API_PORT: port({ default: 3002 }),
         ORIGIN: str({ default: 'http://localhost' }),
 
         // Segurança e Criptografia (OBRIGATÓRIOS)
-        PEPPER_VERSIONS: str({ desc: 'JSON com versões de pepper para senhas' }),
-        PEPPER_CURRENT: str({ desc: 'Versão atual do pepper' }),
+        PEPPER_VERSIONS: str({ default: process.env.NODE_ENV === 'test' ? '{"1": "testpepper"}' : undefined, desc: 'JSON com versões de pepper para senhas' }),
+        PEPPER_CURRENT: str({ default: process.env.NODE_ENV === 'test' ? '1' : undefined, desc: 'Versão atual do pepper' }),
         SALT_ROUNDS: port({ default: 10 }),
 
         // Tokens e gRPC (OBRIGATÓRIOS)
         TOKEN_BYTES: str({ default: '32' }),
         TOKEN_ALGOR: str({ default: 'sha256' }),
-        TOKEN_PEPPER: str({ desc: 'Pepper para geração de tokens de sessão' }),
-        INTERNAL_API_KEY: str({ desc: 'Chave secreta para comunicação gRPC interna' }),
-        VERONA_API_KEY: str({ desc: 'Chave secreta para comunicação interna com o Verona' }),
+        TOKEN_PEPPER: str({ default: process.env.NODE_ENV === 'test' ? 'testtokenpepper' : undefined, desc: 'Pepper para geração de tokens de sessão' }),
+        INTERNAL_API_KEY: str({ default: process.env.NODE_ENV === 'test' ? 'testinternalapikey' : undefined, desc: 'Chave secreta para comunicação gRPC interna' }),
+        VERONA_API_KEY: str({ default: process.env.NODE_ENV === 'test' ? 'testveronaapikey' : undefined, desc: 'Chave secreta para comunicação interna com o Verona' }),
 
         // Flags de Funcionalidade
         ENABLE_TEST_ROUTES: bool({ default: false }),
