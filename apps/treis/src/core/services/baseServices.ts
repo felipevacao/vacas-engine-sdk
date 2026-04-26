@@ -152,8 +152,8 @@ export class BaseServices<T extends BaseEntity, C extends BaseController<T>> imp
 		return this.entityController
 	}
 
-	async setEntity(): Promise<this> {
-		this._entity = await this.findByIdEntity(this.id) as OutputData<T>
+	async setEntity(options: QueryFields<T> = {}): Promise<this> {
+		this._entity = await this.findByIdEntity(this.id, options) as OutputData<T>
 		return this
 	}
 

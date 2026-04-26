@@ -98,7 +98,6 @@ export const read = <T extends BaseEntity>(table: string) => {
 
         const context = {} as ErrorContext
         context.entity = table
-
         try {
             const query = db<T>(table)
                 .select(options.fields || '*')

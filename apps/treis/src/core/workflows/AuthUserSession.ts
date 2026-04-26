@@ -266,7 +266,7 @@ export class AuthUserSessionWorkflow {
 		newPassword: string
 	) {
 		try {
-			await this.userService.withId(userId).setEntity()
+			await this.userService.withId(userId).setEntity({ fields: ['*'] })
 
 			const user = this.userService.getEntity()
 			if (user.status === 'active') {
@@ -276,6 +276,7 @@ export class AuthUserSessionWorkflow {
 				}
 				await this.updatePassword(newPassword)
 			}
+			throw new apiError(MESSAGES.ERROR.INVALID_LOGIN, 403)
 		} catch (error) {
 			throw error
 		}

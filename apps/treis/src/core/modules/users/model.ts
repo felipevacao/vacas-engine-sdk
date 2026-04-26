@@ -20,7 +20,7 @@ const UsersModel: Model<UsersEntity> = {
   restore: () => Promise.resolve<boolean>(false), // Não implementado
   forceDelete: () => Promise.resolve<boolean>(false), // Não implementado
   count: repository.read<UsersEntity>('vacas_users').count,
-  selectAbleFields: ['name', 'login', 'email', 'role'],
+  selectAbleFields: ['name', 'login', 'email'],
   defaultFields: ['id'],
   excludedFields: ['password', 'pepper'],
   relations: {},

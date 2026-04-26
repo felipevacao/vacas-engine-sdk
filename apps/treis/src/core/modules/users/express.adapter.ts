@@ -69,9 +69,9 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
      * @returns Array containing currentPassword and newPassword
      * @throws Error if the input is invalid or if the fields are missing
      */
-    protected validateUpdatePasswordFields(
-        input: unknown
-    ): [string, string] {
+    protected validateUpdatePasswordFields = (
+        input: Request['body']
+    ): string[] => {
 
         if (!input || typeof input !== 'object') {
             throw new apiError(MESSAGES.ERROR.INVALID_FORMAT)
@@ -93,7 +93,6 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
         res: Response
     ): Promise<void> {
 
-        // validates input
         const [currentPassword, newPassword] = this.validateUpdatePasswordFields(req.body)
 
         await this.auth.updateUserPassword(
@@ -111,7 +110,7 @@ export class UserExpressAdapter extends ExpressAdapter<UsersEntity> {
     /**
     * Valida os campos de login.
         */
-    private validateResetPasswordFields(
+    validateResetPasswordFields(
         input: unknown
     ): { email: string, newPassword?: string } {
 
