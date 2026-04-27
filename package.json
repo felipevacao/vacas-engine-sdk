@@ -21,8 +21,8 @@
     "verona:ui:vue:build": "npm run build -w packages/verona-ui-vue",
     "lint": "npm run lint -w apps/treis && npm run lint -w packages/verona-sdk",
     "publish:treis": "npm run publish:treis -w apps/treis",
-    "prepare:sdk": "node apps/treis/scripts/prepare-sdk.mjs && git subtree push --prefix packages/vacas-engine-sdk sdk-public main",
-    "publish:sdk": "git subtree push --prefix packages/vacas-engine-sdk sdk-public main",
+    "prepare:sdk": "node apps/treis/scripts/prepare-sdk.mjs && git subtree push --prefix packages/treis-sdk sdk-public main",
+    "publish:sdk": "git subtree push --prefix packages/treis-sdk sdk-public main",
     "test:all": "vitest"
   },
   "keywords": [

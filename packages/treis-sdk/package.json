@@ -1,7 +1,7 @@
 {
-  "name": "vacas-engine-sdk",
+  "name": "treis-sdk",
   "version": "1.3.4",
-  "description": "SDK do Sistema Vacas-Engine - Ferramentas de Desenvolvimento Treis",
+  "description": "SDK do Sistema Vacas-Engine - Motor de Backend Treis",
   "author": {
     "name": "Felipe Trevenzoli",
     "email": "felipe.trevenzoli@gmail.com",

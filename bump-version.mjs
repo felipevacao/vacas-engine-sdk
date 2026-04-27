@@ -4,7 +4,7 @@ import { input, confirm } from '@inquirer/prompts';
 const packages = [
     { name: 'Root', path: 'package.json' },
     { name: 'Treis', path: 'apps/treis/package.json', env: 'apps/treis/.env' },
-    { name: 'Vacas SDK', path: 'packages/vacas-engine-sdk/package.json' },
+    { name: 'Treis SDK', path: 'packages/treis-sdk/package.json' },
     { name: 'Verona', path: 'packages/verona-sdk/package.json' }
 ];
 

@@ -13,7 +13,7 @@ Este é o monorepo central do ecossistema **Vacas-Engine**, contendo o motor de 
 
 - 🧠 **`apps/treis/`**: O motor (API) central. Contém o Core, autenticação, persistência e gRPC.
 - 🎨 **`packages/verona/`**: O SDK Headless de Frontend (Logic-as-a-Service).
-- 📦 **`packages/vacas-engine-sdk/`**: O **Repositório Público (SDK)** espelhado para usuários finais.
+- 📦 **`packages/treis-sdk/`**: O **Repositório Público (SDK)** espelhado para usuários finais.
 
 ---
 
@@ -28,7 +28,7 @@ npm run publish:treis
 ```
 
 ### B. Publicar o SDK (GitHub Público) 🐙
-Sincroniza a pasta `packages/vacas-engine-sdk` com o repositório público: [felipevacao/vacas-engine-sdk](https://github.com/felipevacao/vacas-engine-sdk)
+Sincroniza a pasta `packages/treis-sdk` com o repositório público: [felipevacao/treis-sdk](https://github.com/felipevacao/treis-sdk)
 ```bash
 npm run publish:sdk
 ```

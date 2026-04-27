@@ -23,8 +23,8 @@ Siga os passos abaixo para preparar seu ambiente local:
 1. **Clone o repositório:**
 
    ```bash
-   git clone https://github.com/felipevacao/vacas-engine-sdk.git
-   cd vacas-engine-sdk
+   git clone https://github.com/felipevacao/treis-sdk.git
+   cd treis-sdk
    ```
 
 2. **Instale as Ferramentas CLI:**
