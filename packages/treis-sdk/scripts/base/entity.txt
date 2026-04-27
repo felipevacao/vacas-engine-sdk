@@ -1,4 +1,0 @@
-// Gerado automáticamente
-import { BaseEntity } from '@interfaces';
-
-export interface {{tablenameCapital}}Entity extends BaseEntity {
