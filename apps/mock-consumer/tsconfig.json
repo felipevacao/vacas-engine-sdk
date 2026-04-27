@@ -1,8 +1,0 @@
-{
-  "extends": "../../packages/verona-sdk/tsconfig.json",
-  "compilerOptions": {
-    "rootDir": "./"
-    // "baseUrl": "."
-  },
-  "include": ["./src/**/*"]
-}

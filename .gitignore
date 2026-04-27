@@ -26,3 +26,7 @@ apps/mock-consumer/.env
 apps/mock-consumer/.env.production
 apps/mock-consumer/dist/
 apps/mock-consumer/node_modules
+
+apps/mock-consumer_old/*
+packages/verona-sdk_old/*
+packages/verona-ui-vue_old/*
