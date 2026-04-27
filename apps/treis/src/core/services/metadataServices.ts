@@ -206,7 +206,10 @@ export class MetadataService {
     return await this.db.raw(query, [tableName]).then(result => result.rows);
   }
 
-  private loadTableManifest(tableName: string, path: string = '/src/dynamic-modules'): TableManifest {
+  private loadTableManifest(tableName: string, path: string = '/src/dynamic-modules', count: number = 0): TableManifest {
+    if (count == 2) {
+      return {}
+    }
     try {
       const manifestPath = join(process.cwd(), `${path}/${tableName}/manifest.json`);
       const manifestContent = readFileSync(manifestPath, 'utf-8');
@@ -215,7 +218,7 @@ export class MetadataService {
 
     } catch {
       // Se não existir manifest, retorna configuração padrão
-      return this.loadTableManifest(tableName, '/src/core/modules') || {};
+      return this.loadTableManifest(tableName, '/src/core/modules', count + 1) || {};
     }
   }
 
@@ -231,14 +234,17 @@ export class MetadataService {
     }, {} as Record<string, string[]>);
 
     return dbFields.map(dbField => {
+
       const manifestField = manifestFields[dbField.column_name] || {};
 
       // Padroniza valores de ENUM para { value, label }
-      const enumValues = dbField.udt_name ? enumsByName[dbField.udt_name] : [];
+      const enumValues = dbField.udt_name ? enumsByName[dbField.udt_name] ?? [] : [];
+
       const standardizedOptions = manifestField.options || enumValues.map(val => ({
         value: val,
         label: this.formatFieldName(val)
       }));
+
 
       return {
         // Informações do banco
@@ -313,6 +319,7 @@ export class MetadataService {
         }
       };
     });
+
   }
 
   private mapDatabaseType(pgType: string): string {
