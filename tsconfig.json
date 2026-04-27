@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": ["ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    // "baseUrl": ".",
+    "paths": {
+      "@core/*": ["./src/mock-core/*"],
+      "@controllers": ["./src/mock-core/controllers"],
+      "@services": ["./src/mock-core/services"],
+      "@app-types": ["./src/mock-core/types"],
+      "@utils": ["./src/mock-core/utils"],
+      "@constants": ["./src/mock-core/constants"],
+      "@dynamic-modules/*": ["./src/dynamic-modules"],
+      "@interfaces": ["./src/mock-core/interfaces"],
+      "@adapters": ["./src/mock-core/adapters"],
+      "@middlewares": ["./src/mock-core/middlewares"]
+    }
+  },
+  "include": ["./src/**/*"]
+}

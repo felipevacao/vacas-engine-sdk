@@ -1,68 +1,61 @@
 services:
-  # Banco de Dados do Vacas-Engine (PostgreSQL 18)
-  postdb:
-    image: postgres:18
-    container_name: postdb
-    restart: unless-stopped
+  db_clone:
+    # Usando a imagem personalizada que já contém o init.sql e tabelas base
+    image: felipetrevenzoli/treis-db:latest
+    container_name: treis_clone_db
+    restart: always
     environment:
-      POSTGRES_USER: felipe
-      POSTGRES_PASSWORD: dbTreis0303
-      POSTGRES_DB: apitreis
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql
-      - ./apps/treis/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data/postgres:/var/lib/postgresql
+    networks:
+      - treis_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U felipe -d apitreis"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - internal_vacas_net
 
-  # Motor Backend Treis (REST & gRPC)
-  treisapi:
-    build:
-      context: ./apps/treis
-      dockerfile: Dockerfile
-    container_name: treisapi
+    # Executa scripts SQL da pasta ./db toda vez que o sistema sobe
+  db-migrator:
+    profiles: ["migration"]
+    image: postgres:18-alpine
+    depends_on:
+      db_clone:
+        condition: service_healthy
+    volumes:
+      - ./db:/scripts
+    command: >
+      sh -c "until pg_isready -h db_clone -U ${DB_USER}; do sleep 2; done;
+            export PGPASSWORD=${DB_PASS};
+            for f in /scripts/*.sql; do 
+              [ -e \"$$f\" ] && psql -h db_clone -U ${DB_USER} -d ${DB_NAME} -f \"$$f\"; 
+            done"
+    networks:
+      - treis_net
+
+  api_clone:
+    build: .
+    profiles: ["api"]
+    container_name: treis_clone_api
     restart: always
     ports:
-      - "3002:3002"
+      - "3020:3020"
       - "50051:50051"
-    env_file:
-      - apps/treis/.env.production
-    environment:
-      # Sobrescrevendo HOST para o nome do serviço no Docker
-      DB_HOST: postdb
-      DB_USER: felipe
-      DB_PASS: dbTreis0303
-      DB_NAME: apitreis
+    env_file: .env
     depends_on:
-      postdb:
+      db_clone:
         condition: service_healthy
     networks:
-      - internal_vacas_net
-
-  # Verona SDK (Headless Logic Service)
-  verona:
-    build:
-      context: ./packages/verona
-      dockerfile: Dockerfile
-    container_name: verona
-    restart: always
-    environment:
-      TREIS_API_URL: http://treisapi:3002
-      TREIS_API_KEY: ${TREIS_API_KEY:-default_secret_key}
-    depends_on:
-      - treisapi
-    networks:
-      - internal_vacas_net
+      - treis_net
 
 volumes:
-  postgres_data:
+  pgdata:
 
 networks:
-  internal_vacas_net:
+  treis_net:
     driver: bridge
