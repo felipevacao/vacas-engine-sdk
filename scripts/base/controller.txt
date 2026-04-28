@@ -13,4 +13,19 @@ export class {{tablenameCapital}}Controller extends BaseController<{{tablenameCa
   public getDefaultFilters(): QueryFilter[] {
     return []
   }
+
+  /**
+	 * Alterar o discovery da entidade
+	 */
+	// public async discovery(): Promise<IDiscoveryEntity> {
+	// 	return {
+	// 		resource: this.getModelTable(),
+	// 		capabilities: {
+	// 			grpc: this.enableGrpc,
+  //      rest: this.enableRest,
+	// 			auth: ['bearer']
+	// 		},
+	// 		methods: ['GET', 'POST', 'PATCH', 'DELETE']
+	// 	}
+	// }
 }

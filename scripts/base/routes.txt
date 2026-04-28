@@ -12,6 +12,7 @@ const expressAdapter = new ExpressAdapter({{tableNameCamel}}Service);
 router.post('/', expressAdapter.create.bind(expressAdapter));
 
 // R
+router.get('/discovery', expressAdapter.discovery.bind(expressAdapter))
 router.get('/metadata', expressAdapter.metadata.bind(expressAdapter))
 router.get('/search', expressAdapter.findBy.bind(expressAdapter))
 router.get('/', expressAdapter.findAll.bind(expressAdapter));
